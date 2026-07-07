@@ -1,4 +1,4 @@
-# CoboGesture: A Continuous Hand Gesture Dataset and Recognition Method for Human-Collaborative Robot Interaction
+﻿# CoboGesture: A Continuous Hand Gesture Dataset and Recognition Method for Human-Collaborative Robot Interaction
 
 Báo cáo thu hoạch nội dung đọc và phân tích bài báo về phương pháp **nhận diện cử chỉ tay liên tục trong tương tác người – robot cộng tác**.
 
@@ -21,7 +21,6 @@ Báo cáo thu hoạch nội dung đọc và phân tích bài báo về phương 
 - [5. Kết quả thực nghiệm và đánh giá](#5-kết-quả-thực-nghiệm-và-đánh-giá)
 - [6. Research Gap còn lại của bài báo](#6-research-gap-còn-lại-của-bài-báo)
 - [7. Nhận xét cá nhân và bài học rút ra](#7-nhận-xét-cá-nhân-và-bài-học-rút-ra)
-- [8. Kết luận](#8-kết-luận)
 
 ---
 
