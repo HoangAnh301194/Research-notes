@@ -1,0 +1,185 @@
+\documentclass[a4paper,11pt]{article}
+\usepackage{latexsym}
+\usepackage[empty]{fullpage}
+\usepackage{titlesec}
+\usepackage{marvosym}
+\usepackage[usenames,dvipsnames]{color}
+\usepackage{verbatim}
+\usepackage{enumitem}
+\usepackage[hidelinks]{hyperref}
+\usepackage{fancyhdr}
+\usepackage[english]{babel}
+\usepackage{tabularx}
+\usepackage{fontawesome5}
+\usepackage[scale=0.90,lf]{FiraMono}
+\usepackage{contour}
+\usepackage[normalem]{ulem}
+\usepackage{tgheros}
+\usepackage[T1]{fontenc}
+
+\renewcommand*\familydefault{\sfdefault}
+
+\definecolor{light-grey}{gray}{0.83}
+\definecolor{dark-grey}{gray}{0.3}
+\definecolor{text-grey}{gray}{.08}
+
+\DeclareRobustCommand{\ebseries}{\fontseries{eb}\selectfont}
+\DeclareTextFontCommand{\texteb}{\ebseries}
+
+\renewcommand{\ULdepth}{1.8pt}
+\contourlength{0.8pt}
+\newcommand{\myuline}[1]{%
+  \uline{\phantom{#1}}%
+  \llap{\contour{white}{#1}}%
+}
+
+\pagestyle{fancy}
+\fancyhf{}
+\fancyfoot{}
+\renewcommand{\headrulewidth}{0pt}
+\renewcommand{\footrulewidth}{0pt}
+
+% Adjust margins
+\addtolength{\oddsidemargin}{-0.5in}
+\addtolength{\evensidemargin}{0in}
+\addtolength{\textwidth}{1in}
+\addtolength{\topmargin}{-.5in}
+\addtolength{\textheight}{1.0in}
+
+\urlstyle{same}
+\raggedbottom
+\raggedright
+\setlength{\tabcolsep}{0in}
+
+\titleformat {\section}{
+    \bfseries \vspace{2pt} \raggedright \large
+}{}{0em}{}[\color{light-grey} {\titlerule[2pt]} \vspace{-4pt}]
+
+%-------------------------
+% Custom commands
+\newcommand{\resumeItem}[1]{
+  \item\small{{#1 \vspace{-1pt}}}
+}
+
+\newcommand{\resumeSubheading}[4]{
+  \vspace{-1pt}\item
+    \begin{tabular*}{\textwidth}[t]{l@{\extracolsep{\fill}}r}
+      \textbf{#1} & {\color{dark-grey}\small #2}\vspace{1pt}\\
+      \textit{#3} & {\color{dark-grey} \small #4}\\
+    \end{tabular*}\vspace{-4pt}
+}
+
+\newcommand{\resumeProjectHeading}[2]{
+    \item
+    \begin{tabular*}{\textwidth}{l@{\extracolsep{\fill}}r}
+      #1 & {\color{dark-grey}\small #2} \\
+    \end{tabular*}\vspace{-4pt}
+}
+
+\newcommand{\resumeSubHeadingListStart}{\begin{itemize}[leftmargin=0in, label={}]}
+\newcommand{\resumeSubHeadingListEnd}{\end{itemize}}
+\newcommand{\resumeItemListStart}{\begin{itemize}[leftmargin=0.18in]}
+\newcommand{\resumeItemListEnd}{\end{itemize}\vspace{0pt}}
+
+\renewcommand\labelitemii{$\vcenter{\hbox{\tiny$\bullet$}}$}
+\color{text-grey}
+
+%-------------------------------------------
+%%%%%%  RESUME STARTS HERE  %%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{document}
+
+%----------HEADING----------
+\begin{center}
+    \textbf{\Huge Hoang Anh Nguyen Huu} \\ \vspace{4pt}
+    \textbf{Robotics / Control Engineering Intern} \\ \vspace{5pt}
+    \small \faPhone* \texttt{(+84) 365 924 027} \hspace{1pt} $|$
+    \hspace{1pt} \faEnvelope \hspace{2pt} \texttt{hoanganh94ptit2k5@gmail.com} \hspace{1pt} $|$
+    \hspace{1pt} \faMapMarker* \hspace{2pt}\texttt{Hanoi, Vietnam}
+    \\ \vspace{2pt}
+    \small \faGithub \hspace{2pt}\href{https://github.com/HoangAnh301194}{\myuline{github.com/HoangAnh301194}} \hspace{1pt} $|$
+    \hspace{1pt} \faLinkedin \hspace{2pt}\href{https://www.linkedin.com/in/hoanganh94ptit2k5/}{\myuline{linkedin.com/in/hoanganh94ptit2k5}}
+    \\ \vspace{-3pt}
+\end{center}
+
+%-----------SUMMARY-----------
+\section{SUMMARY}
+ \begin{itemize}[leftmargin=0in, label={}]
+    \small{\item{
+    Control Engineering and Automation undergraduate with practical experience in ROS 2, mobile robotics, embedded systems, and robot control. Seeking a robotics internship focused on robot software, perception, and motion control.
+    }}
+ \end{itemize}
+
+%-----------EDUCATION-----------
+\section{EDUCATION}
+  \resumeSubHeadingListStart
+    \resumeSubheading
+      {Posts and Telecommunications Institute of Technology (PTIT)}{Hanoi, Vietnam}
+      {B.Eng. Candidate in Control Engineering and Automation}{Expected Graduation: 2028}
+      \resumeItemListStart
+        \resumeItem{Specialization: \textbf{Robotics and Applied AI}; Current GPA: \textbf{3.47/4.0}}
+        \resumeItem{Relevant coursework: Control Theory, Robotics, Embedded Systems}
+      \resumeItemListEnd
+  \resumeSubHeadingListEnd
+
+%-----------TECHNICAL SKILLS-----------
+\section{TECHNICAL SKILLS}
+ \begin{itemize}[leftmargin=0in, label={}]
+    \small{\item{
+     \textbf{Programming}: C/C++, Python \vspace{2pt} \\
+     \textbf{Embedded Systems}: ESP32, Arduino, ESP-IDF, FreeRTOS \vspace{2pt} \\
+     \textbf{Robotics \& Control}: PID Control; Manipulator Kinematics; ROS2\vspace{2pt} \\
+     \textbf{Computer Vision / AI}: OpenCV, YOLO finetuning \vspace{2pt} \\
+     \textbf{Tools}: Linux/Ubuntu, Git/GitHub, basic MATLAB/Simulink, PlatformIO, LaTeX
+    }}
+ \end{itemize}
+
+%-----------EXPERIENCE-----------
+\section{EXPERIENCE}
+  \resumeSubHeadingListStart
+\resumeSubheading
+  {DTT Technology Joint Stock Company (DTT)}{2026 -- Present}
+  {R\&D Intern}{Hanoi, Vietnam}
+  \resumeItemListStart
+    \resumeItem{Applied image processing and CNN-based methods for robot recognition and orientation estimation.}
+  \resumeItemListEnd
+
+\resumeSubheading
+  {Research Laboratory / Academic Research Group}{2024 -- Present}
+  {Student Researcher}{PTIT, Hanoi}
+  \resumeItemListStart
+    \resumeItem{Participated in research activities related to embedded systems, autonomous robots, and applied AI for robotic systems.}
+  \resumeItemListEnd
+  \resumeSubHeadingListEnd
+%-----------SELECTED PROJECTS-----------
+\section{SELECTED PROJECTS}
+  \resumeSubHeadingListStart
+
+    \resumeProjectHeading
+      {\textbf{Quadcopter Control Prototype} $|$ \emph{ESP32, FreeRTOS, PID Control, BLE}}{}
+      \resumeItemListStart
+        \resumeItem{Built a quadcopter prototype using ESP32, FreeRTOS, PID-based control, and BLE communication for configuration.}
+      \resumeItemListEnd
+
+    \resumeProjectHeading
+      {\textbf{Micromouse Maze-Solving Robot} $|$ \emph{STM32F411, PID Control, Flood Fill/BFS}}{}
+      \resumeItemListStart
+        \resumeItem{Developed a micromouse robot using STM32F411, PID-based motion control, and Flood Fill/BFS for maze solving.}
+      \resumeItemListEnd
+
+    \resumeProjectHeading
+      {\textbf{6-DOF Robotic Arm Control} $|$ \emph{Kinematics, Inverse Kinematics, Trajectory Planning}}{}
+      \resumeItemListStart
+        \resumeItem{Implemented forward/inverse kinematics and trajectory planning for a 6-DOF robotic arm to generate end-effector paths and joint-space motions.}
+      \resumeItemListEnd
+
+  \resumeSubHeadingListEnd
+%-----------ADDITIONAL INFORMATION----------
+\section{ADDITIONAL INFORMATION}
+ \begin{itemize}[leftmargin=0in, label={}]
+    \small{\item{
+     \textbf{Languages}: Vietnamese (Native), English (Intermediate), Japanese (Intermediate)
+    }}
+ \end{itemize}
+%-------------------------------------------
+\end{document}
