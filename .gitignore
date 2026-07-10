@@ -1,0 +1,24 @@
+# LaTeX Build Files
+*.aux
+*.bbl
+*.bcf
+*.blg
+*.fdb_latexmk
+*.fls
+*.ilg
+*.ind
+*.lof
+*.lot
+*.out
+*.toc
+*.run.xml
+*.synctex.gz
+*.log
+*.spl
+*.xdv
+*.nav
+*.snm
+
+# Thư mục / File rác hệ thống (tuỳ chọn)
+.DS_Store
+Thumbs.db
