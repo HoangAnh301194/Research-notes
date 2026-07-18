@@ -43,8 +43,8 @@
 \addtolength{\oddsidemargin}{-0.5in}
 \addtolength{\evensidemargin}{0in}
 \addtolength{\textwidth}{1in}
-\addtolength{\topmargin}{-.5in}
-\addtolength{\textheight}{1.0in}
+\addtolength{\topmargin}{-.55in}
+\addtolength{\textheight}{1.15in}
 
 \urlstyle{same}
 \raggedbottom
@@ -106,7 +106,7 @@
 \section{SUMMARY}
  \begin{itemize}[leftmargin=0in, label={}]
     \small{\item{
-    Control Engineering and Automation undergraduate with practical experience in ROS 2, mobile robotics, embedded systems, and robot control. Seeking a robotics internship focused on robot software, perception, and motion control.
+    Control Engineering and Automation undergraduate with hands-on experience in ROS 2, mobile robotics, embedded systems, and robot control. Seeking a robotics internship focused on robot software, perception, and motion control.
     }}
  \end{itemize}
 
@@ -118,68 +118,75 @@
       {B.Eng. Candidate in Control Engineering and Automation}{Expected Graduation: 2028}
       \resumeItemListStart
         \resumeItem{Specialization: \textbf{Robotics and Applied AI}; Current GPA: \textbf{3.47/4.0}}
-        \resumeItem{Relevant coursework: Control Theory, Robotics, Embedded Systems}
+        \resumeItem{\textbf{1st Prize}, PTIT Robot Programming Competition (2025)}
+        \resumeItem{\textbf{Sakura Science Exchange Program} -- JST Scholarship, PTIT \texttimes\ Gunma University, Japan (Feb 2025)}
+        \resumeItem{\textbf{Encouragement Award}, EC Challenge Robot Programming Competition(2024)}
       \resumeItemListEnd
   \resumeSubHeadingListEnd
 
 %-----------TECHNICAL SKILLS-----------
 \section{TECHNICAL SKILLS}
+\begin{itemize}[leftmargin=0in, label={}]
+\small{\item{
+\textbf{Robotics}: ROS 2, Gazebo, RViz, Nav2, SLAM, Forward/Inverse Kinematics \vspace{2pt} \\
+\textbf{Programming}: C/C++, Python, MATLAB/Simulink \vspace{2pt} \\
+\textbf{Perception}: OpenCV, YOLO \vspace{2pt} \\
+\textbf{Embedded \& Tools}: STM32, ESP32, FreeRTOS, Linux, Git, CMake
+}}
+\end{itemize}
+
+%-----------EXPERIENCE & PROJECTS-----------
+\section{EXPERIENCE \& PROJECTS}
+\resumeSubHeadingListStart
+
+\resumeSubheading
+{DTT Technology Joint Stock Company (DTT)}{Apr 2026 -- Present}
+{R\&D Engineer \textnormal{(promoted from R\&D Intern)}}{Hanoi, Vietnam}
+\resumeItemListStart
+\resumeItem{Developed an end-to-end YOLOv8n pipeline for Leanbot detection and 360-degree orientation estimation, including automated data collection and labeling, 24-class training, and custom Soft Angular BCE with circular vector-based angle decoding.}
+\resumeItem{Optimized real-time CPU inference using OpenVINO and ROI tracking; benchmarked PyTorch, ONNX Runtime, and OpenVINO FP32/FP16/INT8 variants, improving throughput from 8.4 FPS to approximately 31 FPS and reducing inference latency from approximately 21 ms to 6 ms.}
+\resumeItemListEnd
+
+
+\resumeProjectHeading
+{\textbf{Vision-Guided Navigation for TurtleBot 4 Lite} $|$
+\emph{ROS 2, Nav2, SLAM, YOLOv8, OAK-D, Gazebo}}{}
+\resumeItemListStart
+\resumeItem{Developed a modular ROS 2 pipeline integrating RGB-D object detection, 3D object localization, autonomous patrol, and Nav2-based goal generation.}
+\resumeItemListEnd
+
+\resumeProjectHeading
+{\textbf{Micromouse Maze-Solving Robot} $|$
+\emph{STM32F411, PID Control, Flood Fill, A*}}{}
+\resumeItemListStart
+\resumeItem{Developed bare-metal firmware integrating encoder, IMU, and IR sensing with PID motion control, maze exploration, optimal-path planning, flash storage, and BLE debugging.}
+\resumeItemListEnd
+
+\resumeProjectHeading
+{\textbf{Quadcopter Flight Controller} $|$
+\emph{ESP32, FreeRTOS, PID Control, Complementary Filter, BLE}}{}
+\resumeItemListStart
+\resumeItem{Developed modular flight-controller firmware with MPU6050-based attitude estimation using complementary filtering, PID roll/pitch/yaw stabilization, PWM motor control, and BLE configuration.}
+\resumeItemListEnd
+
+\resumeProjectHeading
+{\textbf{6-DOF FAIRINO Robot Modeling and Motion Control} $|$
+\emph{Kinematics, Dynamics, Trajectory Planning}}{}
+\resumeItemListStart
+\resumeItem{Developed forward/inverse kinematics, Jacobian analysis, and joint-space and Cartesian trajectory planning for a 6-DOF FAIRINO industrial robot.}
+\resumeItem{Integrated trajectory commands with the FAIRINO SDK and validated end-effector motion on the physical robot; evaluated PD control with dynamic compensation in MATLAB/Simulink.}
+\resumeItemListEnd
+
+\resumeSubHeadingListEnd
+
+
+%-----------LANGUAGES-----------
+\section{LANGUAGES}
  \begin{itemize}[leftmargin=0in, label={}]
     \small{\item{
-     \textbf{Programming}: C/C++, Python \vspace{2pt} \\
-     \textbf{Embedded Systems}: ESP32, Arduino, ESP-IDF, FreeRTOS \vspace{2pt} \\
-     \textbf{Robotics \& Control}: PID Control; Manipulator Kinematics; ROS2\vspace{2pt} \\
-     \textbf{Computer Vision / AI}: OpenCV, YOLO finetuning \vspace{2pt} \\
-     \textbf{Tools}: Linux/Ubuntu, Git/GitHub, basic MATLAB/Simulink, PlatformIO, LaTeX
+     \textbf{English}: CEFR B2 (Aptis ESOL) \hspace{2pt} $|$ \hspace{2pt}
+     \textbf{Japanese}: JLPT N3
     }}
  \end{itemize}
 
-%-----------EXPERIENCE-----------
-\section{EXPERIENCE}
-  \resumeSubHeadingListStart
-\resumeSubheading
-  {DTT Technology Joint Stock Company (DTT)}{2026 -- Present}
-  {R\&D Intern}{Hanoi, Vietnam}
-  \resumeItemListStart
-    \resumeItem{Applied image processing and CNN-based methods for robot recognition and orientation estimation.}
-  \resumeItemListEnd
-
-\resumeSubheading
-  {Research Laboratory / Academic Research Group}{2024 -- Present}
-  {Student Researcher}{PTIT, Hanoi}
-  \resumeItemListStart
-    \resumeItem{Participated in research activities related to embedded systems, autonomous robots, and applied AI for robotic systems.}
-  \resumeItemListEnd
-  \resumeSubHeadingListEnd
-%-----------SELECTED PROJECTS-----------
-\section{SELECTED PROJECTS}
-  \resumeSubHeadingListStart
-
-    \resumeProjectHeading
-      {\textbf{Quadcopter Control Prototype} $|$ \emph{ESP32, FreeRTOS, PID Control, BLE}}{}
-      \resumeItemListStart
-        \resumeItem{Built a quadcopter prototype using ESP32, FreeRTOS, PID-based control, and BLE communication for configuration.}
-      \resumeItemListEnd
-
-    \resumeProjectHeading
-      {\textbf{Micromouse Maze-Solving Robot} $|$ \emph{STM32F411, PID Control, Flood Fill/BFS}}{}
-      \resumeItemListStart
-        \resumeItem{Developed a micromouse robot using STM32F411, PID-based motion control, and Flood Fill/BFS for maze solving.}
-      \resumeItemListEnd
-
-    \resumeProjectHeading
-      {\textbf{6-DOF Robotic Arm Control} $|$ \emph{Kinematics, Inverse Kinematics, Trajectory Planning}}{}
-      \resumeItemListStart
-        \resumeItem{Implemented forward/inverse kinematics and trajectory planning for a 6-DOF robotic arm to generate end-effector paths and joint-space motions.}
-      \resumeItemListEnd
-
-  \resumeSubHeadingListEnd
-%-----------ADDITIONAL INFORMATION----------
-\section{ADDITIONAL INFORMATION}
- \begin{itemize}[leftmargin=0in, label={}]
-    \small{\item{
-     \textbf{Languages}: Vietnamese (Native), English (Intermediate), Japanese (Intermediate)
-    }}
- \end{itemize}
-%-------------------------------------------
 \end{document}
