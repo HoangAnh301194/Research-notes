@@ -1,0 +1,26 @@
+VideoMamba         19
+
+84. Wang, Y., He, Y., Li, Y., Li, K., Yu, J., Ma, X.J., Chen, X., Wang, Y., Luo, P.,
+    Liu, Z., Wang, Y., Wang, L., Qiao, Y.: Internvid: A large-scale video-text dataset
+    for multimodal understanding and generation. In: ICLR (2024)
+85. Wang, Y., Li, K., Li, Y., He, Y., Huang, B., Zhao, Z., Zhang, H., Xu, J., Liu,
+    Y., Wang, Z., Xing, S., Chen, G., Pan, J., Yu, J., Wang, Y., Wang, L., Qiao, Y.:
+    Internvideo: General video foundation models via generative and discriminative
+    learning. ArXiv abs/2212.03191 (2022)
+86. Wu, C.Y., Krahenbuhl, P.: Towards long-form video understanding. In: CVPR
+    (2021)
+87. Xu, J., Mei, T., Yao, T., Rui, Y.: Msr-vtt: A large video description dataset for
+    bridging video and language. In: CVPR (2016)
+88. Yang, Y., Xing, Z., Zhu, L.: Vivim: a video vision mamba for medical video object
+    segmentation. ArXiv abs/2401.14168 (2024)
+89. Yu, Z., Xu, D., Yu, J., Yu, T., Zhao, Z., Zhuang, Y., Tao, D.: Activitynet-qa: A
+    dataset for understanding complex web videos via question answering. In: AAAI
+    (2019)
+90. Zhang, D.J., Li, K., Wang, Y., Chen, Y., Chandra, S., Qiao, Y., Liu, L., Shou,
+    M.Z.: Morphmlp: An eﬃcient mlp-like backbone for spatial-temporal representa-
+    tion learning. In: ECCV (2022)
+91. Zhu, L., Liao, B., Zhang, Q., Wang, X., Liu, W., Wang, X.: Vision mamba: Ef-
+    ficient visual representation learning with bidirectional state space model. ArXiv
+    abs/2401.09417 (2024)
+92. Zhuang, S., Li, K., Chen, X., Wang, Y., Liu, Z., Qiao, Y., Wang, Y.: Vlogger: Make
+    your dream a vlog. ArXiv abs/2401.09414 (2024)

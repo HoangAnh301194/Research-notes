@@ -1,0 +1,29 @@
+flowchart LR
+  subgraph SQ[Mô hình dưới bậc hai]
+    direction TB
+    S0[Chuỗi đầu vào: X - L x D] --> S1[Embedding / Linear projection]
+    S1 --> S2[Sequence mixer dưới bậc hai]
+    S2 --> S3[Gate hoặc MLP]
+    S3 --> S4[Residual + Normalization]
+    S4 --> S5[Đầu ra]
+    S2 -. các lựa chọn .-> S6[Recurrence / SSM: O(L)<br/>Convolution: O(L log L)<br/>Linear attention: O(L)]
+  end
+  subgraph TF[Transformer]
+    direction TB
+    T0[Token embedding + positional information] --> T1[Linear projections Q, K, V]
+    T1 --> T2[Attention scores: QK^T - L x L]
+    T2 --> T3[Softmax attention nhân V]
+    T3 --> T4[MLP / FFN]
+    T4 --> T5[Residual + Normalization]
+    T5 --> T6[Đầu ra]
+    T2 -. dense interaction .-> T7[Mọi token tương tác với mọi token<br/>Thời gian và bộ nhớ: O(L^2)]
+  end
+  S0 ~~~ T0
+  classDef core fill:#f9eff0,stroke:#a6191f,stroke-width:2px,color:#2a2c34,font-weight:bold;
+  classDef normal fill:#ffffff,stroke:#9ca1aa,stroke-width:1px,color:#2a2c34;
+  classDef note fill:#f7f7f8,stroke:#9ca1aa,stroke-width:1px,color:#2a2c34;
+  class S2,T2 core;
+  class S0,S1,S3,S4,S5,T0,T1,T3,T4,T5,T6 normal;
+  class S6,T7 note;
+  style SQ fill:#ffffff,stroke:#a6191f,stroke-width:2px;
+  style TF fill:#ffffff,stroke:#a6191f,stroke-width:2px;

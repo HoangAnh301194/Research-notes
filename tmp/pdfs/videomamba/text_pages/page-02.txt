@@ -1,0 +1,69 @@
+2       K. Li et al.
+
+
+
+
+                   +4.1%
+                                         +/00/$ !
+
+
+
+
+                                +4.6%
+
+
+
+
+                                                    >>?
+
+
+                                                              >>?
+                                         "&10/$ ⚡
+                                        2ℎ/&4/$ #                         40×
+
+                           &=8                            & = 64
+
+
+                           2×                                       20×
+                                          6×
+
+
+
+
+Fig. 1: Comparisons of throughput and memory. The TimeSformer-Ti [4] is built
+based on DeiT-Ti [76] with joint spatiotemporal attention. Our VideoMamba is better,
+faster and cheaper for both short-term and long-term video understanding.
+
+
+
+    The emergence of low-cost operators such as S4 [26], RWKV [74], and Ret-
+Net [71] in the NLP domain, has carved a novel pathway for the vision model.
+Mamba [25] stands out with its selective state space model (SSM), striking a bal-
+ance between maintaining linear complexity and facilitating long-term dynamic
+modeling. This innovation has spurred its adoption in vision tasks, as evidenced
+by Vision Mamba [91] and VMamba [50], which leverage multi-directional SSMs
+for enhanced 2D image processing. These models rival attention-based archi-
+tectures in performance while oﬀering a significant reduction in memory usage.
+Given the inherently longer sequences produced by video, a natural question
+arises: Can Mamba work well for video understanding?
+    Inspired by this, we introduce VideoMamba, a purely SSM-based model tai-
+lored for video understanding. VideoMamba harmoniously merges the strengths
+of convolution and attention in vanilla ViT [16] style. It oﬀers a linear-complexity
+method for dynamic spatiotemporal context modeling, ideal for high-resolution
+long videos. The related evaluation focuses on VideoMamba’s four key abilities:
+    (1) Scalability in the Visual Domain: We examine VideoMamba’s scal-
+ability and find that, while the pure Mamba model tends to overfit as it scales,
+our introduction of a simple yet eﬀective self-distillation strategy allows Video-
+Mamba to achieve remarkable performance enhancements as the model and input
+sizes increase, without the need for large-scale dataset pretraining.
+    (2) Sensitivity for Short-term Action Recognition: Our analysis ex-
+tends to assessing VideoMamba’s capability to accurately distinguish short-term
+actions, especially those with fine-grained motion diﬀerences, e.g., opening and
+closing. The findings reveal VideoMamba’s superior performance over existing
+attention-based models [2,4,52]. More importantly, it is also suitable for masked
+modeling, which further enhances its temporal sensitivity.
+    (3) Superiority in Long-term Video Understanding : We then assess
+VideoMamba’s prowess in interpreting long videos. It showcases remarkable su-
+periority over conventional feature-based methods [36, 47] through end-to-end
+training. Notably, VideoMamba operates 6⇥ faster than TimeSformer [4] and
+demands 40⇥ less GPU memory for 64-frame videos (see Fig. 1).

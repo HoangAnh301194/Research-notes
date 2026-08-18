@@ -1,0 +1,43 @@
+8       K. Li et al.
+
+
+
+
+           ! "#$%-&'()'$$!)'*+ !,*'-( *,#.%'))'+/.   1 2!.$3 ()*44'+/ -*#( +*) ℎ#$4.
+
+       Fig. 6: Ablation studies of Self-Distillation and Early Stopping.
+
+
+
+    Note that diﬀerent from UMT, which employs multi-layer alignment between
+student and teacher models, we align only the final outputs due to VideoMamba’s
+unique architecture (SSM vs. Transformer), Regarding our masking strategy,
+we propose diﬀerent row masking techniques, depicted in Fig. 5, tailored to
+the B-Mamba block’s preference for continuous tokens. Additionally, we explore
+attention masking to preserve meaningful adjacency among tokens, leveraging
+the 1D convolution within the B-Mamba block for improved performance.
+
+
+4     Experiments
+
+4.1   Scaling Up
+
+Dataset and Settings. We first conduct experiments on ImageNet-1K [14],
+which includes 1.28M training images and 50K validation images across 1,000
+categories. For fair comparisons, we follow most of the training strategies of
+DeiT [76], but adopt weaker data augmentation for the tiny variant. We adjust
+the stochastic depth ratio to 0/0.15/0.5 for VideoMamba-Ti/S/M. Our mod-
+els are trained using the AdamW optimizer with a cosine learning rate schedule
+over 300 epochs, with the initial 5 epochs for linear warm-up. Default settings for
+the learning rate, weight decay, and batch size are 1e-3, 0.05, and 1024, respec-
+tively. We use BFloat16 precision during training to enhance stability without
+EMA. For the VideoMamba-M model, we employ a pretrained VideoMamba-S
+model as a “teacher” to guide the training process by aligning the final feature
+maps through L2 loss. For large resolution (>224) fine-tuning, we use a reduced
+learning rate (5e-6) and minimal weight decay (1e-8) for 30 epochs.
+Eﬀect of Self-Distillation. Fig. 6a reveals that when trained from scratch,
+VideoMamba-B tends to overfit more easily and underperforms compared to
+VideoMamba-S, whereas VideoMamba-M achieves similar performances. Fortu-
+nately, our self-distillation has shown to be eﬀective in achieving the desired op-
+timization with marginal additional computational cost. To mitigate teacher’s
+potential overdirection, we experimented with early stopping [12] in Fig. 6b,

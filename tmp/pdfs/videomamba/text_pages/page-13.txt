@@ -1,0 +1,57 @@
+VideoMamba            13
+
+Table 6: Comparison with the state-of-the-art on Breakfast and COIN.
+“e2e” means end-to-end methods without exhausting feature extraction. “†” marks
+the backbone with masked pretraining.
+
+                                                              Pretraining  BF COIN
+  Method                     e2e Backbone        Neck Type
+                                                              Dataset     Top-1 Top-1
+  Timeception [33]           7     3D-ResNet     Conv.        IN-1K+K400   71.3   -
+  VideoGraph [34]            7     I3D           Conv.+Atten. IN-1K+K400   69.5   -
+  Distant Supervision [47]   7     TimeSformer   Atten. w/ KB IN-21K+HTM   89.9 90.0
+  ViS4mer [36]               7     Swin-B        SSM          IN-21K+K600  88.2  88.4
+  Turbof 32 [29]             3     VideoMAE-B                 K400         86.8  82.3
+  Turbof 32 [29]             3     VideoMAE-B                 K400+HTM-AA 91.3   87.5
+  VideoMambaf 32             3     VideoMamba-Ti              K400         94.3  86.2
+  VideoMambaf 64             3     VideoMamba-Ti              K400         94.3  87.0
+  VideoMambaf 32             3     VideoMamba-S               K400         95.3  88.4
+  VideoMambaf 64             3     VideoMamba-S               K400         97.4  88.7
+  VideoMambaf 32             3     VideoMamba-M               K400         94.8  88.3
+  VideoMambaf 64             3     VideoMamba-M               K400         95.8  89.5
+  VideoMambaf 32             3     VideoMamba-M†              K400         97.9  89.6
+  VideoMambaf 64             3     VideoMamba-M†              K400         96.9  90.4
+
+
+Table 7: Comparison with the state-of-the-art on LVU. “e2e” means end-to-
+end methods without exhausting feature extraction. “Rel.”, “Dir.” and “Wtr.” refers to
+“Relation”, “Director” and “Writer”, respectively.
+
+                                          Content(")          Metadata(")        User(#)
+ Method               e2e Backbone
+                                       Rel. Speak Scene Dir. Genre Wtr. Year Like View
+ VideoBERT [70]       7   S3D         52.80 37.90 54.90 47.30 51.90 38.50 36.10 0.32 4.46
+ Object Trans. [86]   7   ResNet      53.10 39.40 56.90 51.20 54.60 34.50 39.10 0.23 3.55
+ Orthoformer [36]     7   ViT-L       50.00 39.30 66.27 55.14 55.79 47.02 43.35 0.29 3.86
+ ViS4mer [36]         7   ViT-L       57.14 40.79 67.44 62.61 54.71 48.80 44.75 0.26 3.63
+ VideoMambaf 32       3   VM-Ti       62.50 40.43 70.37 67.29 65.24 52.98 48.23 0.26 2.90
+
+
+
+Results. As illustrated in Figure 1, the linear complexity of VideoMamba makes
+it well-suited for end-to-end training with long-duration videos. The comparisons
+in Tables 6 and 7 highlight VideoMamba’s simplicity and eﬀectiveness against
+traditional feature-based methods [36,47] on these tasks. It yields significant per-
+formance improvements, achieving SOTA results even with smaller model sizes.
+For example, VideoMamba-Ti shows a notable increase of +6.1% over ViS4mer
+using Swin-B features and a +3.0% uplift against Turbo’s multi-modality align-
+ment approach [29]. Notably, the results underscore the positive impact of the
+scaling model and frame numbers for long-term tasks. In the diverse and chal-
+lenging set of nine tasks presented by LVU, our VideoMamba-Ti, fine-tuned in
+an end-to-end manner, delivers outstanding or comparable results to current
+SOTA methods. These outcomes not only highlight VideoMamba’s eﬀectiveness
+but also its great potential for future long-video comprehension.
+
+4.4   Multi-modality Video Understanding
+Datasets and Settings. Following UMT [43], we utilize WebVid-2M [3] video-
+text pairs and CC3M [65] image-text pairs for joint pretraining with four ob-

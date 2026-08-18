@@ -1,0 +1,52 @@
+             14. Tiến độ triển khai: Mô hình pose và pipeline Jetson
+
+
+So sánh mô hình nano pose
+
+Chỉ số                  YOLOv8n-        YOLO26n-        Thay đổi
+                          pose            pose
+
+COCO pose                  50.4             57.2       +6.8 điểm        Đầu ra pose gồm bounding box, độ tin cậy và 17
+mAP50:95                                                             keypoint cơ thể; skeleton là đầu vào hình học cho bước
+                                                                              chọn người và nhận dạng hành động.
+Tham số                   3.3 M             2.9 M        −12%
+FLOPs tại 640 px          9.2 B             7.5 B        −18%
+
+
+
+YOLO26n-pose thay YOLOv8n-pose vì đạt độ chính xác cao hơn với ít
+tham số và FLOPs hơn. Không đối chiếu trực tiếp latency GPU trong
+hai bảng benchmark do phần cứng đo khác nhau.
+
+Luồng triển khai FP16–TensorRT
+Weight .pt FP32     →        Export FP16,          →   TensorRT .engine    →      Jetson: camera → skeleton
+                                640 px
+
+
+                                                                                                                        17
+                15. Tiến độ triển khai: Kết quả bước đầu trên Jetson
+
+
+Trạng thái hiện tại
+
+Tiêu chí                Kết quả quan sát
+
+Số người phục vụ        Pipeline hiện chỉ chọn và theo
+                        dõi một người mục tiêu.
+Khoảng cách             Khoảng cách phát hiện tối đa
+                        quan sát được khoảng 5 m.
+Đầu ra                  Bounding box, confidence và 17
+                        keypoint cho người được chọn.
+
+
+
+Ảnh hưởng khi số người tăng
+Backbone vẫn xử lý một frame kích thước cố định. Chi phí
+tăng chủ yếu ở NMS, giải mã keypoint, chọn mục tiêu, truyền     YOLO26n-pose xuất skeleton cho bốn người. Hình minh họa
+dữ liệu và vẽ nhiều skeleton; vì vậy FPS toàn pipeline có thể    multi-person pose; FPS trên Jetson cần benchmark riêng.
+giảm, nhưng FLOPs của backbone không tăng tuyến tính theo
+số người.
+
+
+                                                                                                                       18
+

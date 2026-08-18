@@ -1,0 +1,70 @@
+                           Train     Inference (Test)      transformer efficiency by reducing the quadratic
+Model             Param. ↓ Speed ↑ Mode Speed ↑ PPL ↓      cost of self-attention, motivated by scaling to
+                                   N.o.   14.7k   19.40    longer sequences (Kitaev et al., 2020; Roy et al.,
+Baseline           247M    13.9k
+                                   S.W.    2.5k   18.70    2020; Tay et al., 2020). We instead demonstrate
+TransformerXL∗     257M     6.0k   N.o.    3.2k   18.30    improved results with shorter sequences, which
+Sandwich T.        247M    13.9k   S.W.    2.5k   17.96
+Compressive T.     329M       -    N.o.      -     17.1    naturally also improve efficiency.
+Routing T.           -        -    N.o       -     15.8       One way to reduce transformer memory usage is
+kNN-LM∗∗           247M    13.9k   S.W.    145    15.79
+                                                           to sparsify the attention matrix by letting the model
+PIA + Caching      247M    21.5k   N.o.   14.5k   18.55    attend only to a subset of nearby tokens at each
+Staged Training    247M    17.6k   S.W.    2.5k   17.56
+Shortformer        247M    22.9k   N.o.   14.5k   18.15    timestep (Child et al., 2019; Beltagy et al., 2020;
+                                                           Roy et al., 2020). Training on shorter subsequence
+Table 5: Comparison of our best models to other strong     lengths is much more efficient: we use multiple, but
+LMs (see text for citations and explanations) evaluating   much smaller, attention matrices. Since attention
+the WikiText-103 test set, where S = 512. We mea-          uses memory and computation in a way that scales
+sure speed in tok./sec. per GPU, and use a batch size of   quadratically with input size, splitting the inputs
+1 for inference. ∗ TransformerXL runs on an older ver-
+                                                           into multiple subsequences each processed indepen-
+sion of PyTorch, which might affect speed. ∗∗ kNN-LM
+requires a 400GB datastore.                                dently lets us use less memory and run faster. Like
+                                                           our method, Beltagy et al. (2020) attend at each
+                                                           timestep to a growing number of neighbors as train-
+best model from §5.3, it is nine times faster than         ing progresses, but they use five stages, which we
+the baseline for token-by-token generation.                found not to be superior to our two-staged method.
+   Since it uses a cache, sliding window evaluation           The adaptive attention span model of Sukhbaatar
+does not increase Shortformer’s performance. By            et al. (2019) learns the maximum effective context
+training the baseline with staged training (and no         window sizes for each head at each layer indepen-
+PIA or caching), we obtain a model (our best model         dently. Like in our method, context window sizes
+from §4.2) that, with sliding window eval., obtains        are smaller at the start of training and lengthen
+even better results, but that model is much slower         as training progresses. We show that a simple
+than Shortformer (Table 5, second-to-last row).            approach of manually choosing two subsequence
+   Shortformer outperforms the baseline’s perplex-         lengths is highly effective. In addition, keeping sub-
+ity and performs within a standard deviation of            sequence lengths equal across all heads and layers
+the Sandwich Transformer (Press et al., 2020)              lets us save memory and runtime.
+and TransformerXL. It does not outperform the
+                                                           Position-Infused       Attention TransformerXL
+Compressive Transformer (Rae et al., 2020), Rout-
+                                                           (Dai et al., 2019) caches and attends to previous
+ing Transformer (Roy et al., 2020) and kNN-
+                                                           representations using an attention sublayer that
+LM (Khandelwal et al., 2020), which make or-
+                                                           uses relative positioning (Shaw et al., 2018). It
+thogonal improvements that can be applied to any
+                                                           runs much slower than the unmodified attention
+language model, at the price of slower decoding.
+                                                           sublayer, requires extra parameters, and requires
+Combining them with our approach may yield fur-
+                                                           internally modifying the self-attention sublayer,
+ther gains. These results are similar to those we
+                                                           while our PIA method (§5) does not.
+obtain on the Toronto Book Corpus (§A.5 in the
+                                                              In parallel with our work, Ke et al. (2020) com-
+appendix).
+                                                           pute attention coefficients by summing two atten-
+                                                           tion matrices, one based on position-position in-
+7   Related Work
+                                                           teractions and the other on content-content inter-
+Staged Training Devlin et al. (2019) used a                actions. As in PIA, they do not add position em-
+staged training routine for BERT by performing             beddings at the bottom of the model. They present
+the first 90% of training on short subsequences (of        results only for BERT, which uses much smaller
+length 128) before moving on to longer ones (of            subsequences than our models.
+length 512). They use this method to speed train-
+                                                           8   Conclusion
+ing, but we show that also it improves perplexity
+and analyze different configurations of this method.       Our results challenge the conventional wisdom that
+   Many recent papers have explored improving              longer subsequences are always better. By first
+

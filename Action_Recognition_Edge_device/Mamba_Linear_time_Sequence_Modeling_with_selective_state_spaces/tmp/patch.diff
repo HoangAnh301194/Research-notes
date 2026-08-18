@@ -1,0 +1,12 @@
+*** Begin Patch
+*** Update File: main.tex
+@@
+-        {\fontsize{6.85}{7.95}\selectfont
++        {\fontsize{7.10}{8.20}\selectfont
+@@
+-        {\fontsize{6.85}{7.95}\selectfont
++        {\fontsize{7.10}{8.20}\selectfont
+@@
+-        {\fontsize{6.85}{7.95}\selectfont
++        {\fontsize{7.10}{8.20}\selectfont
+*** End Patch

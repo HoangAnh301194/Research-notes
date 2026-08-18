@@ -1,0 +1,51 @@
+18      K. Li et al.
+
+62. Rohrbach, A., Torabi, A., Rohrbach, M., Tandon, N., Pal, C.J., Larochelle, H.,
+    Courville, A.C., Schiele, B.: Movie description. International Journal of Computer
+    Vision (2016)
+63. Shao, D., Zhao, Y., Dai, B., Lin, D.: Finegym: A hierarchical video dataset for
+    fine-grained action understanding. CVPR (2020)
+64. Sharir, G., Noy, A., Zelnik-Manor, L.: An image is worth 16x16 words, what is a
+    video worth? ArXiv abs/2103.13915 (2021)
+65. Sharma, P., Ding, N., Goodman, S., Soricut, R.: Conceptual captions: A cleaned,
+    hypernymed, image alt-text dataset for automatic image captioning. In: ACL
+    (2018)
+66. Simonyan, K., Zisserman, A.: Two-stream convolutional networks for action recog-
+    nition in videos. NeurIPS (2014)
+67. Smith, J.T., Warrington, A., Linderman, S.W.: Simplified state space layers for
+    sequence modeling. In: ICLR (2023)
+68. Soomro, K., Zamir, A.R., Shah, M.: Ucf101: A dataset of 101 human actions classes
+    from videos in the wild. arXiv preprint arXiv:1212.0402 (2012)
+69. Su, J., Lu, Y., Pan, S., Wen, B., Liu, Y.: Roformer: Enhanced transformer with
+    rotary position embedding. ArXiv abs/2104.09864 (2021)
+70. Sun, C., Myers, A., Vondrick, C., Murphy, K., Schmid, C.: Videobert: A joint
+    model for video and language representation learning. In: ICCV (2019)
+71. Sun, Y., Dong, L., Huang, S., Ma, S., Xia, Y., Xue, J., Wang, J., Wei, F.: Re-
+    tentive network: A successor to transformer for large language models. ArXiv
+    abs/2307.08621 (2023)
+72. Tang, Y., Ding, D., Rao, Y., Zheng, Y., Zhang, D., Zhao, L., Lu, J., Zhou, J.: Coin:
+    A large-scale dataset for comprehensive instructional video analysis. In: CVPR
+    (2019)
+73. Team, G.: Gemini: A family of highly capable multimodal models. ArXiv
+    abs/2312.11805 (2023)
+74. Team, R.: Rwkv: Reinventing rnns for the transformer era. In: EMNLP (2023)
+75. Tong, Z., Song, Y., Wang, J., Wang, L.: VideoMAE: Masked autoencoders are
+    data-eﬃcient learners for self-supervised video pre-training. In: NeurIPS (2022)
+76. Touvron, H., Cord, M., Douze, M., Massa, F., Sablayrolles, A., J’egou, H.: Training
+    data-eﬃcient image transformers & distillation through attention. In: ICML (2021)
+77. Tran, D., Bourdev, L.D., Fergus, R., Torresani, L., Paluri, M.: Learning spatiotem-
+    poral features with 3d convolutional networks. In: IEEE International Conference
+    on Computer Vision (2015)
+78. Tran, D., xiu Wang, H., Torresani, L., Ray, J., LeCun, Y., Paluri, M.: A closer look
+    at spatiotemporal convolutions for action recognition. In: CVPR (2018)
+79. Wang, C., Tsepa, O., Ma, J., Wang, B.: Graph-mamba: Towards long-range graph
+    sequence modeling with selective state spaces. ArXiv abs/2402.00789 (2024)
+80. Wang, J., Yan, J.N., Gu, A., Rush, A.M.: Pretraining without attention. ArXiv
+    abs/2212.10544 (2022)
+81. Wang, L., Tong, Z., Ji, B., Wu, G.: TDN: Temporal diﬀerence networks for eﬃcient
+    action recognition. In: CVPR (2021)
+82. Wang, L., Xiong, Y., Wang, Z., Qiao, Y., Lin, D., Tang, X., Gool, L.V.: Temporal
+    segment networks: Towards good practices for deep action recognition. In: ECCV
+    (2016)
+83. Wang, R., Chen, D., Wu, Z., Chen, Y., Dai, X., Liu, M., Jiang, Y.G., Zhou, L.,
+    Yuan, L.: Bevt: Bert pretraining of video transformers. CVPR (2022)

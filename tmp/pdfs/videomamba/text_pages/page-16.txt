@@ -1,0 +1,52 @@
+16      K. Li et al.
+
+19. Feichtenhofer, C., Fan, H., Li, Y., He, K.: Masked autoencoders as spatiotemporal
+    learners. NeurIPS (2022)
+20. Feichtenhofer, C., Fan, H., Malik, J., He, K.: Slowfast networks for video recogni-
+    tion. In: ICCV (2019)
+21. Fu, D.Y., Dao, T., Saab, K.K., Thomas, A.W., Rudra, A., Ré, C.: Hungry hungry
+    hippos: Towards language modeling with state space models. In: ICLR (2023)
+22. Gao, J., Sun, C., Yang, Z., Nevatia, R.: Tall: Temporal activity localization via
+    language query. In: ICCV (2017)
+23. Ge, Y., Ge, Y., Liu, X., Li, D., Shan, Y., Qie, X., Luo, P.: Bridging video-text
+    retrieval with multiple choice questions. In: CVP (2022)
+24. Goyal, R., Kahou, S.E., Michalski, V., Materzynska, J., Westphal, S., Kim, H.,
+    Haenel, V., Fründ, I., Yianilos, P., Mueller-Freitag, M., Hoppe, F., Thurau, C.,
+    Bax, I., Memisevic, R.: The “something something” video database for learning
+    and evaluating visual common sense. In: ICCV (2017)
+25. Gu, A., Dao, T.: Mamba: Linear-time sequence modeling with selective state
+    spaces. ArXiv abs/2312.00752 (2023)
+26. Gu, A., Goel, K., Ré, C.: Eﬃciently modeling long sequences with structured state
+    spaces. In: ICLR (2022)
+27. Gu, C., Sun, C., Vijayanarasimhan, S., Pantofaru, C., Ross, D.A., Toderici, G.,
+    Li, Y., Ricco, S., Sukthankar, R., Schmid, C., Malik, J.: Ava: A video dataset of
+    spatio-temporally localized atomic visual actions. CVPR (2017)
+28. Guo, H., Li, J., Dai, T., Ouyang, Z., Ren, X., Xia, S.T.: Mambair: A simple baseline
+    for image restoration with state-space model. ArXiv abs/2402.15648 (2024)
+29. Han, T., Xie, W., Zisserman, A.: Turbo training with token dropout. In: BMVC
+    (2022)
+30. He, X., Cao, K., Yan, K., Li, R., Xie, C., Zhang, J., Zhou, M.: Pan-mamba: Eﬀective
+    pan-sharpening with state space model. ArXiv abs/2402.12192 (2024)
+31. Heilbron, F.C., Escorcia, V., Ghanem, B., Niebles, J.C.: Activitynet: A large-scale
+    video benchmark for human activity understanding. In: CVPR (2015)
+32. Hu, V.T., Baumann, S.A., Gui, M., Grebenkova, O., Ma, P., Fischer, J.S., Ommer,
+    B.: Zigma: A dit-style zigzag mamba diﬀusion model. In: ECCV (2024)
+33. Hussein, N., Gavves, E., Smeulders, A.W.M.: Timeception for complex action
+    recognition. In: CVPR (2019)
+34. Hussein, N., Gavves, E., Smeulders, A.W.M.: Videograph: Recognizing minutes-
+    long human activities in videos. ArXiv abs/1905.05143 (2019)
+35. Idrees, H., Zamir, A.R., Jiang, Y.G., Gorban, A., Laptev, I., Sukthankar, R., Shah,
+    M.: The thumos challenge on action recognition for videos “in the wild”. Computer
+    Vision and Image Understanding (2017)
+36. Islam, M.M., Bertasius, G.: Long movie clip classification with state-space video
+    models. In: ECCV (2022)
+37. Kay, W., Carreira, J., Simonyan, K., Zhang, B., Hillier, C., Vijayanarasimhan,
+    S., Viola, F., Green, T., Back, T., Natsev, A., Suleyman, M., Zisserman, A.: The
+    kinetics human action video dataset. ArXiv abs/1705.06950 (2017)
+38. Kuehne, H., Arslan, A., Serre, T.: The language of actions: Recovering the syntax
+    and semantics of goal-directed human activities. In: CVPR (2014)
+39. Lei, J., Berg, T.L., Bansal, M.: Revealing single frame bias for video-and-language
+    learning. ArXiv abs/2206.03428 (2022)
+40. Li, J., Selvaraju, R., Gotmare, A., Joty, S., Xiong, C., Hoi, S.C.H.: Align before
+    fuse: Vision and language representation learning with momentum distillation. In:
+    NeurIPS (2021)

@@ -1,0 +1,52 @@
+4          K. Li et al.
+
+      Linear          Sequence           Multiplication   !   Activation
+      Projection      Transformation     Summarization
+                                                                           &.+/                                  &.+/
+                                                                                  Conv       5       SSM
+            Conv      5        SSM
+                                                                                  Conv       5       SSM
+
+
+                      5                                                                      5
+
+
+                   ! 7!81!                                                               1 ;'-'.#9)'*+!$ 7!81!
+
+Fig. 2: Mamba blocks for 1D [25] and 2D [91] sequence. We omit the initial
+normalization and the final residual for simplification.
+
+
+models [2,4,60,64,90] like TimeSformer [4] and ViViT [2] significantly advanced
+the field by capturing long-range dependencies, improving temporal relation-
+ship understanding. Recent models [42, 44, 52, 85] have focused on eﬃcient video
+transformers, with innovations like VideoSwin’s window attention [52] and Uni-
+Former’s integration of convolution and self-attention [44], balancing computa-
+tional eﬃciency with performance. Despite these advancements, high computa-
+tional costs remain for long sequences. In contrast, our VideoMamba introduces
+a linear-complexity operator for eﬃcient long-term modeling, outperforming ex-
+isting methods with faster speed and lower GPU consumption.
+
+
+3     Method
+3.1    Preliminaries
+SSM for 1D sequence. State Space Models (SSMs) are conceptualized based
+on continuous systems that map a 1D function or sequence, x(t) 2 RL ! y(t) 2
+RL through a hidden state h(t) 2 RN . Formally, SSMs employ the following
+ordinary diﬀerential equation (ODE) to model the input data:
+
+                                               h0 (t) = Ah(t) + Bx(t),                                                  (1)
+                                                y(t) = Ch(t),                                                           (2)
+
+where A 2 RN ⇥N represents the system’s evolution matrix, and B 2 RN ⇥1 , C 2
+RN ⇥1 are the projection matrices. This continuous ODE is approximated through
+discretization in modern SSMs. Mamba [25] is one of the discrete versions of the
+continuous system, which includes a timescale parameter       to transform the
+continuous parameters A, B to their discrete counterparts A, B. The transfor-
+mation typically employs the zero-order hold (ZOH) method, defined by:
+
+                                       A = exp( A),                                                                     (3)
+                                                               1
+                                       B = ( A)                    (exp( A)         I) ·         B                      (4)
+                                       ht = Aht 1 + Bxt ,                                                               (5)
+                                       yt = Cht .                                                                       (6)

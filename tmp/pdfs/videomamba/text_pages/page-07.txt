@@ -1,0 +1,53 @@
+VideoMamba              7
+
+                           *+,-                       *+,-                         *+,-
+
+
+
+
+        ! '+4@) ,'-#*              1 .!+-*8 8!(A'+/            9 )@1# 8!(A'+/
+                           *+,-                       *+,-                         *+,-
+
+
+
+
+      - 9$'4−.*B 8!(A'+/          # %.!8#−.*B 8!(A'+/        % !))#+)'*+ 8!(A'+/
+
+Fig. 5: Diﬀerent masking strategies. Row masking, tailored for VideoMamba in
+light of the 1D convolution preceding SSM, enhances performance with continuous
+tokens. The diﬀerence between clip-row and frame-row masking is that the former
+masks the entire video clip, while the latter masks each frame individually.
+
+
+
+For SSM in the B-Mamba layer, we adopt the
+default hyperparameters as in Mamba [25]. Table 1: Diﬀerent model sizes.
+setting the state dimension and expansion Base model is finally excluded due
+ratio to 16 and 2, respectively. Following to its suboptimization.
+ViT [16], we adjust the depth and embedding       Model #Depth #Dim #Param.
+dimensions to create models of comparable         Tiny         24    192        7M
+sizes in Table 1, including VideoMamba-Ti,        Small        24    384       26M
+VideoMamba-S and VideoMamba-M. How-               Middle       32    576       74M
+ever, we observe that larger VideoMamba           Base         24    768       98M
+tends to overfit during our experiments, leading to suboptimal performance as
+illustrated in Fig. 6a. This overfitting issue is not unique to our models but
+is also found in VMamba [50], where the optimal performance of VMamba-B
+was achieved at three-quarters of the total training epochs. To counteract the
+overfitting in larger Mamba models, we introduce an eﬀective Self-Distillation
+strategy, which uses a smaller and well-trained model as the “teacher” to guide
+the training of the larger “student” model. The results, depicted in Fig. 6a, show
+that this strategy leads to expected better convergence.
+
+
+3.4     Masked Modeling
+
+Recently, VideoMAE and ST-MAE [19, 75] have showcased the significant bene-
+fits of masked modeling in enhancing a model’s capability for FINE-GRAINED
+temporal understanding. UMT [43] takes this further by introducing an eﬃcient
+masked alignment technique that yields robust results across single and multi-
+modal video tasks. To augment VideoMamba’s temporal sensitivity and verify
+its adaptability with text modalities, we adopt a masked alignment approach
+inspired by UMT. Firstly, VideoMamba is trained from scratch on video data
+alone, aligning unmasked tokens with those from CLIP-ViT. Subsequently, it is
+integrated with a text encoder and a cross-modal decoder (i.e., BERT [15]), for
+pretraining on both image-text and video-text datasets.

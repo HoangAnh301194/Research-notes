@@ -1,0 +1,47 @@
+6           K. Li et al.
+
+    S                          S                    S                      S
+
+T                          T                    T                      T
+
+
+
+
+        "4!)'!$−:'.()          =#84*.!$−:'.()       "4!)'*)#84*.!$                 "4!)'*)#84*.!$
+    !                      1                    9                              -
+        ;'-'.#9)'*+!$           ;'-'.#9)'*+!$       ;'-'.#9)'*+!$ ,1               ;'-'.#9)'*+!$ ,2
+
+    Fig. 4: Diﬀerent scan methods. We omit the [CLS] token for simplification.
+
+
+
+Spatial-First, organizing spatial tokens by location, then stacking them frame
+by frame; (b) Temporal-First, arranging temporal tokens by frame, then stack-
+ing them along the spatial dimension; (c) Spatiotemporal, a hybrid of Spatial-
+First and Temporal-First, with v1 conducting half and v2 conducting full (2⇥
+computation). Our experiments in Fig. 7a demonstrate that the Spatial-First
+bidirectional scan is the most eﬀective and simple. Thanks to Mamba’s linear
+complexity, our VideoMamba can eﬃciently handle long, high-resolution videos.
+Comparison to Vim [91] and VMamba [50]. Our VideoMamba builds
+upon Vim, streamlining its architecture by omitting the middle [CLS] token
+and Rotary Position Embedding (RoPE [69]), resulting in superior performance
+on ImageNet-1K with gains of +0.8% and +0.7% for Vim-Ti and Vim-S,
+respectively. Unlike VMamba, which incorporates additional depthwise convolu-
+tion, VideoMamba strictly follows the ViT design without downsampling layers.
+To counter overfitting issues observed in VMamba, we introduce an eﬀective
+self-distillation technique outlined in Section 3.3, demonstrating VideoMamba’s
+great scalability for image and video tasks.
+Comparison to TimeSformer [4] and ViViT [2]. Traditional attention-
+based models like TimeSformer and ViViT address the self-attention mecha-
+nism’s quadratic complexity by adopting divided spatiotemporal attention. De-
+spite being more eﬃcient, it introduces additional parameters and underperforms
+compared to joint attention, particularly in masked pretraining scenarios [43,75].
+In contrast, VideoMamba processes spatiotemporal tokens with linear complex-
+ity, outperforming TimeSformer on Kinetics-400 by +2.6% and making signifi-
+cant strides on SthSthV2 with a +5.9% improvement (see Table 3 and 4). Fur-
+thermore, VideoMamba achieves a 6⇥ increase in processing speed and requires
+40⇥ less GPU memory for long videos (see Fig. 1, demonstrating its eﬃciency
+and eﬀectiveness in handling long-video tasks.
+
+
+3.3       Architecture

@@ -1,0 +1,60 @@
+3.1    Different Views of the LSSL
+Given a fixed state space representation A, B, C, D, an LSSL is the sequence-to-sequence mapping defined by
+discretizing the linear state-space model (1) and (2).
+    Concretely, an LSSL layer has parameters A, B, C, D, and ∆t. It operates on an input u ∈ RL×H
+representing a sequence of length L where each timestep has an H-dimensional feature vector. Each feature
+                               (h)
+h ∈ [H] defines a sequence (ut )t∈[L] , which is combined with a timescale ∆th to define an output y (h) ∈ RL
+via the discretized state-space model (4)+(5).
+    Computationally, the discrete-time LSSL can be viewed in multiple ways (Fig. 1).
+
+As a recurrence. The recurrent state xt−1 ∈ RH×N carries the context of all inputs before time t. The
+current state xt and output yt can be computed by simply following equations (4)+(5). Thus the LSSL is a
+recurrent model with efficient and stateful inference, which can consume a (potentially unbounded) sequence
+of inputs while requiring fixed computation/storage per time step.
+
+As a convolution. For simplicity let the initial state be x−1 = 0. Then (4)+(5) explicitly yields
+                               k        k−1
+                       yk = C A Bu0 + C A     Bu1 + · · · + CABuk−1 + Buk + Duk .                            (6)
+
+Then y is simply the (non-circular) convolution y = KL (A, B, C) ∗ u + Du, where
+
+                      KL (A, B, C) = CAi B i∈[L] ∈ RL = (CB, CAB, . . . , CAL−1 B).                          (7)
+                                            
+
+
+   Thus the LSSL can be viewed as a convolutional model where the entire output y ∈ RH×L can be
+computed at once by a convolution, which can be efficiently implemented with three FFTs.
+
+The computational bottleneck. We make a note that the bottleneck of (i) the recurrence view is
+matrix-vector multiplication (MVM) by the discretized state matrix A when simulating (4), and (ii)
+the convolutional view is computing the Krylov function KL (7). Throughout this section we assumed the
+LSSL parameters were fixed, which means that A and KL (A, B, C) can be cached for efficiency. However,
+learning the parameters A and ∆t would involve repeatedly re-computing these, which is infeasible in practice.
+We revisit and solve this problem in Section 4.2.
+
+3.2    Expressivity of LSSLs
+For a model to be both recurrent and convolutional, one might expect it to be limited in other ways. Indeed,
+while [12, 44] also observe that certain recurrences can be replaced with a convolution, they note that it is
+not obvious if convolutions can be replaced by recurrences. Moreover, while the LSSL is a linear recurrence,
+popular RNN models are nonlinear sequence models with activation functions between each time step. We
+now show that LSSLs surprisingly do not have limited expressivity.
+
+Convolutions are LSSLs. A well-known fact          R about state-space systems (1)+(2) is that the output y is
+related to the input u by a convolution y(t) = h(τ )u(t − τ )dτ with the impulse response h of the system.
+Conversely, a convolutional filter h that is a rational function of degree N can be represented by a state-space
+model of size N [59]. Thus, an arbitrary convolutional filter h can be approximated by a rational function
+(e.g., by Padé approximants) and represented by an LSSL.
+    In the particular case of LSSLs with HiPPO matrices (Sections 2 and 4.1), there is another intuitive
+interpretation of how LSSL relate to convolutions. Consider the special case when A corresponds to a uniform
+measure (in the literature known as the LMU [58] or HiPPO-LegT [24] matrix). Then for a fixed dt, equation
+(1) is simply memorizing the input within sliding windows of ∆t   1
+                                                                     elements, and equation (2) extracts features
+from this window. Thus the LSSL can be interpreted as automatically learning convolution filters with a
+learnable kernel width.
+
+
+
+
+                                                       5
+
