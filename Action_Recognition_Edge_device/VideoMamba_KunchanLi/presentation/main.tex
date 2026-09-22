@@ -88,36 +88,34 @@
 \end{frame}
 
 \begin{frame}{Nội dung trình bày}
-  \vspace{0.20cm}
-  {\fontsize{9.6}{11.3}\selectfont
-  \renewcommand{\arraystretch}{1.64}
+  \vspace{0.14cm}
+  {\fontsize{9.3}{11.2}\selectfont
+  \renewcommand{\arraystretch}{1.52}
   \begin{tabularx}{\linewidth}{@{}C{0.72cm}L{3.55cm}Y@{}}
     \numlabel{1} & \textcolor{PTITRed}{\bfseries Bài toán và mục tiêu} & Video dài tạo redundancy cục bộ, dependency toàn cục và chi phí attention lớn.\\
     \numlabel{2} & \textcolor{PTITRed}{\bfseries Kiến trúc} & Token hóa video 3D, B-Mamba và spatiotemporal scan.\\
     \numlabel{3} & \textcolor{PTITRed}{\bfseries Recipe huấn luyện} & Architecture scaling, self-distillation và masked video pretraining.\\
-    \numlabel{4} & \textcolor{PTITRed}{\bfseries Thực nghiệm} & Kết quả ngắn hạn, dài hạn và hiệu năng.\\
+    \numlabel{4} & \textcolor{PTITRed}{\bfseries Thực nghiệm bài báo} & Kết quả ngắn hạn, dài hạn và hiệu năng.\\
+    \numlabel{5} & \textcolor{PTITRed}{\bfseries Kết luận bài báo} & Conclusion, limitations và research relevance theo công bố gốc.\\
+    \numlabel{6} & \textcolor{PTITRed}{\bfseries Thực nghiệm IPN Hand} & Fine-tuning VideoMamba trên cử chỉ tay, phân tích hội tụ và ma trận nhầm lẫn.\\
   \end{tabularx}}
-  \vspace{0.35cm}
-  \begin{tcolorbox}[keypanel]
-    \centering\bfseries Trọng tâm: cách VideoMamba tổ chức chuỗi token 3D và huấn luyện hiệu quả cho video dài.
-  \end{tcolorbox}
   \vfill
-  \source{Nguồn: VideoMamba, Abstract và Section 1.}
+  \source{Nguồn: VideoMamba (2024) và Thực nghiệm nhóm nghiên cứu.}
 \end{frame}
 
 \begin{frame}{1.1. Video dài cần mô hình hóa vừa cục bộ vừa toàn cục}
-  \vspace{0.12cm}
+  \vspace{0.08cm}
   \begin{columns}[T,onlytextwidth]
     \begin{column}{0.48\textwidth}
-      \begin{tcolorbox}[titlepanel,title=Hai tính chất đối nghịch]
+      \begin{tcolorbox}[titlepanel,title=Hai tính chất đối nghịch,equal height group=s1_top]
         \begin{itemize}\tightitems
           \item \textbf{Redundancy cục bộ:} nhiều patch lân cận gần như trùng nhau.
           \item \textbf{Dependency toàn cục:} hành động có thể phụ thuộc vào các frame rất xa.
           \item \textbf{Mục tiêu:} đồng thời nhận biết motion tinh vi và ngữ cảnh dài.
         \end{itemize}
       \end{tcolorbox}
-      \vspace{0.18cm}
-      \begin{tcolorbox}[panel]
+      \vspace{0.14cm}
+      \begin{tcolorbox}[panel,equal height group=s1_bot]
         \heading{Chi phí theo độ dài chuỗi $L$}
         \vspace{-0.12cm}
         \[
@@ -130,20 +128,20 @@
       \end{tcolorbox}
     \end{column}
     \begin{column}{0.48\textwidth}
-      \begin{tcolorbox}[titlepanel,title=Khoảng trống của các họ mô hình]
-        \renewcommand{\arraystretch}{1.35}
-        {\fontsize{7.5}{8.6}\selectfont\begin{tabularx}{\linewidth}{@{}L{1.72cm}Y Y@{}}
+      \begin{tcolorbox}[titlepanel,title=Khoảng trống của các họ mô hình,equal height group=s1_top]
+        \renewcommand{\arraystretch}{1.28}
+        {\fontsize{7.4}{8.5}\selectfont\begin{tabularx}{\linewidth}{@{}L{1.72cm}Y Y@{}}
           \toprule
           \textbf{Họ} & \textbf{Điểm mạnh} & \textbf{Hạn chế chính}\\
           \midrule
           3D CNN & Receptive field cục bộ & Khó giữ dependency dài.\\
           Transformer & Context toàn cục & Attention đắt với video dài.\\
-          VideoMamba & Scan tuyến tính & Cần thiết kế thứ tự scan phù hợp.\\
+          VideoMamba & Scan tuyến tính & Cần thiết kế scan phù hợp.\\
           \bottomrule
         \end{tabularx}}
       \end{tcolorbox}
-      \vspace{0.18cm}
-      \begin{tcolorbox}[keypanel]
+      \vspace{0.14cm}
+      \begin{tcolorbox}[keypanel,equal height group=s1_bot]
         \heading{Mục tiêu nghiên cứu}
         Điều chỉnh Mamba cho video nhằm mô hình hóa dependency không-thời gian dài với chi phí tuyến tính theo số token.
       \end{tcolorbox}
@@ -157,7 +155,7 @@
   \vspace{0.10cm}
   \begin{columns}[T,onlytextwidth]
     \begin{column}{0.30\textwidth}
-      \begin{tcolorbox}[titlepanel,title=1. Video tensor $\mathbf X_v$, height=4.65cm]
+      \begin{tcolorbox}[titlepanel,title=1. Video tensor $\mathbf X_v$, equal height group=s2]
         \centering
         \[
           \mathbf X_v\in\mathbb R^{3\times T\times H\times W}
@@ -173,7 +171,7 @@
       \end{tcolorbox}
     \end{column}
     \begin{column}{0.33\textwidth}
-      \begin{tcolorbox}[titlepanel,title=2. Patchify và $L$, height=4.65cm]
+      \begin{tcolorbox}[titlepanel,title=2. Patchify và $L$, equal height group=s2]
         \raggedright
         \textbf{Kernel = stride:} $(1\times16\times16)$.\\
         Mỗi patch nằm trong một frame, nên $t=T$.\par
@@ -191,7 +189,7 @@
       \end{tcolorbox}
     \end{column}
     \begin{column}{0.30\textwidth}
-      \begin{tcolorbox}[titlepanel,title=3. Chuỗi đưa vào encoder, height=4.65cm]
+      \begin{tcolorbox}[titlepanel,title=3. Chuỗi đưa vào encoder, equal height group=s2]
         \centering
         {\fontsize{7.0}{8.25}\selectfont
         \[
@@ -213,13 +211,13 @@
 \begin{frame}{2.2. VideoMamba: encoder ViT-like với B-Mamba cho chuỗi token 3D}
   \vspace{0.04cm}
   \centering
-  \includegraphics[width=0.97\linewidth,height=3.70cm,keepaspectratio]{figure-3-framework.png}\par
-  \vspace{-0.03cm}
+  \includegraphics[width=0.97\linewidth,height=3.65cm,keepaspectratio]{figure-3-framework.png}\par
+  \vspace{-0.02cm}
   \begin{columns}[T,onlytextwidth]
     \begin{column}{0.58\textwidth}
-      \begin{tcolorbox}[titlepanel,title=Luồng dữ liệu VideoMamba]
-        {\fontsize{7.6}{8.8}\selectfont
-        \renewcommand{\arraystretch}{1.19}
+      \begin{tcolorbox}[titlepanel,title=Luồng dữ liệu VideoMamba,equal height group=s3_bot]
+        {\fontsize{7.5}{8.7}\selectfont
+        \renewcommand{\arraystretch}{1.18}
         \begin{tabularx}{\linewidth}{@{}C{0.70cm}Y@{}}
           \numlabel{1} & 3D convolution $(1\times16\times16)$ tạo các patch không-thời gian không chồng lấp.\\
           \numlabel{2} & Ghép [CLS] với patch sequence; cộng spatial và temporal position embedding.\\
@@ -228,7 +226,7 @@
       \end{tcolorbox}
     \end{column}
     \begin{column}{0.38\textwidth}
-      \begin{tcolorbox}[keypanel]
+      \begin{tcolorbox}[keypanel,equal height group=s3_bot]
         \heading{Video tạo chuỗi token dài}
         {\fontsize{7.4}{8.5}\selectfont
         \[\mathbf X_v\in\mathbb R^{3\times T\times H\times W}\]
@@ -242,19 +240,19 @@
 \end{frame}
 
 \begin{frame}{2.3. Spatiotemporal bidirectional scan strategies}
-  \vspace{0.08cm}
+  \vspace{0.06cm}
   \centering
-  \includegraphics[width=0.98\linewidth,height=3.80cm,keepaspectratio]{figure-4-scan.png}\par
-  \vspace{-0.03cm}
+  \includegraphics[width=0.98\linewidth,height=3.75cm,keepaspectratio]{figure-4-scan.png}\par
+  \vspace{-0.02cm}
   \begin{columns}[T,onlytextwidth]
     \begin{column}{0.48\textwidth}
-      \begin{tcolorbox}[panel]
+      \begin{tcolorbox}[panel,equal height group=s4_bot]
         \heading{Điểm khác nhau}
         Spatial-first, temporal-first, spatiotemporal v1 và v2 đều chạy forward + backward; khác biệt duy nhất là thứ tự token trước khi đi vào SSM.
       \end{tcolorbox}
     \end{column}
     \begin{column}{0.48\textwidth}
-      \begin{tcolorbox}[keypanel]
+      \begin{tcolorbox}[keypanel,equal height group=s4_bot]
         \heading{Kết quả ablation}
         Trên SSV2, spatial-first đạt 65.1\%, cao nhất trong các scan strategy được đánh giá; tác giả chọn thiết kế này vì đơn giản.
       \end{tcolorbox}
@@ -265,19 +263,19 @@
 \end{frame}
 
 \begin{frame}{3.1. Masked video pretraining: objective và masking strategy}
-  \vspace{0.05cm}
+  \vspace{0.04cm}
   \centering
-  \includegraphics[width=0.97\linewidth,height=3.22cm,keepaspectratio]{figure-5-masking.png}\par
+  \includegraphics[width=0.97\linewidth,height=3.20cm,keepaspectratio]{figure-5-masking.png}\par
   \vspace{0.04cm}
   \begin{columns}[T,onlytextwidth]
     \begin{column}{0.54\textwidth}
-      \begin{tcolorbox}[panel]
+      \begin{tcolorbox}[panel,equal height group=s5_bot]
         \heading{Objective}
         VideoMamba được pretrain trên video; output của token không bị mask được align với feature từ CLIP-ViT teacher. Masking strategy là một thành phần của recipe này.
       \end{tcolorbox}
     \end{column}
     \begin{column}{0.42\textwidth}
-      \begin{tcolorbox}[keypanel]
+      \begin{tcolorbox}[keypanel,equal height group=s5_bot]
         \heading{Masking và ablation trên SSV2}
         \smallnote{Conv1D ưu tiên token liên tục. Random: 67.4\quad Tube: 66.3\\ Clip-row: 68.2\quad Frame-row: 67.8\quad \textbf{Attention: 68.5}}
       \end{tcolorbox}
@@ -288,10 +286,10 @@
 \end{frame}
 
 \begin{frame}{3.2. Architecture scaling và self-distillation}
-  \vspace{0.05cm}
+  \vspace{0.04cm}
   \begin{columns}[T,onlytextwidth]
     \begin{column}{0.31\textwidth}
-      \begin{tcolorbox}[titlepanel,title=Model scale]
+      \begin{tcolorbox}[titlepanel,title=Model scale,height=2.65cm]
         {\fontsize{7.2}{8.2}\selectfont
         \renewcommand{\arraystretch}{1.18}
         \begin{tabularx}{\linewidth}{@{}Y C{0.62cm} C{0.62cm} C{0.62cm}@{}}
@@ -308,19 +306,19 @@
     \end{column}
     \begin{column}{0.65\textwidth}
       \centering
-      \includegraphics[width=\linewidth,height=2.62cm,keepaspectratio]{figure-6-distillation.png}\par
+      \includegraphics[width=\linewidth,height=2.65cm,keepaspectratio]{figure-6-distillation.png}\par
     \end{column}
   \end{columns}
-  \vspace{0.02cm}
+  \vspace{0.04cm}
   \begin{columns}[T,onlytextwidth]
-    \begin{column}{0.47\textwidth}
-      \begin{tcolorbox}[panel]
+    \begin{column}{0.48\textwidth}
+      \begin{tcolorbox}[panel,equal height group=s6_bot]
         \heading{Quan sát khi scale}
         VideoMamba-B huấn luyện từ đầu có xu hướng overfit và không tốt hơn VideoMamba-S; early stopping không thay thế được regularization.
       \end{tcolorbox}
     \end{column}
-    \begin{column}{0.49\textwidth}
-      \begin{tcolorbox}[keypanel]
+    \begin{column}{0.48\textwidth}
+      \begin{tcolorbox}[keypanel,equal height group=s6_bot]
         \heading{Teacher $\rightarrow$ student, chỉ khi train}
         VideoMamba-S đã học tốt làm teacher cho VideoMamba-M; căn chỉnh final feature map bằng L2 loss. Inference vẫn là một VideoMamba duy nhất.
       \end{tcolorbox}
@@ -331,34 +329,34 @@
 \end{frame}
 
 \begin{frame}{4.1. Thiết lập thực nghiệm}
-  \vspace{0.15cm}
+  \vspace{0.10cm}
   \begin{columns}[T,onlytextwidth]
     \begin{column}{0.48\textwidth}
-      \begin{tcolorbox}[titlepanel,title=Scale up trên ảnh]
+      \begin{tcolorbox}[titlepanel,title=Scale up trên ảnh,equal height group=s7_top]
         \heading{ImageNet-1K}
         \smallnote{Kiểm tra khả năng scale model/input trước khi transfer sang video; benchmark có 1.28M ảnh train, 1,000 lớp.}
       \end{tcolorbox}
-      \vspace{0.18cm}
-      \begin{tcolorbox}[titlepanel,title=Video ngắn]
+      \vspace{0.14cm}
+      \begin{tcolorbox}[titlepanel,title=Video ngắn,equal height group=s7_bot]
         \heading{Kinetics-400}
         \smallnote{Phân loại hành động theo scene; video trung bình 10 giây.}
-        \vspace{0.12cm}
+        \vspace{0.08cm}
         \heading{Something-Something V2}
         \smallnote{Nhạy với diễn biến thời gian; video trung bình 4 giây.}
       \end{tcolorbox}
     \end{column}
     \begin{column}{0.48\textwidth}
-      \begin{tcolorbox}[titlepanel,title=Video dài]
-        \heading{Breakfast và COIN}
-        \smallnote{Nhận biết hoạt động và thủ tục dài; Breakfast gồm 77 giờ video, COIN có 180 procedural tasks.}
-        \vspace{0.14cm}
-        \heading{LVU}
-        \smallnote{Long-form Video Understanding: clip phim 1--3 phút, 9 tác vụ content, metadata và user engagement.}
-      \end{tcolorbox}
-      \vspace{0.18cm}
-      \begin{tcolorbox}[greenpanel]
+      \begin{tcolorbox}[greenpanel,equal height group=s7_top]
         \heading{Thiết lập chính}
         Fine-tune video từ ImageNet-1K; masked alignment dùng CLIP-ViT teacher cho pretraining self-supervised.
+      \end{tcolorbox}
+      \vspace{0.14cm}
+      \begin{tcolorbox}[titlepanel,title=Video dài,equal height group=s7_bot]
+        \heading{Breakfast và COIN}
+        \smallnote{Nhận biết hoạt động và thủ tục dài; Breakfast gồm 77 giờ video, COIN có 180 procedural tasks.}
+        \vspace{0.08cm}
+        \heading{LVU}
+        \smallnote{Long-form Video Understanding: clip phim 1--3 phút, 9 tác vụ content, metadata và user engagement.}
       \end{tcolorbox}
     \end{column}
   \end{columns}
@@ -370,9 +368,9 @@
   \vspace{0.08cm}
   \begin{columns}[T,onlytextwidth]
     \begin{column}{0.48\textwidth}
-      \begin{tcolorbox}[titlepanel,title={Kinetics-400, supervised}]
+      \begin{tcolorbox}[titlepanel,title={Kinetics-400, supervised},equal height group=s8_top]
         {\fontsize{7.9}{9.0}\selectfont
-        \renewcommand{\arraystretch}{1.28}
+        \renewcommand{\arraystretch}{1.24}
         \begin{tabularx}{\linewidth}{@{}Y C{1.05cm} C{1.05cm}@{}}
           \toprule
           \textbf{Model} & \textbf{Top-1} & \textbf{Top-5}\\
@@ -383,16 +381,16 @@
           \bottomrule
         \end{tabularx}}
       \end{tcolorbox}
-      \vspace{0.17cm}
-      \begin{tcolorbox}[panel]
+      \vspace{0.14cm}
+      \begin{tcolorbox}[panel,equal height group=s8_bot]
         \heading{Ablation: scan strategy}
         Spatial-first đạt 65.1\% trên SSV2, cao nhất trong các scan strategy được đánh giá; Alternative SF\&TF đạt cùng mức nhưng phức tạp hơn.
       \end{tcolorbox}
     \end{column}
     \begin{column}{0.48\textwidth}
-      \begin{tcolorbox}[titlepanel,title={Something-Something V2, supervised}]
+      \begin{tcolorbox}[titlepanel,title={Something-Something V2, supervised},equal height group=s8_top]
         {\fontsize{7.9}{9.0}\selectfont
-        \renewcommand{\arraystretch}{1.28}
+        \renewcommand{\arraystretch}{1.24}
         \begin{tabularx}{\linewidth}{@{}Y C{1.05cm} C{1.05cm}@{}}
           \toprule
           \textbf{Model} & \textbf{Top-1} & \textbf{Top-5}\\
@@ -403,8 +401,8 @@
           \bottomrule
         \end{tabularx}}
       \end{tcolorbox}
-      \vspace{0.17cm}
-      \begin{tcolorbox}[keypanel]
+      \vspace{0.14cm}
+      \begin{tcolorbox}[keypanel,equal height group=s8_bot]
         \heading{Ablation: token budget}
         K400 tăng theo số frame; SSV2 có optimum khác vì video ngắn. Nhiều token hơn không luôn cải thiện kết quả.
       \end{tcolorbox}
@@ -415,10 +413,10 @@
 \end{frame}
 
 \begin{frame}{4.3. Kết quả video dài: Breakfast, COIN và LVU}
-  \vspace{0.12cm}
+  \vspace{0.10cm}
   \begin{columns}[T,onlytextwidth]
     \begin{column}{0.56\textwidth}
-      \begin{tcolorbox}[titlepanel,title=Kết quả long-term video understanding]
+      \begin{tcolorbox}[titlepanel,title=Kết quả long-term video understanding,height=4.65cm]
         {\fontsize{8.1}{9.2}\selectfont
         \renewcommand{\arraystretch}{1.37}
         \begin{tabularx}{\linewidth}{@{}L{1.55cm}Y C{1.25cm} C{1.25cm}@{}}
@@ -435,7 +433,7 @@
       \end{tcolorbox}
     \end{column}
     \begin{column}{0.40\textwidth}
-      \begin{tcolorbox}[panel]
+      \begin{tcolorbox}[panel,height=2.70cm]
         \heading{Điểm khác biệt}
         \begin{itemize}\tightitems
           \item Train end-to-end trên video dài.
@@ -443,8 +441,8 @@
           \item Dễ tăng frame nhờ scan có chi phí tuyến tính.
         \end{itemize}
       \end{tcolorbox}
-      \vspace{0.18cm}
-      \begin{tcolorbox}[keypanel]
+      \vspace{0.14cm}
+      \begin{tcolorbox}[keypanel,height=1.81cm]
         \heading{Thông điệp}
         Với long context, cách token mixer ảnh hưởng trực tiếp cả memory lẫn khả năng học quan hệ xa.
       \end{tcolorbox}
@@ -461,14 +459,14 @@
   \vspace{0.04cm}
   \begin{columns}[T,onlytextwidth]
     \begin{column}{0.48\textwidth}
-      \begin{tcolorbox}[greenpanel]
+      \begin{tcolorbox}[greenpanel,equal height group=s9_bot]
         \heading{Throughput}
         32 frame: xấp xỉ \textbf{2$\times$} nhanh hơn TimeSformer-Ti.\\
         64 frame: xấp xỉ \textbf{6$\times$} nhanh hơn.
       \end{tcolorbox}
     \end{column}
     \begin{column}{0.48\textwidth}
-      \begin{tcolorbox}[keypanel]
+      \begin{tcolorbox}[keypanel,equal height group=s9_bot]
         \heading{GPU memory}
         32 frame: dùng khoảng \textbf{20$\times$} ít memory hơn.\\
         64 frame: dùng khoảng \textbf{40$\times$} ít memory hơn.
@@ -480,10 +478,10 @@
 \end{frame}
 
 \begin{frame}{5. Conclusion, limitations và research relevance}
-  \vspace{0.10cm}
+  \vspace{0.08cm}
   \begin{columns}[T,onlytextwidth]
     \begin{column}{0.48\textwidth}
-      \begin{tcolorbox}[titlepanel,title=Kết luận của bài báo]
+      \begin{tcolorbox}[titlepanel,title=Kết luận của bài báo,equal height group=s5_top]
         \begin{itemize}\tightitems
           \item \textbf{Scale:} self-distillation giúp model lớn hội tụ tốt hơn.
           \item \textbf{Motion:} spatial-first scan và masking giữ nhạy với hành động ngắn.
@@ -491,29 +489,184 @@
           \item \textbf{Multimodal:} có thể kết hợp text encoder và cross-modal decoder.
         \end{itemize}
       \end{tcolorbox}
-      \vspace{0.18cm}
-      \begin{tcolorbox}[keypanel]
+      \vspace{0.14cm}
+      \begin{tcolorbox}[keypanel,equal height group=s5_bot]
         \heading{Relevance to our research}
         \smallnote{Diễn giải cho Action Recognition Edge: linear scan có thể hỗ trợ tăng số frame trong memory giới hạn. Latency thực tế cần benchmark trên đúng Jetson/NPU và pipeline decode.}
       \end{tcolorbox}
     \end{column}
     \begin{column}{0.48\textwidth}
-      \begin{tcolorbox}[titlepanel,title=Giới hạn được tác giả nêu]
+      \begin{tcolorbox}[titlepanel,title=Giới hạn được tác giả nêu,equal height group=s5_top]
         \begin{itemize}\tightitems
           \item Chưa kiểm chứng toàn diện ở kích thước cực lớn.
           \item Chưa tích hợp audio hoặc mô hình ngôn ngữ lớn cho video theo giờ.
           \item Chưa đánh giá trực tiếp khi chuyển từ benchmark GPU sang thiết bị edge.
         \end{itemize}
       \end{tcolorbox}
-      \vspace{0.18cm}
-      \begin{tcolorbox}[greenpanel]
+      \vspace{0.14cm}
+      \begin{tcolorbox}[greenpanel,equal height group=s5_bot]
         \heading{Phạm vi kết luận}
-        Các kết quả hiệu năng và accuracy được báo cáo theo cấu hình training, input và GPU của paper; không suy diễn trực tiếp sang một edge platform cụ thể.
+        \smallnote{Các kết quả hiệu năng và accuracy được báo cáo theo cấu hình training, input và GPU của paper; không suy diễn trực tiếp sang một edge platform cụ thể.}
       \end{tcolorbox}
     \end{column}
   \end{columns}
   \vfill
   \source{Nguồn: VideoMamba, Abstract, Sections 4.4--5.}
+\end{frame}
+
+\begin{frame}{6.1. Thực nghiệm Fine-tuning VideoMamba trên IPN Hand}
+  \vspace{0.02cm}
+  \begin{columns}[T,onlytextwidth]
+    \begin{column}{0.48\textwidth}
+      \begin{tcolorbox}[titlepanel,title=Tập dữ liệu IPN Hand (Subject-wise),equal height group=s6_1]
+        {\fontsize{7.4}{8.7}\selectfont
+        \begin{itemize}\tightitems
+          \item \textbf{Tác vụ:} Nhận dạng 14 lớp cử chỉ tay tương tác vô chạm.
+          \item \textbf{Quy mô:} 200 video AVI, 5,649 gesture instances.
+          \item \textbf{Subject-wise split (chia theo người quay):}
+            \begin{itemize}\tightitems
+              \item \textit{Train:} 20 subjects (140 video, 3,969 mẫu)
+              \item \textit{Val:} 6 subjects (36 video, 1,058 mẫu)
+              \item \textit{Test:} 3 subjects (24 video, 622 mẫu)
+            \end{itemize}
+          \item \textbf{Data Pipeline:} Đọc trực tiếp $[t_{\text{start}}, t_{\text{end}}]$ qua Decord, không sinh video clip vật lý phụ.
+          \item \textbf{Đầu vào mô hình:} 16 frames uniform sampling, $224\times 224$, Random Resized Crop + Color Jitter.
+        \end{itemize}}
+      \end{tcolorbox}
+    \end{column}
+    \begin{column}{0.48\textwidth}
+      \begin{tcolorbox}[titlepanel,title=Cấu hình Huấn luyện chi tiết (Recipe),equal height group=s6_1]
+        {\fontsize{7.1}{8.2}\selectfont
+        \renewcommand{\arraystretch}{1.08}
+        \begin{tabularx}{\linewidth}{@{}L{2.55cm}Y@{}}
+          \toprule
+          \textbf{Tham số} & \textbf{Thiết lập thực nghiệm}\\
+          \midrule
+          Backbone & \textbf{VideoMamba-Tiny} (7M params)\\
+          Khởi tạo & ImageNet-1K pretrained weights\\
+          Phần cứng & $2\times$ NVIDIA Tesla T4 (FP32 DDP)\\
+          Effective Batch & 16 (8 clips / GPU)\\
+          Optimizer & AdamW ($\beta_1=0.9, \beta_2=0.999$, $\text{wd}=0.05$)\\
+          Learning Rate & Base $\text{LR}=1\times 10^{-4}$ (Cosine decay)\\
+          Warmup & 2,480 steps khởi động\\
+          Số Epochs & 30 epochs ($\approx$ 8h 07m tổng thời gian)\\
+          Loss Function & CrossEntropyLoss (FP32 save/resume)\\
+          \bottomrule
+        \end{tabularx}}
+        \vspace{0.03cm}
+        \smallnote{\textbf{Tối ưu:} Cached wheels \texttt{causal\_conv1d} \& \texttt{mamba\_ssm} cho T4.}
+      \end{tcolorbox}
+    \end{column}
+  \end{columns}
+  \vfill
+  \source{Thực nghiệm nhóm: Huấn luyện trên Kaggle $2\times$ T4 GPU, dataset IPN Hand.}
+\end{frame}
+
+\begin{frame}{6.2. Quá trình huấn luyện và đồ thị hội tụ}
+  \vspace{-0.15cm}
+  \centering
+  \includegraphics[width=0.98\linewidth,height=2.68cm,keepaspectratio]{ipn_curves_slide.png}\par
+  \vspace{0.02cm}
+  \begin{columns}[T,onlytextwidth]
+    \begin{column}{0.48\textwidth}
+      \begin{tcolorbox}[titlepanel,title=Đặc điểm hội tụ qua 30 Epochs,equal height group=s6_2]
+        {\fontsize{7.2}{8.4}\selectfont
+        \begin{itemize}\tightitems
+          \item \textbf{Khởi động nhanh:} Chuyển giao hiệu quả từ ImageNet-1K; Val Acc đạt 73.1\% ngay từ Epoch 7.
+          \item \textbf{Điểm tối ưu:} Đạt \textbf{Val Acc cao nhất = 77.98\%} tại \textbf{Epoch 22} (Val Loss đạt 0.7664).
+          \item \textbf{Checkpoint:} \texttt{checkpoint-best.pth} kích thước gọn nhẹ (\textbf{80.15 MB}), sẵn sàng deploy.
+        \end{itemize}}
+      \end{tcolorbox}
+    \end{column}
+    \begin{column}{0.48\textwidth}
+      \begin{tcolorbox}[titlepanel,title=Tính ổn định của VideoMamba,equal height group=s6_2]
+        {\fontsize{7.2}{8.4}\selectfont
+        \begin{itemize}\tightitems
+          \item Đường cong Loss và Acc mượt mà, không gặp hiện tượng tràn số (NaN / Inf) hay sụp đổ gradient.
+          \item Cơ chế Cosine LR decay giúp mô hình tinh chỉnh trọng số ổn định trong 10 epoch cuối.
+          \item Thời gian trung bình mỗi epoch $\approx 16$ phút trên $2\times$ T4.
+        \end{itemize}}
+      \end{tcolorbox}
+    \end{column}
+  \end{columns}
+  \vfill
+  \source{Nguồn: Nhật ký huấn luyện \texttt{log.txt}, 30 epochs trên IPN Hand.}
+\end{frame}
+
+\begin{frame}{6.3. Đánh giá hiệu năng kiểm thử trên tập Test}
+  \vspace{0.08cm}
+  \begin{columns}[T,onlytextwidth]
+    \begin{column}{0.48\textwidth}
+      \begin{tcolorbox}[titlepanel,title=Hiệu năng tổng thể Test Set (622 mẫu),equal height group=s6_3_top]
+        {\fontsize{7.4}{8.6}\selectfont
+        \renewcommand{\arraystretch}{1.20}
+        \begin{tabularx}{\linewidth}{@{}L{2.85cm}C{1.35cm}Y@{}}
+          \toprule
+          \textbf{Giao thức} & \textbf{Top-1} & \textbf{Chi tiết}\\
+          \midrule
+          Multi-view (12 views) & \textbf{81.83\%} & Top-5: 96.62\%\\
+          Single-view (Center) & \textbf{77.97\%} & Balanced: 68.03\%\\
+          \bottomrule
+        \end{tabularx}}
+        \vspace{0.06cm}
+        \smallnote{\textbf{Weighted F1 = 77.38\%} \quad|\quad \textbf{Macro F1 = 68.39\%}}
+      \end{tcolorbox}
+      \vspace{0.14cm}
+      \begin{tcolorbox}[panel,equal height group=s6_3_bot]
+        \heading{Khả năng tổng quát hóa}
+        \smallnote{Mô hình kiểm thử trên 3 đối tượng (Subjects 1, 10, 17) hoàn toàn mới, chứng minh khả năng thích ứng tốt với người dùng khác nhau.}
+      \end{tcolorbox}
+    \end{column}
+    \begin{column}{0.48\textwidth}
+      \begin{tcolorbox}[titlepanel,title=Phân tích theo nhóm cử chỉ tay,equal height group=s6_3_top]
+        {\fontsize{7.3}{8.5}\selectfont
+        \begin{itemize}\tightitems
+          \item \textbf{Cử chỉ giữ ngón / tĩnh (D0X, B0A, B0B):} F1 rất cao (\textbf{87.2\% -- 88.8\%}).
+          \item \textbf{Cử chỉ vuốt/ném (G03--G06):} F1 đạt \textbf{72.3\% -- 85.7\%} (G05 Throw left đạt Precision 100\%).
+          \item \textbf{Cử chỉ click vi mô (G01, G02):} F1 thấp hơn do thời lượng ngắn, dễ nhầm giữa 1 và 2 ngón trong video độ phân giải thường.
+        \end{itemize}}
+      \end{tcolorbox}
+      \vspace{0.14cm}
+      \begin{tcolorbox}[greenpanel,equal height group=s6_3_bot]
+        \heading{Ưu thế Spatiotemporal Scan}
+        \smallnote{Mô hình hóa hoàn hảo các chuyển động định hướng không gian lớn (Throw, Zoom) nhờ cơ chế quét hai chiều liên tục.}
+      \end{tcolorbox}
+    \end{column}
+  \end{columns}
+  \vfill
+  \source{Đánh giá độc lập trên tập Test (24 raw videos, 3 đối tượng chưa từng xuất hiện trong tập Train/Val).}
+\end{frame}
+
+\begin{frame}{6.4. Ma trận nhầm lẫn chi tiết (Normalized Confusion Matrix)}
+  \vspace{-0.18cm}
+  \begin{columns}[T,onlytextwidth]
+    \begin{column}{0.66\textwidth}
+      \centering
+      \includegraphics[width=\linewidth,height=6.30cm,keepaspectratio]{ipn_cm_fill.png}\par
+    \end{column}
+    \begin{column}{0.32\textwidth}
+      \begin{tcolorbox}[titlepanel,title=Nhóm chính xác cao]
+        {\fontsize{7.0}{8.1}\selectfont
+        \begin{itemize}\tightitems
+          \item \textbf{D0X, B0A, B0B:} Cử chỉ tĩnh đạt \textbf{87.5\% -- 91.5\%}.
+          \item \textbf{G04--G06:} Vuốt ném đạt \textbf{75.0\% -- 87.5\%} (G05 Precision 100\%).
+          \item \textbf{G10, G11:} Zoom đạt \textbf{66.7\% -- 70.8\%}.
+        \end{itemize}}
+      \end{tcolorbox}
+      \vspace{0.08cm}
+      \begin{tcolorbox}[keypanel]
+        \heading{Cặp nhầm lẫn chính}
+        {\fontsize{6.8}{7.9}\selectfont
+        \begin{itemize}\tightitems
+          \item \textbf{G01 $\leftrightarrow$ G08:} Click 1 ngón $\rightarrow$ Double (54.2\%).
+          \item \textbf{G02 $\leftrightarrow$ G09:} Click 2 ngón $\rightarrow$ Double (87.5\%).
+          \item \smallnote{Do 16-frame sampling bắt trùng pha chuyển động bấm của double click.}
+        \end{itemize}}
+      \end{tcolorbox}
+    \end{column}
+  \end{columns}
+  \vfill
+  \source{Ma trận nhầm lẫn chuẩn hóa theo nhãn thực tế (True labels) trên 622 đoạn video test.}
 \end{frame}
 
 \end{document}

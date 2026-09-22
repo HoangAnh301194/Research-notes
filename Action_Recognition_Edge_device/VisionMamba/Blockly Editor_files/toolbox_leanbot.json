@@ -1,0 +1,300 @@
+// Load language string based on the selected language (Code.LANG)
+var toolbox_leanbot =
+{
+  "kind": "categoryToolbox",
+  "contents": [
+    {
+      "kind": "category",
+      "name": Blockly.Msg.Leanbot[Code.LANG].Category.Name,
+      "toolboxitemid": "LEANBOT",
+      "levels": "1,2,3",
+      "level": "1",
+      "categorystyle": "leanbot_category",
+      "cssConfig": {
+        "icon": "customIcon fas fa-robot"
+      },
+      "contents": [
+
+        {
+          "kind": "block",
+          "type": "Leanbot.commentLine"
+        },
+        {
+          "kind": "block",
+          "type": "Leanbot.section"
+        },
+        {
+          "kind": "block",
+          "blockxml": "<block type='Leanbot.delay'><value name='Delay'> <shadow type='math_number'> <field name='NUM'>1.25</field> </shadow> </value></block>"
+        },
+        {
+          "kind": "block",
+          "type": "LbMission.elapsedMillis"
+        },
+        {
+          "kind": "block",
+          "type": "LbMission.beginByTeacher_end"
+        },
+        {
+          "kind": "block",
+          "type": "LbMission.beginImmediately_end"
+        },
+        // {
+        //   "kind": "block",
+        //   "type": "LbMission.beginByServer_end"
+        // },
+        // {
+        //   "kind": "block",
+        //   "type": "LbMission.beginByName_end"
+        // },
+        {
+          "kind": "block",
+          "type": "LbMission.missionSelect"
+        },
+        {
+          "kind": "block",
+          "blockxml": "<block type='LbMission.beginBySelect_end'><value name='missionId'> <shadow type='text'> <field name='TEXT'>mission name</field> </shadow> </value></block>"
+        },
+        {
+          "kind": "block",
+          "type": "LbMission.end"
+        },
+        {
+          "kind": "block",
+          "type": "Leanbot.whenStarted"
+        },
+        {
+          "kind": "block",
+          "blockxml": "<block type='Leanbot.DCMotor.setPower'><value name='Power'> <shadow type='math_number'> <field name='NUM'>100</field> </shadow> </value></block>"
+        },
+
+        {
+          "kind": "category",
+          "name": Blockly.Msg.Leanbot[Code.LANG].Category.Motion,
+          "level": "2",
+          "levels": "1,2,3",
+          "categorystyle": "leanbot_motion_category",
+          "contents": [
+            {
+              "kind": "block",
+              "blockxml": "<block type='LbMotion.run'><value name='Left'> <shadow type='math_number'> <field name='NUM'>30</field> </shadow> </value><value name='Right'> <shadow type='math_number'> <field name='NUM'>30</field> </shadow> </value></block>"
+            },
+            {
+              "kind": "block",
+              "blockxml": "<block type='LbMotion.waitDistanceMm'><value name='distanceMm'> <shadow type='math_number'> <field name='NUM'>4.2</field> </shadow> </value></block>"
+            },
+            {
+              "kind": "block",
+              "blockxml": "<block type='LbMotion.waitRotationDeg'><value name='rotationDeg'> <shadow type='math_number'> <field name='NUM'>90</field> </shadow> </value></block>"
+            },
+            {
+              "kind": "block",
+              "blockxml": "<block type='LbMotion.wait'><value name='Delay'> <shadow type='math_number'> <field name='NUM'>1.25</field> </shadow> </value></block>"
+            },
+            {
+              "kind": "block",
+              "type": "LbMotion.stop"
+            },
+            {
+              "kind": "block",
+              "type": "LbMotion.approxDistance"
+            },
+            {
+              "kind": "block",
+              "type": "LbMotion.approxHeading"
+            },
+            {
+              "kind": "block",
+              "type": "LbMotion.setZeroOrigin"
+            },
+          ]
+        },
+
+
+        {
+          "kind": "category",
+          "name": Blockly.Msg.Leanbot[Code.LANG].Category.Gripper,
+          "level": "2",
+          "levels": "1,2,3",
+          "categorystyle": "leanbot_gripper_category",
+          "contents": [
+            {
+              "kind": "block",
+              "type": "LbGripper.open"
+            },
+            {
+              "kind": "block",
+              "type": "LbGripper.close"
+            },
+            {
+              "kind": "block",
+              "blockxml": "<block type='LbGripper.moveTo'><value name='angleDeg'> <shadow type='math_number'> <field name='NUM'>45</field> </shadow> </value></block>"
+            },
+            {
+              "kind": "block",
+              "blockxml": "<block type='LbGripper.moveToLR'><value name='angleDegL'> <shadow type='math_number'> <field name='NUM'>30</field> </shadow> </value> <value name='angleDegR'> <shadow type='math_number'> <field name='NUM'>60</field> </shadow> </value> <value name='timeMs'> <shadow type='math_number'> <field name='NUM'>1000</field> </shadow> </value> </block>"
+            },
+            {
+              "kind": "block",
+              "type": "LbGripper.help"
+            },
+          ]
+        },
+
+
+        {
+          "kind": "category",
+          "name": Blockly.Msg.Leanbot[Code.LANG].Category.RGBLed,
+          "level": "2",
+          "levels": "1,2,3",
+          "categorystyle": "leanbot_rgbled_category",
+          "contents": [
+            {
+              "kind": "block",
+              "type": "LbRGB.help"
+            },
+            {
+              "kind": "block",
+              "type": "LbRGB.clear_show"
+            },
+            {
+              "kind": "block",
+              "blockxml": "<block type='LbRGB.setColor'><value name='RGBColor'> <shadow type='LbRGB.colour_picker'> <field name='Color'>#00ffff</field> </shadow></value></block>"
+            },
+            {
+              "kind": "block",
+              "type": "LbRGB.setColorText"
+            },
+            {
+              "kind": "block",
+              "blockxml": "<block type='LbRGB.fillColor'><value name='bitmask'> <shadow type='LbRGB.shape'></shadow></value> <value name='RGBColor'> <shadow type='LbRGB.colour_picker'> <field name='Color'>#ffff00</field> </shadow></value></block>"
+            },
+            {
+              "kind": "block",
+              "type": "LbRGB.colour_picker"
+            },
+            {
+              "kind": "block",
+              "type": "LbRGB.colour_random"
+            },
+            {
+              "kind": "block",
+              "blockxml": "<block type='LbRGB.colour_rgb'><value name='Red'> <shadow type='math_number'> <field name='NUM'>255</field> </shadow> </value> <value name='Green'> <shadow type='math_number'> <field name='NUM'>0</field> </shadow> </value> <value name='Blue'> <shadow type='math_number'> <field name='NUM'>0</field> </shadow> </value></block>"
+            },
+            {
+              "kind": "block",
+              "type": "LbRGB.colour_blend"
+            },
+            {
+              "kind": "block",
+              "type": "LbRGB.clear"
+            },
+            {
+              "kind": "block",
+              "type": "LbRGB.show"
+            },
+          ]
+        },
+
+
+        {
+          "kind": "category",
+          "name": Blockly.Msg.Leanbot[Code.LANG].Category.Sound,
+          "level": "2",
+          "levels": "1,2,3",
+          "categorystyle": "leanbot_sound_category",
+          "contents": [
+            // {
+            //   "kind": "block",
+            //   "blockxml": "<block type='LbBuzzer.tone'><value name='Freq'> <shadow type='math_number'> <field name='NUM'>1500</field> </shadow> </value></block>"
+            // },
+            {
+              "kind": "block",
+              "blockxml": "<block type='Leanbot.toneDuration'><value name='Freq'> <shadow type='math_number'> <field name='NUM'>1500</field> </shadow> </value><value name='Duration'> <shadow type='math_number'> <field name='NUM'>100</field> </shadow> </value></block>"
+            },
+            // {
+            //   "kind": "block",
+            //   "type": "LbBuzzer.noTone"
+            // }
+          ]
+        },
+
+
+        {
+          "kind": "category",
+          "name": Blockly.Msg.Leanbot[Code.LANG].Category.Sensors,
+          "level": "2",
+          "levels": "1,2,3",
+          "categorystyle": "leanbot_sensors_category",
+          "contents": [
+            {
+              "kind": "block",
+              "type": "LbTouch.waitUntil"
+            },
+            {
+              "kind": "block",
+              "type": "LbTouch.read"
+            },
+            // {
+            //   "kind": "block",
+            //   "type": "LbTouch.onPress"
+            // },
+            {
+              "kind": "block",
+              "type": "Leanbot.ping"
+            },
+            {
+              "kind": "block",
+              "blockxml": "<block type='Leanbot.objectInFront'><value name='Distance'> <shadow type='math_number'> <field name='NUM'>25</field> </shadow> </value></block>"
+            },
+          ]
+        },
+
+
+        {
+          "kind": "category",
+          "name": Blockly.Msg.Leanbot[Code.LANG].Category.IRLine,
+          "level": "2",
+          "levels": "1,2,3",
+          "categorystyle": "leanbot_irline_category",
+          "contents": [
+            {
+              "kind": "block",
+              "type": "LbIRLine.doManualCalibration"
+            },
+            {
+              "kind": "block",
+              "blockxml": "<block type='LbIRLine.setThreshold'><value name='th2L'> <shadow type='math_number'> <field name='NUM'>300</field> </shadow> </value><value name='th0L'> <shadow type='math_number'> <field name='NUM'>300</field> </shadow> </value><value name='th1R'> <shadow type='math_number'> <field name='NUM'>300</field> </shadow> </value><value name='th3R'> <shadow type='math_number'> <field name='NUM'>300</field> </shadow> </value></block>"
+            },
+            {
+              "kind": "block",
+              "type": "LbIRLine.read"
+            },
+            {
+              "kind": "block",
+              "blockxml": "<block type='LbIRLine.displayOnRGB'><value name='RGBColor'> <shadow type='LbRGB.colour_picker'> <field name='Color'>#00ff00</field> </shadow></value></block>"
+            },
+            {
+              "kind": "block",
+              "type": "LbIRLine.isBlackDetected"
+            },
+            {
+              "kind": "block",
+              "type": "LbIRLine.value"
+            },
+            {
+              "kind": "block",
+              "type": "LbIRLine.state"
+            },
+            {
+              "kind": "block",
+              "type": "LbIRLine.help"
+            },
+          ]
+        },
+
+
+      ]
+    }
+  ]
+};
