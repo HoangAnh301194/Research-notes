@@ -133,3 +133,108 @@ Final gesture segments
       - `track_mul/`: Quỹ đạo của người xung quanh trong video (`.pkl`).
       - `vibe/`: Tham số 3D Human Mesh SMPL được trích xuất bằng mô hình VIBE (`.pkl`).
 
+### 3. So sánh kết quả Pipeline Mamba hiện tại và pipeline của bài báo 
+
+| Categories | Chỉ số đánh giá | CoboGesture paper – IPN-Hand | VideoMamba-Tiny (224×224) | Chênh lệch |
+| :--- | :--- | :---: | :---: | :---: |
+| **Isolated recognition** | VideoMAE Accuracy | 78.81% | **84.65%** | **+5.84 pp** |
+| | VideoMAEv2 Accuracy | 84.59% | **84.65%** | **+0.06 pp** |
+| **Continuous – so với VideoMAE** | Frame-wise Accuracy | 80.00% | **81.66%** (final) | **+1.66 pp** |
+| | Activity Overlap Score | 0.370 | **0.4513** (final) | **+0.0813** |
+| **Continuous – so với VideoMAEv2** | Frame-wise Accuracy | 83.00% | 81.66% (final) | −1.34 pp |
+| | Activity Overlap Score | 0.510 | 0.4513 (final) | −0.0587 |
+| **Model complexity** | Parameters – VideoMAE | 303.8M | **6.96M** | **≈43.6× fewer** |
+| | Parameters – VideoMAEv2 | 303.8M | **6.96M** | **≈43.6× fewer** |
+| **Input modality** | Modality | RGB | RGB | Same |
+
+> [!NOTE]
+> **Chú thích:**
+> - `pp`: Percentage points (điểm phần trăm chênh lệch).
+> - `final`: Kết quả sau khi đã qua bước hậu xử lý (Post-Processing).
+
+
+
+## 4. Báo cáo cấu tạo dataset EgoEv-Gesture (2025)
+
+### 4.1. Cấu tạo dataset
+
+**EgoEvGesture** bộ dataset gesture góc nhìn thứ nhất (*egocentric gesture recognition*) sử dụng **event camera**. Dataset gồm **5.419 sequence**, **38 lớp cử chỉ**, được thu thập từ **10 người tham gia (subjects)** trong hai điều kiện ánh sáng là **normal light** và **low light**.
+
+#### 4.1.1. Hệ thống thu thập dữ liệu
+Hệ thống bao gồm:
+* hai camera sự kiện **Prophesee EVK4**, bố trí bên trái và bên phải;
+* một camera RGB-D **Intel RealSense D435** đặt ở giữa;
+* các sensor được đồng bộ thời gian bằng tín hiệu hardware trigger.
+
+#### 4.1.2. Cấu trúc thư mục dữ liệu
+
+Trong bản dataset được phát hành, dữ liệu được tổ chức theo người tham gia:
+
+```text
+EgoEvGesture/
+├── subj1/
+│   ├── left/
+│   │   ├── act0_0.npy
+│   │   ├── act0_1.npy
+│   │   ├── ...
+│   │   ├── label/
+│   │   └── mask/
+│   └── right/
+│       ├── act0_0.npy
+│       ├── act0_1.npy
+│       └── ...
+├── subj2/
+│   ├── left/
+│   └── right/
+├── ...
+└── subj10/
+    ├── left/
+    └── right/
+```
+
+Trong đó:
+
+* `subj1` đến `subj10` tương ứng với **10 người tham gia** thu thập dữ liệu;
+* `left/` và `right/` tương ứng với dữ liệu từ hai event camera bên trái và bên phải của hệ HMCS;
+* mỗi file `actX_Y.npy` biểu diễn **một sequence của một lần thực hiện cử chỉ**;
+* `X` mã hóa action/condition;
+* `Y` là chỉ số lần thực hiện (*repetition index*).
+
+Repo sử dụng các action ID từ `0` đến `75`, sau đó quy chúng về 38 gesture class theo:
+
+$$
+c=
+\begin{cases}
+X, & 0\leq X\leq37\\
+X-38, & 38\leq X\leq75
+\end{cases}
+$$
+
+hay tương đương:
+
+$$
+c=X\bmod38
+$$
+
+Do đó, ví dụ:
+
+```text
+act5_*.npy  → class 5
+act43_*.npy → class 5
+```
+
+Tức là 2 nhóm `0–37` và `38–75` biểu diễn cùng 38 gesture nhưng thuộc hai điều kiện thu thập khác nhau.
+
+#### 4.1.3. Dữ liệu event trong file `.npy`
+
+- Khác với camera RGB thông thường, event camera không tạo ra ảnh tại những thời điểm cố định. Mỗi pixel chỉ phát sinh dữ liệu khi độ sáng tại pixel đó thay đổi đủ lớn.
+- Dữ liệu này được mã hóa dưới dạng ma trận numpy , không quan sát trực quan được . 
+
+- Ngoài raw event stream, trong một số thư mục còn tồn tại `label/` và `mask/`. Các file label .txt quan sát được có dạng:
+
+```text
+frame_id   x   y
+```
+- chứa 21 tọa độ keypoint bàn tay cho mỗi frame.
+
+- `mask` là dữ liệu cho bài toán segmentation .
