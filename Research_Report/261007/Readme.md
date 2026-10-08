@@ -115,7 +115,6 @@ Linking (T_AVG) -> Short-segment Removal (MIN_GESTURE) -> Fill same neighbors ->
 **Quá trình training bị timeout và dừng tại Epoch 29/30** do Kaggle giới hạn session tối đa 12 tiếng liên tục. Tuy nhiên, checkpoint tốt nhất (best accuracy) đã được lưu tự động tại Epoch 18.
 
 | Epoch | Train Loss | Train Acc | Val Loss | Val Acc | Best | LR | Ghi chú |
-| Epoch | Train Loss | Train Acc | Val Loss | Val Acc | Best | LR | Ghi chú |
 |:-----:|:----------:|:---------:|:--------:|:-------:|:----:|:--:|---------|
 | 1 | 2.0191 | 33.8% | 1.7178 | 50.3% | 50.3% | 1.09e-05 | Khởi đầu (Warmup) |
 | 5 | 0.5631 | 84.6% | 0.5259 | 83.9% | 83.9% | 9.01e-05 | Kết thúc Warmup|
