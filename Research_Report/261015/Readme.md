@@ -220,26 +220,39 @@
 
 ##### Isolated Gesture Recognition
 
-| Method | Year | Input / Feature Representation | Parameters | Model Size | Accuracy |
-|---|---:|---|---:|---:|---:|
-| MD-GCN (P1) | 2021 | RGB → OpenPose → Skeleton → MD-GCN | — | 11,7 M* | 98,95% |
-| NTPGR (P2) | 2025 | RGB → EPFFNet → CNN / LSTM / Attention | — | — | 97,56% |
-| BiLSTM–Transformer (P3) | 2026 | RGB → YOLOv11m-Pose → Pose sequence → BiLSTM–Transformer | 86,41K (20M YoloPose11m) | — | 98,91% |
-| RSC-GestureNet (P4) | 2026 | RGB → Pose + RGB appearance fusion | — | — | — |
-| **VideoMamba-Tiny (Ours)** | **2026** | **RGB video trực tiếp** | **6,96M** | **80,14 MiB** | **98,55%** |
+| Method | Year | Input / Feature Representation | Parameters — theo thành phần pipeline | GFLOPs — theo thành phần | Model Size / Checkpoint | Accuracy |
+|---|---:|---|---|---|---|---:|
+| MD-GCN (P1) | 2021 | RGB → OpenPose → GSE → MD-GCN | **OpenPose:** NR; **GSE:** NR; **MD-GCN:** NR | OpenPose: NR; MD-GCN: NR; **full pipeline: NR** | **11,7 M [P1, Table 1]** — đơn vị chưa được giải thích rõ | **98,95%** |
+| NTPGR (P2) | 2025 | RGB → keyframe selection → EPFFNet → MSNet (CNN + LSTM + attention) | **EPFFNet:** NR; **MSNet / CNN, LSTM, attention:** NR | EPFFNet: NR; MSNet: NR; **full pipeline: NR** | NR | **97,56%** |
+| BiLSTM–Transformer (P3) | 2026 | RGB → YOLO11m-Pose → 40-frame pose sequence → BiLSTM–Transformer | **YOLO11m-Pose: ≈20,9M [U]**; **BiLSTM–Transformer head: 86,41K [P3]**; tổng danh nghĩa **≈20,99M [ước tính]** | **YOLO11m-Pose: 71,5 GFLOPs/ảnh 640×640 [U]**; head: NR; **full 40-frame pipeline: NR** | NR (toàn pipeline) | **98,91%** |
+| RSC-GestureNet (P4) | 2026 | RGB → MediaPipe Pose (BlazePose Lite) + RGB appearance descriptor → RSC causal/fusion | **MediaPipe Pose detector/landmarker: NR**; **RSC full-fusion network: 815.270 [code]**; tổng cấu hình cuối: NR | MediaPipe Pose: NR; RSC fusion: NR; **full pipeline: NR** | RSC full-fusion checkpoint **≈3,15 MiB [repo]**; không gồm MediaPipe Pose | — |
+| **VideoMamba-Tiny (Ours)** | **2026** | **RGB video → VideoMamba-Tiny** | **Toàn bộ VideoMamba-Tiny: 6.959.817 (≈6,96M)**; không có pose estimator riêng | **29,026 GFLOPs/clip** (16×224×224, custom estimate) | **80,14 MiB** (`checkpoint-best.pth`) | **98,55%** |
+
+**Cơ sở đánh giá isolated:** P1 dùng 9 test videos và gesture clips đã cắt; P2 dùng 10 videos / 778 gesture instances; P3 dùng 10 test videos với pose sequences; VideoMamba-Tiny dùng 11 videos / 1.728 GT segments (9 lớp). **Không phải kết quả cùng split/protocol.** Với cùng checkpoint VideoMamba-Tiny, Accuracy *gesture-only* trên 859 segments GT lớp 1–8 là **98,02%**, không phải mô hình thứ hai.
+
+**Nguồn Accuracy:** [P1, Section 6.3 / Table 3](electronics-10-00551-v2.pdf); [P2, Table 2](s41598-025-02833-y.pdf); [P3, Tables 2–3](electronics-15-02578.pdf); notebook Cell 16.
 
 ##### Continuous Gesture Recognition
 
-| Method | Year | Input / Feature Representation | Parameters | Model Size | Accuracy | Macro-F1 |
-|---|---:|---|---:|---:|---:|---:|
-| MD-GCN (P1) | 2021 | RGB → OpenPose → Skeleton → MD-GCN | — | 11,7 M* | — | — |
-| NTPGR (P2) | 2025 | RGB → EPFFNet → CNN / LSTM / Attention | — | — | — | — |
-| BiLSTM–Transformer (P3) | 2026 | RGB → YOLOv11m-Pose → Pose sequence → BiLSTM–Transformer | 86,41K(20M YoloPose11m) | — | — | — |
-| RSC-GestureNet (P4) | 2026 | RGB → Pose + RGB appearance fusion | — | — | **93,33 ± 0,24%** | **91,71 ± 0,27%** |
-| **VideoMamba-Tiny (Ours, RAW)** | **2026** | **RGB video trực tiếp** | **6,96M** | **80,14 MiB** | **83,98%** | **80,61%** |
+| Method | Year | Input / Feature Representation | Parameters — theo thành phần pipeline | GFLOPs — theo thành phần | Model Size / Checkpoint | Accuracy | Macro-F1 |
+|---|---:|---|---|---|---|---:|---:|
+| MD-GCN (P1) | 2021 | RGB → OpenPose → GSE → MD-GCN | **OpenPose:** NR; **GSE:** NR; **MD-GCN:** NR | OpenPose: NR; MD-GCN: NR; **full pipeline: NR** | **11,7 M [P1, Table 1]** — đơn vị chưa rõ | — | — |
+| NTPGR (P2) | 2025 | RGB → keyframe selection → EPFFNet → MSNet (CNN + LSTM + attention) | **EPFFNet:** NR; **MSNet / CNN, LSTM, attention:** NR | EPFFNet: NR; MSNet: NR; **full pipeline: NR** | NR | — | — |
+| BiLSTM–Transformer (P3) | 2026 | RGB → YOLO11m-Pose → 40-frame pose sequence → BiLSTM–Transformer | **YOLO11m-Pose: ≈20,9M [U]**; **head: 86,41K [P3]**; tổng danh nghĩa **≈20,99M [ước tính]** | **YOLO11m-Pose: 71,5 GFLOPs/ảnh 640×640 [U]**; head: NR; **full 40-frame pipeline: NR** | NR (toàn pipeline) | — | — |
+| RSC-GestureNet (P4) | 2026 | RGB → MediaPipe Pose (BlazePose Lite) + RGB appearance descriptor → RSC causal/fusion | **MediaPipe Pose detector/landmarker: NR**; **RSC full-fusion network: 815.270 [code]**; tổng cấu hình cuối: NR | MediaPipe Pose: NR; RSC fusion: NR; **full pipeline: NR** | RSC full-fusion checkpoint **≈3,15 MiB [repo]**; không gồm MediaPipe Pose | **93,33 ± 0,24%** | **91,71 ± 0,27%** |
+| **VideoMamba-Tiny (Ours, RAW)** | **2026** | **RGB video → VideoMamba-Tiny** | **Toàn bộ VideoMamba-Tiny: 6.959.817 (≈6,96M)** | **29,026 GFLOPs/clip** (16×224×224, custom estimate) | **80,14 MiB** (`checkpoint-best.pth`) | **83,98%** | **80,61%** |
 
-* **Khác biệt protocol:** Continuous VideoMamba-Tiny hiện tổng hợp xác suất trên cửa sổ chồng lấn và có thể sử dụng frame tương lai; kết quả này không phải đánh giá causal trực tiếp tương đương với P4.
+**Nguồn Accuracy/Macro-F1 continuous:** P4, [Section 4.1 / Table 1](2608.02200v1.pdf) (CTPGesture v1, causal 32-frame window, stride 4, 3 seeds); VideoMamba-Tiny, notebook Cell 22 (11 test videos, 32-frame window, stride 8, overlapping-probability frame aggregation, 1 checkpoint). Dấu **—** ở kết quả P1–P3 chỉ **không có kết quả đánh giá full-frame continuous tương ứng do các bài gốc báo cáo**; không có nghĩa phương pháp không xử lý chuỗi thời gian.
 
+**Chú giải Parameters / GFLOPs / Model Size (áp dụng cho cả hai bảng):**
+
+- **NR = Not Reported / Not Reliably Established:** không có số liệu đủ căn cứ cho **đúng thành phần và đúng cấu hình pipeline**; tuyệt đối không diễn giải là 0. **— = không có kết quả đánh giá thuộc loại bài toán trong bảng**.
+- **[P1]** Tác giả ghi **`Model Size = 11.7 M`** cho MD-GCN với dilation rates 1, 2, 4 (Table 1); bài không định nghĩa rõ `M` trong bảng và không xác nhận chi phí OpenPose. Không đổi 11,7 M thành số parameters.
+- **[P2]** Bài mô tả EPFFNet và MSNet gồm các nhánh CNN/LSTM/attention nhưng không đưa ra số parameter và GFLOPs có thể xác minh cho từng mạng hoặc tổng hệ thống; không lấy số của một mạng pose khác để thay thế.
+- **[P3]** **86,41K [P3]** là *chỉ riêng recognition head* trong Table 3, **không bao gồm YOLO11m-Pose**. **≈20,9M parameters / 71,5 GFLOPs mỗi ảnh 640×640 [U]** lấy từ [bảng Pose (COCO) chính thức của Ultralytics](https://github.com/ultralytics/ultralytics/blob/main/docs/en/models/yolo11.md), **không phải phép đo của tác giả P3 trên CTPGesture**. **≈20,99M** là phép cộng danh nghĩa `20,9M + 0,08641M` dựa trên phiên bản chuẩn được công bố (giá trị YOLO đã làm tròn); không phải số đếm thực tế từ checkpoint của P3. **GFLOPs/ảnh 640×640 không phải GFLOPs/chuỗi 40 frame**; chưa có tổng GFLOPs cả pipeline trên cấu hình trong P3.
+- **[P4]** Bài sử dụng MediaPipe Pose `model_complexity=0` (BlazePose Lite) và descriptor màu 12 chiều từ RGB. **815.270 parameters [code]** là số đếm từ **mạng RSC full-fusion** với `hidden=96`, `num_joints=17`, `num_classes=9`, `rgb_dim=12` theo [mã nguồn](https://github.com/chengli24/rsc-gesturenet-prcv2026/blob/main/src/rsc_gesturenet/model.py) và [config tác giả](https://github.com/chengli24/rsc-gesturenet-prcv2026/blob/main/configs/train.yaml). File [`rsc_gesture_fusion.pt`](https://github.com/chengli24/rsc-gesturenet-prcv2026/blob/main/weights/rsc_gesture_fusion.pt) có kích thước **3.306.392 bytes ≈ 3,15 MiB [repo]**. **Cả hai chỉ phản ánh fusion subnetwork**, không gồm MediaPipe detector/landmarker và chưa đủ để tính tổng tham số/tổng GFLOPs của cấu hình **RSC-GestureNet (Ours)** đạt **93,33%** trong P4 Table 1 (có cơ chế calibration/adaptive selective inference). Không gán 93,33% cho riêng checkpoint fusion: P4 Table 1 còn báo cáo **RSC-Gesture-Fusion 91,38%**.
+- **[Ours]** 6.959.817 parameters và **29,026 GFLOPs/clip** lấy từ notebook Cell 26, input 16×224×224; **80,14 MiB** là kích thước file checkpoint ghi ở Cell 8. GFLOPs được ước lượng bằng custom counter, chưa chuẩn hóa với GFLOPs của Ultralytics.
+- **Không cộng GFLOPs khác đơn vị:** Ultralytics báo cáo **trên 1 ảnh pose 640×640**, VideoMamba-Tiny báo cáo **trên 1 clip 16 frames 224×224**, còn RSC-GestureNet hoạt động theo cửa sổ thời gian và có pose extraction per frame. Muốn so sánh tính toán end-to-end phải chuẩn hóa số frames/window, input resolution, model config và quy ước MAC/FLOP trước khi profiler chạy lại trên cùng thiết bị.
 
 
 ## B. Khó khăn 
