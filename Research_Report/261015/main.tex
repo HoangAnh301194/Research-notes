@@ -374,62 +374,120 @@ P4&Li et al. -- RSC-GestureNet&arXiv preprint, 2026&Không gán quartile/CORE\\\
 \vspace{0.05cm}\srcn{Bốn PDF trong thư mục 261015; Electronics Journal Statistics (MDPI), số JCR 2025.}
 \end{frame}
 
-% ---------- 12: Methods P1/P2 ----------
-\begin{frame}{4. Phương pháp đối chứng: Xiong (2021) và Xiao (2025)}
+
+% ---------- 12: Dedicated comparison P1 ----------
+\begin{frame}{4.1. P1 -- Xiong et al. (2021): MD-GCN và RGB baselines}
 \begin{columns}[T,onlytextwidth]
-\begin{column}{0.49\textwidth}
-\begin{tcolorbox}[titlepanel,title=P1 -- MD-GCN (2021),height=5.45cm]
-\smallnote{\textbf{Input / Model:} Gesture Skeleton Extractor rồi Multichannel Dilated Graph CNN, học quan hệ khớp theo không gian và thời gian.}
-\vspace{0.18cm}
-\smallnote{\textbf{Published:} MD-GCN \textbf{98,95\%}; các baseline RGB P3D \textbf{92,21\%}, C3D \textbf{87,12\%}.}
-\vspace{0.18cm}
-\smallnote{\textbf{Vị trí:} Section 6.1 (11 video train, 9 video test); \textbf{Table 3, trang 12} (Accuracy).}
-\vspace{0.18cm}
-\smallnote{\textbf{Lưu ý:} C3D/P3D là kết quả P1 đánh giá lại, không phải kết quả dataset trong bài C3D/P3D gốc.}
+\begin{column}{0.48\textwidth}
+\begin{tcolorbox}[titlepanel,title=Phương pháp và bài toán,height=5.00cm]
+\smallnote{\textbf{Nơi công bố:} \emph{Electronics} (2021), MDPI; JCR 2025 Q2 (lưu ý lịch sử xếp hạng).}\par\vspace{0.14cm}
+\smallnote{\textbf{Pipeline:} RGB video $\rightarrow$ Gesture Skeleton Extractor $\rightarrow$ Multichannel Dilated GCN. GCN mô hình hóa tương quan giữa các khớp theo không gian và thời gian.}\par\vspace{0.14cm}
+\smallnote{\textbf{Thí nghiệm:} 11 video train, \textbf{9 video test}; tạo gesture clips từ annotation.}\par\vspace{0.14cm}
+\smallnote{\textbf{Điểm quan trọng:} Ngoài MD-GCN, tác giả trực tiếp đánh giá lại các baseline \textbf{RGB 3D CNN}, đặc biệt C3D và P3D.}
 \end{tcolorbox}
 \end{column}
-\begin{column}{0.49\textwidth}
-\begin{tcolorbox}[titlepanel,title=P2 -- NTPGR (2025),height=5.45cm]
-\smallnote{\textbf{Input / Model:} EPFFNet lấy skeleton; MSNet kết hợp CNN, LSTM và temporal/channel attention.}
-\vspace{0.18cm}
-\smallnote{\textbf{Published:} \textbf{97,56\% Accuracy}; 759/778 cử chỉ nhận dạng đúng; response time 0,76 s.}
-\vspace{0.18cm}
-\smallnote{\textbf{Vị trí:} \textbf{Table 2, trang 11}; Tables 3--4, trang 13--14.}
-\vspace{0.18cm}
-\smallnote{\textbf{Lưu ý:} 10 test videos / 778 gesture instances; không đồng nhất split 11 videos của notebook.}
+\begin{column}{0.50\textwidth}
+\begin{tcolorbox}[titlepanel,title=Kết quả và đối chiếu,height=5.00cm]
+\renewcommand{\arraystretch}{1.16}
+\begin{tabularx}{\linewidth}{@{}Y C{1.42cm}@{}}
+\toprule
+\textbf{Method, P1 Table 3} & \textbf{Acc.}\\\midrule
+3D ResNet (RGB) & 81,16\%\\
+C3D (RGB) & 87,12\%\\
+P3D (RGB) & 92,21\%\\
+MD-GCN (skeleton) & \textbf{98,95\%}\\\bottomrule
+\end{tabularx}
+\vspace{0.16cm}
+\smallnote{\textbf{Ours:} VideoMamba-Tiny RGB, \textbf{98,55\% isolated} (9 lớp, 11 test videos).}\par\vspace{0.11cm}
+\smallnote{\textbf{Không so sánh trực tiếp:} P1 dùng \textbf{9} test videos, clip đã cắt; ours \textbf{11} videos và gồm No Gesture.}
 \end{tcolorbox}
 \end{column}
 \end{columns}
-\vspace{0.05cm}\srcn{P1: electronics-10-00551-v2.pdf; P2: s41598-025-02833-y.pdf.}
+\vspace{0.06cm}
+\srcn{P1: \texttt{electronics-10-00551-v2.pdf}; Section 6.1, Table 3 (PDF trang in 12). Các giá trị RGB là P1 re-evaluation.}
 \end{frame}
 
-% ---------- 13: Methods P3/P4 ----------
-\begin{frame}{4. Phương pháp đối chứng: Zhang (2026) và Li (2026)}
+% ---------- 13: Dedicated comparison P2 ----------
+\begin{frame}{4.2. P2 -- Xiao et al. (2025): NTPGR}
 \begin{columns}[T,onlytextwidth]
-\begin{column}{0.49\textwidth}
-\begin{tcolorbox}[titlepanel,title=P3 -- BiLSTM--Transformer (2026),height=5.45cm]
-\smallnote{\textbf{Input / Model:} YOLOv11m-Pose (17 keypoints), chuỗi \textbf{40 frames}, BiLSTM kết hợp Transformer.}
-\vspace{0.18cm}
-\smallnote{\textbf{Published:} \textbf{98,91\% Accuracy}, F1=98,91\%.}
-\vspace{0.18cm}
-\smallnote{\textbf{Vị trí:} Table 1 (test 10 videos); \textbf{Tables 2--4, trang 16--19}.}
-\vspace{0.18cm}
-\smallnote{\textbf{Cảnh báo:} Table 3 ghi BiLSTM 96,48\%, đoạn diễn giải không nhất quán; thời gian suy luận bỏ qua chi phí pose extractor.}
+\begin{column}{0.48\textwidth}
+\begin{tcolorbox}[titlepanel,title=Phương pháp và vị thế công bố,height=5.00cm]
+\smallnote{\textbf{Venue:} \emph{Scientific Reports} (2025), Nature Portfolio, \textbf{JCR 2025 Q1} (Multidisciplinary Sciences).}\par\vspace{0.15cm}
+\smallnote{\textbf{EPFFNet:} Trích xuất pose/keypoints và đặc trưng hình học.}\par\vspace{0.13cm}
+\smallnote{\textbf{MSNet:} Kết hợp \textbf{CNN, LSTM và attention} để mô hình hóa cử chỉ theo thời gian.}\par\vspace{0.15cm}
+\smallnote{\textbf{Khác với ours:} NTPGR học chuỗi \textbf{skeleton/pose}, còn VideoMamba học chuỗi \textbf{RGB} trực tiếp.}
 \end{tcolorbox}
 \end{column}
-\begin{column}{0.49\textwidth}
-\begin{tcolorbox}[titlepanel,title=P4 -- RSC-GestureNet (2026),height=5.45cm]
-\smallnote{\textbf{Input / Model:} Reliability-aware pose features, graph reasoning, pose--RGB fusion và causal temporal recognition.}
-\vspace{0.18cm}
-\smallnote{\textbf{Published:} \textbf{93,33$\pm$0,24\% Accuracy}; \textbf{91,71$\pm$0,27\% Macro-F1}.}
-\vspace{0.18cm}
-\smallnote{\textbf{Vị trí:} Section 4.1, \textbf{Table 1 trang 9}: official CTPGesture v1, causal window 32/4, trung bình 3 seeds.}
-\vspace{0.18cm}
-\smallnote{\textbf{Vai trò:} Đối chứng gần nhất cho continuous nhưng hiện vẫn khác cách suy luận.}
+\begin{column}{0.50\textwidth}
+\begin{tcolorbox}[titlepanel,title=Evidence và kết quả,height=5.00cm]
+\centering
+{\fontsize{17}{19}\selectfont\bfseries\color{PTITRed} 97,56\%\par}
+\smallnote{NTPGR published gesture-instance Accuracy}\par\vspace{0.11cm}
+\smallnote{\textbf{Bằng chứng:} \textbf{759/778} cử chỉ nhận dạng đúng; test 10 video, theo \textbf{Table 2}, PDF trang 11.}\par\vspace{0.12cm}
+\smallnote{\textbf{Thời gian đáp ứng:} 0,76 s theo \textbf{Table 4} (trang 14), khác định nghĩa latency model-only của ours.}\par\vspace{0.12cm}
+\smallnote{\textbf{Ours:} 98,55\% isolated / 98,02\% gesture-only; \textbf{859 gesture segments}.}\par\vspace{0.10cm}
+\smallnote{\textbf{Không xếp hạng:} NTPGR có \textbf{778} mẫu test, ours 859; cách chia và tiêu chuẩn nhận dạng không trùng khớp.}
 \end{tcolorbox}
 \end{column}
 \end{columns}
-\vspace{0.05cm}\srcn{P3: electronics-15-02578.pdf; P4: 2608.02200v1.pdf.}
+\vspace{0.06cm}
+\srcn{P2: \texttt{s41598-025-02833-y.pdf}; Table 2 (trang 11), Table 3 (trang 13), Table 4 (trang 14).}
+\end{frame}
+
+% ---------- 14: Dedicated comparison P3 ----------
+\begin{frame}{4.3. P3 -- Zhang et al. (2026): BiLSTM--Transformer}
+\begin{columns}[T,onlytextwidth]
+\begin{column}{0.48\textwidth}
+\begin{tcolorbox}[titlepanel,title=Phương pháp và dữ liệu,height=5.00cm]
+\smallnote{\textbf{Venue:} \emph{Electronics} (2026), MDPI, \textbf{JCR 2025 Q2} (Engineering, EEE).}\par\vspace{0.14cm}
+\smallnote{\textbf{Pipeline:} YOLOv11m-Pose $\rightarrow$ 17 keypoints/frame $\rightarrow$ \textbf{40-frame sequence} $\rightarrow$ BiLSTM + Transformer.}\par\vspace{0.14cm}
+\smallnote{\textbf{Vai trò:} BiLSTM mô hình hóa chuỗi; Transformer khai thác long-range temporal dependency.}\par\vspace{0.14cm}
+\smallnote{\textbf{Split:} \textbf{Table 1} nêu 10 test videos, thiếu \texttt{101.mp4} có trong notebook của nhóm.}
+\end{tcolorbox}
+\end{column}
+\begin{column}{0.50\textwidth}
+\begin{tcolorbox}[titlepanel,title=Kết quả, bằng chứng và khác biệt,height=5.00cm]
+\centering
+{\fontsize{17}{19}\selectfont\bfseries\color{PTITRed}98,91\%\par}
+\smallnote{Hybrid BiLSTM--Transformer published Accuracy}\par\vspace{0.11cm}
+\smallnote{\textbf{Nguồn:} \textbf{Tables 2--4}, PDF trang 16--19; phân tích ablation tại Table 3.}\par\vspace{0.13cm}
+\smallnote{\textbf{Ours:} 98,55\% isolated RGB; 16 input frames; 11 test videos.}\par\vspace{0.13cm}
+\smallnote{\textbf{Cảnh báo:} Kết quả 98,91\% khác nhiệm vụ/đầu vào (pose). Bài P3 có chỗ diễn giải BiLSTM không nhất quán với Table 3; thời gian temporal head không bao gồm pose extraction.}
+\end{tcolorbox}
+\end{column}
+\end{columns}
+\vspace{0.06cm}
+\srcn{P3: \texttt{electronics-15-02578.pdf}; Table 1 (trang 13), Tables 2--4 (trang 16--19).}
+\end{frame}
+
+% ---------- 15: Dedicated comparison P4 ----------
+\begin{frame}{4.4. P4 -- Li et al. (2026): RSC-GestureNet}
+\begin{columns}[T,onlytextwidth]
+\begin{column}{0.48\textwidth}
+\begin{tcolorbox}[titlepanel,title=Phương pháp và protocol,height=5.00cm]
+\smallnote{\textbf{Nguồn:} arXiv:2608.02200v1 (2026); \textbf{preprint}, chưa gán quartile/CORE.}\par\vspace{0.14cm}
+\smallnote{\textbf{Kiến trúc:} Reliability-aware skeleton graph, pose--RGB fusion và \textbf{causal temporal modeling}.}\par\vspace{0.14cm}
+\smallnote{\textbf{Đánh giá:} CTPGesture v1 official split, \textbf{9 classes}; 32-frame causal windows, \textbf{stride 4}; ba random seeds.}\par\vspace{0.14cm}
+\smallnote{\textbf{Điểm mạnh:} Đánh giá nhận dạng liên tục theo giao thức online/causal, không sử dụng frame tương lai.}
+\end{tcolorbox}
+\end{column}
+\begin{column}{0.50\textwidth}
+\begin{tcolorbox}[titlepanel,title=So sánh continuous cụ thể,height=5.00cm]
+\renewcommand{\arraystretch}{1.18}
+\begin{tabularx}{\linewidth}{@{}Y C{1.45cm}C{1.35cm}@{}}
+\toprule
+\textbf{Method} & \textbf{Acc.} & \textbf{Macro-F1}\\\midrule
+RSC-GestureNet [P4] & \textbf{93,33\%} & \textbf{91,71\%}\\
+VideoMamba RAW (ours) & 83,98\% & 80,61\%\\\bottomrule
+\end{tabularx}
+\vspace{0.12cm}
+\smallnote{\textbf{Bằng chứng:} P4 \textbf{Table 1, trang 9}: RSC $\pm$0,24 / $\pm$0,27 điểm \% (3 seeds).}\par\vspace{0.12cm}
+\smallnote{\textbf{Không phải phép đối chứng causal công bằng:} Ours sliding \textbf{32/8}, cộng xác suất lên frame và có thể dùng frame tương lai; hiện chỉ có một checkpoint.}
+\end{tcolorbox}
+\end{column}
+\end{columns}
+\vspace{0.06cm}
+\srcn{P4: \texttt{2608.02200v1.pdf}, Section 4.1 (trang 8), Table 1 (trang 9); ours Notebook Cell 22.}
 \end{frame}
 
 % ---------- 14: Evidence ----------
