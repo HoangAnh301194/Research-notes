@@ -1,0 +1,607 @@
+--- PAGE 6 ---
+J. He, C. Zhang and X. He et al. / Neurocomputing 390 (2020) 248–259 253 
+Fig. 4. Two actions with similar spatial features belonging to different gestures. 
+feature set h τ from spatial feature set and save it’s memory (cell 
+states) at e τ for the subsequent predictions. The e τ is denoted by: 
+e τ = σ(W 1 · (h τ−1 /varoplusF τ ) + β1 ) ∗e τ−1 
++ σ(W 2 · (h τ−1 /varoplusF τ ) + β2 ) 
+∗ tanh (W 3 · (h τ−1 /varoplusF τ ) + β3 ) 
+(10) 
+While producing the e τ, LSTM also produces h τ as the temporal 
+feature set which contains substaintial evidences for gesture pre- 
+diction: 
+h τ = σ(W 4 · (h τ−1 /varoplusF τ ) + β4 ) ∗tanh (e τ ) (11) 
+In Eqs. (10) and ( 11 ), σ( ·) denotes the sigmoid function, tanh ( ·) 
+denotes the hyperbolic tangent function. /varoplusdenotes the concatena- 
+tion operation, · denotes matrix multiplication, ∗ denotes point- 
+wise multiplication. Since t was already registered as stage, a new 
+notation τ is established to denotes time. F t denotes the spatial 
+features for police gestures produced at time τ. W and β denotes 
+two trainable layers in neural networks: weight and bias accord- 
+ingly. Lastly, a dense layer is applied to convert the temporal fea- 
+ture set h τ to the prediction results: 
+o all 
+τ = s (W 5 ·h τ + β5 ) (12) 
+o max 
+τ = 
+{argmax (o all 
+τ ) if max (o all 
+τ ) > δg 
+0 if max (o all 
+τ ) < δg 
+(13) 
+In Eqs. (12) and ( 13 ), s ( ·) denotes softmax function, o all τ denotes 
+the probability set of current gesture belonging to each gesture la- 
+bels, o max τ denotes the ﬁnal gesture label prediction. δg denotes the 
+conﬁdence threshold for gestures. When the conﬁdence of each 
+gestures is all smaller than the threshold, then no matter what 
+class the argmax (o all τ ) shows, the class of ”stand in attention” is 
+produced to prevent false detections. 
+4. Network architectures 
+This section describes the architectures of the spatial feature 
+extractor: modiﬁed CPM, and temperal feature extractor: LSTM in 
+details. 
+Fig. 5. The architecture of PKEN. 
+4.1. Convolutional network for part localization 
+To localize the human parts for spatial feature extraction, we 
+introduce the Convolutional Pose Machine (CPM) and modiﬁed it’s 
+architecture. In details, we increase the number of score maps to 
+acquire better performence when parts are overlapping, and de- 
+crease the stages to make the execution time shorter. To distin- 
+guish our modiﬁed architecture from original CPM, we reference 
+our architecture as Police Keypoint Extraction Network (PKEN) in 
+the following sections. 
+The architecture of PKEN is illustrated in Fig. 5 . In the ﬁgure, C 
+represents a convolutional layer, P represents a max pooling layer, 
+L represents the loss. The top 10 convolutional layers of the net- 
+work are the same as that of the VGG-19. The top 12 convolu- 
+tional layers implements ψ( ·), which extract image features from 
+original image. There are 3 pooling layers among these convolu- 
+tional layers, which means that the extracted image features are 
+8 times smaller in width and height than the original image. The 
+13 th to 17 th convolutional layers implement g 1 ( ·), the stage 1 of 
+CPM. It takes x z as input, and outputs conﬁdence set b 1 . The 18 th 
+to 24 th convolutional layers implement g 2 ( ·), the stage 2 of classi- 
+ﬁer, which accepts two inputs: x z and b 1 as input, and produces b 2 . 
+Similarly, The 25 th to 31 th convolutional layers implement g 3 ( ·). 
+Fig. 6 illustrates the image of b 3 . Note that this image superim- 
+poses conﬁdence maps for each part together. The total stage T is 
+set to 3 in PKEN. 
+There are three losses in the network, namely L1, L2, and L3, 
+which are the Euclidian distance of b 1 , b 2 , b 3 with the ground 
+truth S ∗. Such architecture with multiple losses has been proved to 
+be able to prevent the vanishing gradients problem during training 
+[31] . 
+Overall loss value of the whole network can be calculated ac- 
+cording to the following Equation: 
+f = 
+P ∑  
+p=1 
+T ∑  
+t=1 
+∑  
+z 
+|| b p 
+t (z) − b p 
+∗ (z) || (14) 
+
+--- PAGE 7 ---
+254 J. He, C. Zhang and X. He et al. / Neurocomputing 390 (2020) 248–259 
+Fig. 6. Conﬁdence maps for each part. 
+Fig. 7. Architecture of LSTM network. 
+In Eq. (14) , b p 
+∗ is the ground truth conﬁdence map of part p , and 
+z is the image location on the conﬁdence map. Eq. (14) calculates 
+the sum of Euclidean distance for each pixel of conﬁdence map 
+w.r.t. ground truth. 
+4.2. LSTM for temporal feature extraction 
+To extract the temporal features for police gesture recognition, 
+Long short-term memory (LSTM) [2] , a recurrent neural network, 
+is applied. Fig. 7 illustrates the architecture of the LSTM used in 
+our method. 
+In Fig. 7 , e τ−1 , h τ−1 and F τ denote the inputs of the LSTM, 
+and e τ, h τ denote the outputs. The notation “Dense” means fully 
+connected layer, P denotes point-wise calculation. A dropout layer 
+[32] is placed before the loss layer to prevent overﬁtting during 
+training. 
+Let the ground truth label be o ∗
+τ , loss function for the network 
+at time τ is: 
+f = cr ossentr opy (o a 
+τl l , onehot(o ∗
+τ )) (15) 
+Fig. 8. Loss function of LSTM. 
+Fig. 9. Three steps training. 
+As a recurrent network, for each step of gradient descent, LSTM 
+has to consider the loss of each frame for a certain duration, as 
+shown in Fig. 8 
+The overall loss for LSTM is the mean of the loss at each time 
+step. This method of training is called truncated backpropagation. 
+Let the loss of LSTM at time τ be L τ, current time be τ, then the 
+overall loss is shown in Eq. (16) . 
+f = 
+∑ τ
+i =0 L i 
+τ (16) 
+5. Datasets and training steps 
+This section describes the training details of PKEN and LSTM, 
+introduces datasets, training orders and preprocessing steps. PKEN 
+and LSTM are trained on two datasets respectively. The training 
+process has three ordered steps which are illustrated in Fig. 9 . 
+5.1. Datasets 
+As shown in Fig. 9 , two datasets are involved during the train- 
+ing process. 
+The ﬁrst dataset is a human keypoint dataset containing the co- 
+ordinates of human joints such as wrist, shoulder, and neck, etc. In 
+
+--- PAGE 8 ---
+J. He, C. Zhang and X. He et al. / Neurocomputing 390 (2020) 248–259 255 
+Fig. 10. Police Gesture Dataset video gallery. This gallery shows one picture per 
+video, arranged from left to right: 0 01, 0 02, 0 03, 0 04, 0 07, 0 08, 0 09, 010, 011, 012, 
+013, 014, 015, 016, 017, 018, 101, 102, 103, 104. 
+Fig. 11. Time delay of the labels. 
+this paper, the dataset provided by AI Challenger [33] is applied on 
+training. 
+The second dataset is the Police Gesture Dataset presented by 
+us. The Police Gesture Dataset contains 20 videos of people making 
+traﬃc police gestures and is annotated frame by frame. The dataset 
+has a total video length of approximately 2 h showing different 
+people and various backgrounds. A gallery of these videos is shown 
+in Fig. 10 , and the splitting of the dataset is shown in Table 1 . 
+In Table 1 , the dataset is divided into 2 subsets for training 
+and test purpose. In the table, “Set” indicates the name of sub- 
+sets.“Films” indicates the number of ﬁles in a set. “Gestures” in- 
+dicates the total number of gestures occured in a set. “stand in 
+attention” indicates the number of stand in attention gesture. The 
+ﬁlms is shot with different devices in different scenes, and people 
+with different appearance and police attire. The camera distances 
+are also varied. 
+5.2. Label preprocessing 
+Before training, the appearance time of each label in Police Ges- 
+ture Dataset is delayed for 750 ms after the occurrence of gestures. 
+This time delay is essential for the entire pipeline to work properly, 
+and dramatically increases its accuracy. 
+Fig. 11 illustrates how labels are delayed. the ﬁgure illustrated a 
+few frames clipped from the dataset, with annotated labels. There 
+are three rows named image, original labels and delayed labels. 
+The original labels and the delayed labels use gray area to express 
+one kind of gesture: Stand In Attention, and use green area to ex- 
+press another kind of gesture: Pull Over. Originally, the Pull Over 
+label appears as soon as the police raises his hand. After delay- 
+ing the labels, the Stand In Attention area becomes longer, which 
+means that the appearances of Pull Over labels are delayed. The 
+reason of delaying the training labels is: originally, a label ap- 
+pears as soon as the gesture occurred. If the original labels are 
+used to train the network, it means that the network has to re- 
+sponse immediately as soon as a gesture occurred, which makes 
+the network over-sensitive against each small movement of the po- 
+lice, and makes wrong predictions frequently. Therefore, the tim- 
+ing of labels are delayed to leave some time for the LSTM to ob- 
+serve, so the network will not judge the meaning of the gesture 
+until the police made enough movements. It turns out that delay- 
+ing the appearance of labels signiﬁcantly improved the accuracy 
+of the network, and also made it robust against small movements 
+that is not related to any gestures. At the cost, delayed training 
+labels decrease the method response speed. A comparison of per- 
+formances between human and our method trained with delayed 
+labels is given at the results section. 
+5.3. Training steps 
+As shown in Fig. 9 , our model, the Traﬃc Police Gesture Recog- 
+nizer, is not an end-to-end network that can be trained directly. 
+three steps are required to ﬁnish the training. In step (1) PKEN 
+is trained on keypoint dataset. In step (2) spatial features are ex- 
+tracted from Police Gesture Dataset using trained PKEN. In step (3) 
+the LSTM is trained on spatial features. 
+The overall process of training is shown in Algorithm 1 . In the 
+algorithm block, KP I denotes the total number of images contained 
+in Human Keypoint dataset, and KP i denotes the image number i. 
+PG I denotes the total number of frames contained in Police Ges- 
+ture dataset, and PG i denotes the ith frame. F i denotes the spatial 
+feature F of ith frame. PG L denotes the total number of frames con- 
+tained in spatial features, F clip denotes a random clip created from 
+F τ. 
+Algorithm 1 Train CTPGR 
+1: Initialize PKEN weights 
+2: for i = 1 ...KP I do 
+3: for p = 1 ...P do 
+4: Read an image KP i from keypoint dataset 
+5: Create b p 
+∗ from KP i using Eq. (17) 
+6: Train b p using b p 
+∗
+7: PKEN predictor b p trained 
+8: for i = 1 ...P G I do 
+9: Read a frame P G i from police gesture dataset 
+10: Generate F i from P G i by predictor b p 
+11: Spatial features F τ τ∈ 0 ,...,PG L generated 
+12: Initialize LSTM weights 
+13: while LSTM loss decreasing do 
+14: Create a random clip F clip from F τ
+τ∈ 0 ,...,PG L 
+15: Train LSTM by F clip 
+16: LSTM trained 
+17: Build CTPGR by connecting PKEN and LSTM 
+To train the PKEN in step (1), the annotated human keypoints 
+are converted to ground truth conﬁdence maps. A 2D Gaussian 
+function is used to convert annotated points to ground truth of 
+conﬁdence map, which is shown in Fig. 12 . 
+Let K be the number of people, ground truth conﬁdence map 
+for part p can be calculated according to following Equation: 
+b p 
+∗ (z) = 
+K ∑  
+k =1 
+exp 
+(
+−|| z −n p,k || 
+σ2 
+)
+(17) 
+
+--- PAGE 9 ---
+256 J. He, C. Zhang and X. He et al. / Neurocomputing 390 (2020) 248–259 
+Table 2 
+Edit distance between predicted labels and ground truth labels. 
+Filename Predicted N (True Gestures) S (Substitution) D (Deletion) I (Insertion) Accuracy 
+014.mp4 200 165 6 37 2 0.7273 
+016.mp4 186 161 2 27 2 0.8075 
+004.mp4 99 100 0 0 1 0.9900 
+018.mp4 165 163 1 4 2 0.9571 
+010.mp4 172 145 1 27 0 0.8069 
+104.mp4 161 167 0 0 6 0.9641 
+102.mp4 164 165 0 3 4 0.9576 
+012.mp4 179 177 0 2 0 0.9887 
+008.mp4 159 161 0 0 2 0.9876 
+002.mp4 170 161 0 9 0 0.9441 
+AVERAGE 165.5 156.5 1 10.9 1.9 0.9130 
+TOTAL 1655 1565 10 109 19 0.9118 
+Fig. 12. 2D Gaussian function for making ground truth map from annotated points. 
+In Eq. (17) , n is the annotated points, σ is used to control how 
+much the Gaussian peak spreads. 
+In step (1), to establish the PKEN network, we build the net- 
+work in Fig. 5 with rectiﬁed linear unit (ReLU) activation func- 
+tion, and initialize all the neurons with “he initializer” [39] . As for 
+training, we choose a batch size of 15, and adopt Adam optimizer 
+[40] for gradient descent, with a learning rate of 0.0 0 08 and an 
+exponential decaying rate of 0.8 for every 20,0 0 0 steps. Data aug- 
+mentation methods such as rotation and scaling are applied to in- 
+crease the variety of dataset. We train the PKEN for 50 epochs. 
+In step (2), we run the forward pass of the trained PKEN to ex- 
+tract part location from Police Gesture Dataset into spatial feature 
+F . PKEN parses the police gesture videos frame-by-frame, gener- 
+ates a sequence of spatial features. The temporal labels marked for 
+the Police Gesture Dataset is unchanged and used to mark ground 
+truth gestures for these spatial features. 
+In step (3), to establish the LSTM network, we build the net- 
+work in Fig. 7 , and initialize all the neurons with Xavier initializer 
+[41] . No data augmentation method is applied. As for training, we 
+randomly clip the sequence of spatial features into smaller frag- 
+ments. Each of the fragment is a video with 90 seconds duration, 
+and 128 fragments compose a batch. We adopt Adam optimizer 
+for truncated back propagation, with a learning rate of 0.0 0 04, and 
+train the network for 50,0 0 0 steps. 
+After the training, feature extractor and classiﬁer are connected 
+in order to form the Traﬃc Police Gesture Recognizer. The entire 
+network takes a sequence of images as input, and outputs a se- 
+quence of gesture predictions. 
+6. Evaluation results 
+The Accuracy of Traﬃc Police Gesture Recognizer is evaluated 
+on the test set of the Police Gesture Dataset. The oﬄine evaluation 
+result is shown in Table 2 . The metrics for this table is called Edit 
+Distance, which is a common metrics [42] to evaluate the accuracy 
+of time series labels. This metrics contains 4 notations: N, I, D, S . 
+Notation N indicates the total number of ground truth gestures 
+in the video. In our case, since the method needs to distinguish 
+the state of “stand in attention” from the video, each “stand in 
+Table 3 
+Architecture comparison. 
+No. Architecture Reference Accuracy 
+1 (Ours) PKEN + LSTM 91.18% 
+2 PKEN + Bidirectional LSTM Pigou et. al. [34] 91.04% 
+3 Resnet Part Localizer + LSTM He et. al. [35] 87.29% 
+4 Densenet Part Localizer + LSTM Huang et. al. [36] 89.74% 
+5 End to end 3D Convolution Ji et. al. [37] 81.16% 
+6 Convolutional LSTM Xing et. al. [38] 82.40% 
+attention” gesture is also counted as N . Notation I indicates the 
+number of insertions from predicted labels to ground truth labels, 
+I = i means that if i characters were inserted to the designated 
+places of predicted labels, then predicted labels become same 
+as ground truth labels. D indicates the number of deletion from 
+predicted labels to ground truth labels. D = d means that if d 
+characters were deleted from predicted labels, then the predicted 
+labels and ground truth labels become equal. S indicates total 
+number of substitution, S = s means that if s characters were 
+substituted from predicted labels, then predicted and ground 
+truth label series become equal. Finally, the value of accuracy is 
+produced as: Accuracy = (N −I −D −S) /N. For completeness, extra 
+information are presented. “Filename” indicates the corresponding 
+ﬁle in the dataset. “Predicted” indicates the  number of pre-  
+dicted gestures. The “AVERAGE” row shows the average of above 
+rows. The “TOTAL” row sums the above rows then computes the 
+accuracy, which is equal to concatenating all the ﬁlms together. 
+The results in Table 2 shows that the ﬁlm “014.mp4” has the 
+lowest accuracy among all the test ﬁlms. We analyzed this ﬁlm, 
+and found that at some frames, the CPM network failed to recog- 
+nize the parts of police, as shown in Fig. 13 . Figure (a) shows a bad 
+case where the CPM failed to recognize most of the parts, and the 
+LSTM produced a wrong result. Figure (b) shows a bad case where 
+the CPM failed to recognize the right arm of the police. Fortunately, 
+the recognized parts (body and left arm) provides enough evidence 
+for the LSTM to predict a correct label. Figure (c) shows a normal 
+case from 012.mp4. In this frame, the CPM correctly recognized all 
+the parts, and LSTM predicted a correct label. 
+A real-time recognition test (online test) is performed to vali- 
+date the online availability of our method. To acquire a stable re- 
+sult, we performed the online test 4 times in different places. The 
+image acquiring speed for a real-time scene is 65 ms per image, 
+so the frame rate keeps around 15 fps. The accuracy of real-time 
+recognition is shown in Table 4 . In the table, “Number” indicates 
+the sequence number of a test, and other notations are the same 
+with that of the Table 2 . The accuracy of our method under online 
+scene shows almost no different with the oﬄine test according to 
+Table 4 . 
+The total stage number T in CPM controls how many times 
+the conﬁdence maps are reﬁned before producing the result. 
+
+--- PAGE 10 ---
+J. He, C. Zhang and X. He et al. / Neurocomputing 390 (2020) 248–259 257 
+Fig. 13. Badcases where the CPM network failed to recognize parts 
+Table 4 
+Accuracy of online test. 
+Number Pred N S D I Accuracy 
+No.1 79 80 2 1 2 0.9375 
+No.2 67 62 2 5 0 0.8870 
+No.3 66 65 0 2 1 0.9538 
+No.4 123 121 1 4 2 0.9421 
+AVERAGE 83.75 82 1.25 3 1.25 0.9301 
+TOTAL 335 328 5 12 5 0.9329 
+Fig. 14. Comparison across each number of total stages. 
+According to [1] , adding more stages to the network results in bet- 
+ter part detection rate. However, each stage adds approximately 
+14ms latency to the prediction process. considering the trade-off
+between the recognition accuracy and the latency, see Fig. 14 , we 
+decide to add 3 stages into our model. 
+We implement some typical network architectures for the po- 
+lice gesture recognizing task. A comparison of the architecture 
+and accuracy between our method and other methods is listed in 
+Table 3 . 
+In Table 3 , top 4 architecture extracted skeletal data, while 
+other architectures use image features directly. The performance of 
+Fig. 15. Response speed comparison, gesture (1)–(4). 
+Fig. 16. Response speed comparison, gesture (5)–(8). 
+bidirectional LSTM in architecture no.2 is close to LSTM, but since 
+it needs to read information from future time points, the method 
+can only execute on off-line data instead of online data. Architec- 
+ture no.3 and no.4 use different connections than PKEN between 
+convolutional layers. To achieve similar accuracy, these 2 architec- 
+ture consume more times than PKEN. Architecture no.5 and no.6 
+classify the gestures from image features directly, which results in 
+lower accuracy. 
+The appearances of training labels are delayed to increase 
+the accuracy of model. However, this paper describes an online 
+method that needs to recognize gestures as soon as possible, so 
+the response speed must be in an acceptable range. To address this 
+problem, a comparison between the performance of human and 
+our method is presented as Figs. 15 and 16 . 
+Figs. 15 and 16 compare the average response speed of our 
+method with human. The response speed is deﬁned by the time 
+duration between the appearance of the original label and the ap- 
+pearance of the predicted label. In these ﬁgures, the horizontal 
+axes represent eight different gestures, the vertical axes represent 
+response speed by seconds. At the 0.00 second, the original labels 
+of gestures starts to appear. The green bars represent the response 
+speed of human. To acquire these data, videos in the test set of 
+the police gesture dataset are played at normal speed, and 8 sub- 
+jects with Chinese driving licences are asked to press a button as 
+soon as they recognized a gesture. For each gesture, the response 
+
+--- PAGE 11 ---
+258 J. He, C. Zhang and X. He et al. / Neurocomputing 390 (2020) 248–259 
+speed of a driver is computed as the time the button was pressed 
+minus the time the original label appeared. The ﬁnal human re- 
+sponse speed for each class of gesture is calculated as the average 
+response speed of test samples. The orange bars indicate the ap- 
+pearance timing of delayed labels when training, their length are 
+ﬁxed at 0.75. Ideally, the network is trained to show the class of 
+gestures after 750 milliseconds, so the response speeds for each 
+gestures should be 750 ms, as shown in orange bars. However, at 
+test time, the network actually takes more time to recognize each 
+gestures, and this increased duration is illustrated by the blue bars 
+in the ﬁgure. Therefore, the length of the orange bar plus that 
+of the blue bar, which is indicated by the number on the top of 
+the blue bar, shows the response time of our method. The vertical 
+black line centered at the top of blue and green bars indicates the 
+standard deviation of the corresponding data. 
+Figs. 15 and 16 show that generally, human consumes less time 
+to response a gesture than our method, and the method needs 
+even more time (blue bar) than the delayed duration (orange bar) 
+to recognize the gestures. But the method is more precise, it gives 
+signiﬁcantly less standard deviations than human. Generally speak- 
+ing, the speed gap between human and method is not huge (0.28 
+seconds at most), and sometimes human perform worse accord- 
+ing to the deviation. Also, in practice, it is expected for a driver to 
+response the police after he saw a whole gesture, which is a dura- 
+tion of at least 2 s. Therefore, the response time of our method is 
+within an acceptable range. 
+We shorten the CPM network to decrease the execution time 
+of each frame for real-time detection and recognition, which is an 
+optimization that does not relevant to the response time discussed 
+above. Theoretically, if the execution time of each frame became 
+longer, to keep the real-time performance, we can just decrease 
+the amount of frames per second to compensate. However, this 
+also decrease the spatial features received per second, which re- 
+sults in less reliable classiﬁcation outputs. Under the graphic card 
+environment of Nvidia GTX 1080 TI, our method runs at 17.2 fps 
+per second (we limited the speed at 15 fps for stability), receiving 
+15 frames of spatial features within a second. As a comparison, if 
+original CPM is applied, the whole program runs at 8.7 fps, which 
+receives signiﬁcantly less spatial features (8–9 frames per second) 
+when handling online tasks. Using ResNet as articulated pose ex- 
+tractor can further decrease this to 5.1 fps. The lack of frames can 
+ultimately cause more classiﬁcation errors to the online tasks. In 
+summary, our method manage to achieve real-time performance 
+with relatively more fps so as to keep a high accuracy when 
+working online. 
+7. Conclusion and future work 
+In this paper, we integrate Convolutional Pose Machine with 
+two kinds of handcrafted features: Relative Bone Length and An- 
+gle with Gravity, and adopt a LSTM network to capture the tem- 
+poral domain feature and recognize police gestures accurately. Our 
+method also provides an architecture that is able to perform online 
+police gesture recognition tasks with high accuracy. The method 
+extracts skeletal data from image by a modiﬁed CPM to decrease 
+the inﬂuence of background scenes. Then, it converts the skeletal 
+data to two kinds of handcrafted spatial features: Relative Bone 
+Length and Angle with Gravity to avoid the noises from absolute 
+positions. At last, it sends the sequence of spatial features to LSTM 
+network for the temporal features, and ﬁnally uses a dense con- 
+nected network to infer the class of gestures. 
+Future work will concentrate on recognizing traﬃc police ges- 
+tures in multi-person scenes, and separating the traﬃc police from 
+the crowd. This task includes recognizing multiple traﬃc police 
+attire, and picking all the parts that belong to the police from a 
+crowded scene. The dataset will be expanded as well to build the 
+recognition model. 
+Declaration of Competing Interest 
+We have no known competing ﬁnancial interests or personal 
+relationships that could have appeared to inﬂuence the work re- 
+ported in this paper. 
+References 
+[1] S.-E. Wei , V. Ramakrishna , T. Kanade , Y. Sheikh , Convolutional pose machines, 
+in: Proceedings of the IEEE Conference on Computer Vision and Pattern Recog- 
+nition, 2016, pp. 4724–4732 . 
+[2] S. Hochreiter , J. Schmidhuber , Long short-term memory, Neural Comput. 9 (8) 
+(1997) 1735–1780 . 
+[3] B. Wang , T. Yuan , Traﬃc police gesture recognition using accelerometer, in: 
+Proceedings of IEEE SENSORS Conference, Lecce, Italy, 2008, pp. 1080–1083 . 
+[4] T. Yuan , B. Wang , Accelerometer-based Chinese traﬃc police gesture recogni- 
+tion system, Chin. J. Electron. 19 (2) (2010) 270–274 . 
+[5] Z. Cai , F. Guo , Max-covering scheme for gesture recognition of Chinese traﬃc 
+police, Pattern Anal. Appl. 18 (2) (2015) 403–418 . 
+[6] F. Guo , J. Tang , Z. Cai , Automatic recognition of Chinese traﬃc police gesture 
+based on max-covering scheme, Adv. Inf. Sci. Serv. Sci. 5 (1) (2013) 428 . 
+[7] M. Eichner , V. Ferrari , Human pose co-estimation and applications, IEEE Trans. 
+Pattern Anal. Mach. Intell. 34 (11) (2012) 2282–2288 . 
+[8] M. Eichner , M. Marin-Jimenez , A. Zisserman , V. Ferrari , 2d articulated human 
+pose estimation and retrieval in (almost) unconstrained still images, Int. J. 
+Comput. Vis. 99 (2) (2012) 190–214 . 
+[9] H. Kang , C.W. Lee , K. Jung , Recognition-based gesture spotting in video games, 
+Pattern Recognit. Lett. 25 (15) (2004) 1701–1714 . 
+[10] Y. Song , D. Demirdjian , R. Davis , Tracking body and hands for gesture recog- 
+nition: natops aircraft handling signals database, in: Proceedings of 2011 IEEE 
+International Conference on Automatic Face & Gesture Recognition and Work- 
+shops, IEEE, 2011, pp. 500–506 . 
+[11] Z. Zhang , Microsoft kinect sensor and its effect, IEEE Multimed. 19 (2) (2012) 
+4–10 . 
+[12] F. Guo , J. Tang , X. Wang , Gesture recognition of traﬃc police based on static 
+and dynamic descriptor fusion, Multimed. Tools Appl. 76 (6) (2017) 8915–8936 . 
+[13] Q.K. Le , C.H. Pham , T.H. Le , Road traﬃc control gesture recognition using depth 
+images, IEIE Trans. Smart Process. Comput. 1 (1) (2012) 1–7 . 
+[14] Z. Zhou , S. Li , B. Sun , Extreme learning machine based hand posture recogni- 
+tion in color-depth image, in: Proceedings of Chinese Conference on Pattern 
+Recognition, Springer, 2014, pp. 276–285 . 
+[15] M.H. Memon , J.-P. Li , I. Memon , Q.A. Arain , Geo matching regions: multiple 
+regions of interests using content based image retrieval based on relative lo- 
+cations, Multimed. Tools Appl. 76 (14) (2017) 15377–15411 . 
+[16] I. Memon , L. Chen , A. Majid , M. Lv , I. Hussain , G. Chen ,T r a v e l recommendation 
+using geo-tagged photos in social media for tourist, Wirel. Pers. Commun. 80 
+(4) (2015) 1347–1362 . 
+[17] Y. Bengio , A. Courville , P. Vincent , Representation learning: a review and new 
+perspectives, IEEE Trans. Pattern Anal. Mach. Intell. 35 (8) (2013) 1798–1828 . 
+[18] Z. Cao , T. Simon , S.-E. Wei , Y. Sheikh , Realtime multi-person 2d pose estimation 
+using part aﬃnity ﬁelds, in: Proceedings of the IEEE Conference on Computer 
+Vision and Pattern Recognition, 2017, pp. 7291–7299 . 
+[19] D. Mehta , S. Sridhar , O. Sotnychenko , H. Rhodin , M. Shaﬁei , H.-P. Seidel , W. Xu , 
+D. Casas , C. Theobalt , Vnect: Real-time 3d human pose estimation with a single 
+rgb camera, ACM Trans. Graph. 36 (4) (2017) 44 . 
+[20] H. Bilen , B. Fernando , E. Gavves , A. Vedaldi , S. Gould , Dynamic image networks 
+for action recognition, in: Proceedings of the IEEE Conference on Computer 
+Vision and Pattern Recognition, 2016, pp. 3034–3042 . 
+[21] K. Soomro , A.R. Zamir , M. Shah , A dataset of 101 human action classes from 
+videos in the wild, Center for Research in Computer Vision (2012) . 
+[22] H. Kuehne , H. Jhuang , R. Stiefelhagen , T. Serre , Hmdb51: a large video database 
+for human motion recognition, in: High Performance Computing in Science 
+and Engineering, 12, Springer, 2013, pp. 571–582 . 
+[23] J. Donahue , L. Anne Hendricks , S. Guadarrama , M. Rohrbach , S. Venugopalan , 
+K. Saenko , T. Darrell , Long-term recurrent convolutional networks for visual 
+recognition and description, in: Proceedings of the IEEE Conference on Com- 
+puter Vision and Pattern Recognition, 2015, pp. 2625–2634 . 
+[24] B. Zhang , L. Wang , Z. Wang , Y. Qiao , H. Wang , Real-time action recognition 
+with enhanced motion vector cnns, in: Proceedings of the IEEE Conference on 
+Computer Vision and Pattern Recognition, 2016, pp. 2718–2726 . 
+[25] F. Zhu , L. Shao , J. Xie , Y. Fang ,F r o m handcrafted to learned representations for 
+human action recognition: a survey, Image Vis. Comput. 55 (2016) 42–52 . 
+[26] D. Wu , L. Shao , Leveraging hierarchical parametric networks for skeletal joints 
+based action segmentation and recognition, in: Proceedings of the IEEE Con- 
+ference on Computer Vision and Pattern Recognition, 2014, pp. 724–731 . 
+[27] Y. Du , W. Wang , L. Wang , Hierarchical recurrent neural network for skeleton 
+based action recognition, in: Proceedings of the IEEE Conference on Computer 
+Vision and Pattern Recognition, 2015, pp. 1110–1118 . 
+[28] B. Liu , H. Cai , Z. Ju , H. Liu , Rgb-d sensing based human action and interaction 
+analysis: a survey, Pattern Recognition 94 (2019) 1–12 . 
+
+--- PAGE 12 ---
+J. He, C. Zhang and X. He et al. / Neurocomputing 390 (2020) 248–259 259 
+[29] J.K. Aggarwal , L. Xia , Human activity recognition from 3d data: a review, Pat- 
+tern Recognit. Lett. 48 (2014) 70–80 . 
+[30] V. Argyriou , M. Petrou , S. Barsky , Photometric stereo with an arbitrary number 
+of illuminants, Comput. Vis. Image Underst. 114 (8) (2010) 887–900 . 
+[31] C. Szegedy , W. Liu , Y. Jia , P. Sermanet , S. Reed , D. Anguelov , D. Erhan , V. Van- 
+houcke , A. Rabinovich , Going deeper with convolutions, in: Proceedings of the 
+IEEE Conference on Computer vision and Pattern Recognition, 2015, pp. 1–9 . 
+[32] N. Srivastava , G. Hinton , A. Krizhevsky , I. Sutskever , R. Salakhutdinov ,D r o p o u t : 
+a simple way to prevent neural networks from overﬁtting, J. Mach. Learn. Res. 
+15 (1) (2014) 1929–1958 . 
+[33] J. Wu , H. Zheng , B. Zhao , Y. Li , B. Yan , R. Liang , W. Wang , S. Zhou , G. Lin , 
+Y. Fu , et al. , Large-scale datasets for going deeper in image understanding, 
+2019 IEEE International Conference on Multimedia and Expo (ICME), 2019, 
+pp. 1480–1485 . 
+[34] L. Pigou , A. Van Den Oord , S. Dieleman , M. Van Herreweghe , J. Dambre , Beyond 
+temporal pooling: Recurrence and temporal convolutions for gesture recogni- 
+tion in video, Int. J. Comput. Vis. 126 (2-4) (2018) 430–439 . 
+[35] K. He , X. Zhang , S. Ren , J. Sun , Deep residual learning for image recognition, in: 
+Proceedings of the IEEE Conference on Computer Vision and Pattern Recogni- 
+tion, 2016, pp. 770–778 . 
+[36] G. Huang , Z. Liu , L. Van Der Maaten , K.Q. Weinberger , Densely connected con- 
+volutional networks., in: Proceedings of CVPR, 1, 2017, p. 3 . 
+[37] S. Ji , W. Xu , M. Yang , K. Yu , 3d convolutional neural networks for human action 
+recognition, IEEE Trans. Pattern Anal. Mach. Intell. 35 (1) (2013) 221–231 . 
+[38] S. Xingjian , Z. Chen , H. Wang , D.-Y. Yeung , W.-K. Wong , W.-c. Woo , Convolu- 
+tional lstm network: a machine learning approach for precipitation nowcast- 
+ing, in: Proceedings of Advances in Neural Information Processing Systems, 
+2015, pp. 802–810 . 
+[39] K. He , X. Zhang , S. Ren , J. Sun , Delving deep into rectiﬁers: Surpassing hu- 
+man-level performance on imagenet classiﬁcation, in: Proceedings of the IEEE 
+International Conference on Computer Vision, 2015, pp. 1026–1034 . 
+[40] D.P. Kingma, J. Ba, Adam: A Method for Stochastic Optimization, arXiv: 1412. 
+6980 (2014). 
+[41] X. Glorot , Y. Bengio , Understanding the diﬃculty of training deep feedforward 
+neural networks, in: Proceedings of the Thirteenth International Conference on 
+Artiﬁcial intelligence and Statistics, 2010, pp. 249–256 . 
+[42] S.-F. Wong , R. Cipolla , Continuous gesture recognition using a sparse Bayesian 
+classiﬁer, in: Proceedings of 18th International Conference on Pattern Recogni- 
+tion, ICPR, 1, IEEE, 2006, pp. 1084–1087 . 
+Jian He received the M.S. degree in Computer Software 
+from Northwest University, Xin, China in 20 0 0, and 
+received the Ph.D. degree in Computer Software from Xin 
+Jiaotong University, Xin, China 2005. He is an associate 
+professor at the School of Software Engineering, Beijing 
+University of Technology. Besides, he is also an adjunct re- 
+searcher with Beijing Advanced Innovation Center for Fu- 
+ture Internet Technology, China. His research interests in- 
+clude Ubiquitous Computing, Embedded System, and HCI. 
+Cheng Zhang He received the B.S. degree in Software En- 
+gineering from Beijing University of Technology in 2016. 
+He is a graduate student at the Information Department, 
+Beijing University of Technology. His research interests in- 
+clude Computer Vision and Deep Learning. 
+Xinlin He is an undergraduate student at The University 
+of British Columbia studying Computer Science. She is in- 
+terested in data analytics, operational research, and com- 
+puter graphics. 
+Ruihai Dong is an Assistant Professor with the School 
+of Computer Science in University College Dublin. His re- 
+search interests lie broadly in Machine Learning and Deep 
+Learning, and their applications in recommender systems 
+and ﬁnance. 
+
