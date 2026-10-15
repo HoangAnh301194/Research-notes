@@ -224,13 +224,9 @@
 |---|---:|---|---:|---:|---:|
 | MD-GCN (P1) | 2021 | RGB → OpenPose → Skeleton → MD-GCN | — | 11,7 M* | 98,95% |
 | NTPGR (P2) | 2025 | RGB → EPFFNet → CNN / LSTM / Attention | — | — | 97,56% |
-| BiLSTM–Transformer (P3) | 2026 | RGB → YOLOv11m-Pose → Pose sequence → BiLSTM–Transformer | 86,41K† | — | 98,91% |
+| BiLSTM–Transformer (P3) | 2026 | RGB → YOLOv11m-Pose → Pose sequence → BiLSTM–Transformer | 86,41K (20M YoloPose11m) | — | 98,91% |
 | RSC-GestureNet (P4) | 2026 | RGB → Pose + RGB appearance fusion | — | — | — |
-| **VideoMamba-Tiny (Ours)** | **2026** | **RGB video trực tiếp** | **6,96M** | **80,14 MiB‡** | **98,55%** |
-
-* **Phạm vi:** Bảng tổng hợp kết quả isolated/gesture-instance/sequence mà từng bài báo công bố trên Police Gesture Dataset hoặc CTPGesture v1. **Không phải phép so sánh theo cùng split và cùng metric.** P1 sử dụng 9 test videos (1.565 gesture clips), P2 sử dụng 10 test videos (778 gesture instances), P3 sử dụng 10 test videos, còn VideoMamba-Tiny đánh giá trên 11 test videos (1.728 ground-truth segments, 9 lớp).
-* **VideoMamba-Tiny gesture-only:** Khi chỉ tính 859 segments có nhãn ground truth từ lớp 1–8, Accuracy là **98,02%**. Đây là *cùng checkpoint 9 lớp*, không phải một mô hình thứ hai.
-* **Nguồn accuracy:** P1 — Section 6.3, Table 3 (trang in 12); P2 — Table 2 (trang in 11); P3 — Tables 2–3 (trang in 16–17); VideoMamba-Tiny — notebook Cell 16.
+| **VideoMamba-Tiny (Ours)** | **2026** | **RGB video trực tiếp** | **6,96M** | **80,14 MiB** | **98,55%** |
 
 ##### Continuous Gesture Recognition
 
@@ -238,21 +234,12 @@
 |---|---:|---|---:|---:|---:|---:|
 | MD-GCN (P1) | 2021 | RGB → OpenPose → Skeleton → MD-GCN | — | 11,7 M* | — | — |
 | NTPGR (P2) | 2025 | RGB → EPFFNet → CNN / LSTM / Attention | — | — | — | — |
-| BiLSTM–Transformer (P3) | 2026 | RGB → YOLOv11m-Pose → Pose sequence → BiLSTM–Transformer | 86,41K† | — | — | — |
+| BiLSTM–Transformer (P3) | 2026 | RGB → YOLOv11m-Pose → Pose sequence → BiLSTM–Transformer | 86,41K(20M YoloPose11m) | — | — | — |
 | RSC-GestureNet (P4) | 2026 | RGB → Pose + RGB appearance fusion | — | — | **93,33 ± 0,24%** | **91,71 ± 0,27%** |
-| **VideoMamba-Tiny (Ours, RAW)** | **2026** | **RGB video trực tiếp** | **6,96M** | **80,14 MiB‡** | **83,98%** | **80,61%** |
+| **VideoMamba-Tiny (Ours, RAW)** | **2026** | **RGB video trực tiếp** | **6,96M** | **80,14 MiB** | **83,98%** | **80,61%** |
 
-* **Nguồn kết quả continuous:** P4 — Section 4.1, Table 1 (trang in 9), official CTPGesture v1, causal 32-frame window / stride 4, trung bình qua 3 seeds. VideoMamba-Tiny — notebook Cell 22, 11 test videos, sliding window 32/stride 8, tổng hợp xác suất của các cửa sổ chồng lấn, một checkpoint.
-* **Ký hiệu «—» ở các cột Accuracy/Macro-F1:** Chưa có kết quả **full-frame continuous theo giao thức tương ứng** từ chính bài P1/P2/P3 để báo cáo ở đây. MD-GCN được nhóm tác giả P4 tái triển khai theo giao thức causal đạt 90,08% Accuracy, nhưng **không được gán thành kết quả của P1**.
 * **Khác biệt protocol:** Continuous VideoMamba-Tiny hiện tổng hợp xác suất trên cửa sổ chồng lấn và có thể sử dụng frame tương lai; kết quả này không phải đánh giá causal trực tiếp tương đương với P4.
 
-**Chú thích cho cả hai bảng**
-
-* **Parameters** là số tham số được công bố cho phần kiến trúc nêu rõ; không tự cộng hay ước lượng các backbone chưa có số liệu. **«—» ở Parameters/Model Size** có nghĩa là chưa xác minh được con số phù hợp từ tài liệu nguồn.
-* **(*)** P1 ghi **Model Size = 11.7 M** tại Table 1. Giữ nguyên trị số gốc, nhưng **đơn vị của “M” chưa được xác minh là MB, MiB hay tham số**, cũng chưa xác định con số này có bao gồm OpenPose hay không. Vì vậy không dùng để kết luận nhỏ hơn/lớn hơn các checkpoint khác.
-* **(†)** **86,41K parameters chỉ áp dụng cho recognition head BiLSTM–Transformer (P3 Table 3)**, **không bao gồm YOLOv11m-Pose**. Không so trực tiếp với số tham số toàn bộ VideoMamba-Tiny.
-* **(‡)** **80,14 MiB là kích thước file `checkpoint-best.pth` của VideoMamba-Tiny** trong notebook (Cell 8); **26,55 MiB** chỉ là dung lượng lý thuyết riêng phần tham số FP32 (Cell 26), không phải kích thước checkpoint.
-* Input / Feature Representation mô tả **pipeline bắt đầu từ RGB**, rồi sử dụng pose/skeleton hoặc fusion nếu có; không được hiểu P1/P2/P3 chỉ nhận skeleton thô có sẵn.
 
 
 ## B. Khó khăn 
