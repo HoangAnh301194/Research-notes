@@ -222,11 +222,11 @@
 
 | Method | Year | Input / Feature Representation | Parameters — theo thành phần pipeline | GFLOPs — theo thành phần | Model Size / Checkpoint | Accuracy |
 |---|---:|---|---|---|---|---:|
-| MD-GCN (P1) | 2021 | RGB → OpenPose → GSE → MD-GCN | **OpenPose:** NR; **GSE:** NR; **MD-GCN:** NR | OpenPose: NR; MD-GCN: NR; **full pipeline: NR** | **11,7 M [P1, Table 1]** — đơn vị chưa được giải thích rõ | **98,95%** |
-| NTPGR (P2) | 2025 | RGB → keyframe selection → EPFFNet → MSNet (CNN + LSTM + attention) | **EPFFNet:** NR; **MSNet / CNN, LSTM, attention:** NR | EPFFNet: NR; MSNet: NR; **full pipeline: NR** | NR | **97,56%** |
-| BiLSTM–Transformer (P3) | 2026 | RGB → YOLO11m-Pose → 40-frame pose sequence → BiLSTM–Transformer | **YOLO11m-Pose: ≈20,9M [U]**; **BiLSTM–Transformer head: 86,41K [P3]**; tổng danh nghĩa **≈20,99M [ước tính]** | **YOLO11m-Pose: 71,5 GFLOPs/ảnh 640×640 [U]**; head: NR; **full 40-frame pipeline: NR** | NR (toàn pipeline) | **98,91%** |
-| RSC-GestureNet (P4) | 2026 | RGB → MediaPipe Pose (BlazePose Lite) + RGB appearance descriptor → RSC causal/fusion | **MediaPipe Pose detector/landmarker: NR**; **RSC full-fusion network: 815.270 [code]**; tổng cấu hình cuối: NR | MediaPipe Pose: NR; RSC fusion: NR; **full pipeline: NR** | RSC full-fusion checkpoint **≈3,15 MiB [repo]**; không gồm MediaPipe Pose | — |
-| **VideoMamba-Tiny (Ours)** | **2026** | **RGB video → VideoMamba-Tiny** | **Toàn bộ VideoMamba-Tiny: 6.959.817 (≈6,96M)**; không có pose estimator riêng | **29,026 GFLOPs/clip** (16×224×224, custom estimate) | **80,14 MiB** (`checkpoint-best.pth`) | **98,55%** |
+| MD-GCN (P1) | 2021 | RGB → OpenPose → GSE → MD-GCN | NR | NR | **11,7 M [P1, Table 1]** | **98,95%** |
+| NTPGR (P2) | 2025 | RGB → keyframe selection → EPFFNet → MSNet (CNN + LSTM + attention) | NR | NR | NR | **97,56%** |
+| BiLSTM–Transformer (P3) | 2026 | RGB → YOLO11m-Pose → 40-frame pose sequence → BiLSTM–Transformer | **YOLO11m-Pose: ≈20,9M [U]**; **BiLSTM–Transformer head: 86,41K [P3]** | **YOLO11m-Pose: 71,5 GFLOPs/ảnh 640×640 [U]** | NR | **98,91%** |
+| RSC-GestureNet (P4) | 2026 | RGB → MediaPipe Pose (BlazePose Lite) + RGB appearance descriptor → RSC causal/fusion | **RSC full-fusion network: 815.270 [code]** | NR | RSC full-fusion checkpoint **≈3,15 MiB [repo]** | — |
+| **VideoMamba-Tiny (Ours)** | **2026** | **RGB video → VideoMamba-Tiny** | **6.959.817 (≈6,96M)** | **29,026 GFLOPs/clip** (16×224×224, custom estimate) | **80,14 MiB** (`checkpoint-best.pth`) | **98,55%** |
 
 **Cơ sở đánh giá isolated:** P1 dùng 9 test videos và gesture clips đã cắt; P2 dùng 10 videos / 778 gesture instances; P3 dùng 10 test videos với pose sequences; VideoMamba-Tiny dùng 11 videos / 1.728 GT segments (9 lớp). **Không phải kết quả cùng split/protocol.** Với cùng checkpoint VideoMamba-Tiny, Accuracy *gesture-only* trên 859 segments GT lớp 1–8 là **98,02%**, không phải mô hình thứ hai.
 
@@ -236,15 +236,17 @@
 
 | Method | Year | Input / Feature Representation | Parameters — theo thành phần pipeline | GFLOPs — theo thành phần | Model Size / Checkpoint | Accuracy | Macro-F1 |
 |---|---:|---|---|---|---|---:|---:|
-| MD-GCN (P1) | 2021 | RGB → OpenPose → GSE → MD-GCN | **OpenPose:** NR; **GSE:** NR; **MD-GCN:** NR | OpenPose: NR; MD-GCN: NR; **full pipeline: NR** | **11,7 M [P1, Table 1]** — đơn vị chưa rõ | — | — |
-| NTPGR (P2) | 2025 | RGB → keyframe selection → EPFFNet → MSNet (CNN + LSTM + attention) | **EPFFNet:** NR; **MSNet / CNN, LSTM, attention:** NR | EPFFNet: NR; MSNet: NR; **full pipeline: NR** | NR | — | — |
-| BiLSTM–Transformer (P3) | 2026 | RGB → YOLO11m-Pose → 40-frame pose sequence → BiLSTM–Transformer | **YOLO11m-Pose: ≈20,9M [U]**; **head: 86,41K [P3]**; tổng danh nghĩa **≈20,99M [ước tính]** | **YOLO11m-Pose: 71,5 GFLOPs/ảnh 640×640 [U]**; head: NR; **full 40-frame pipeline: NR** | NR (toàn pipeline) | — | — |
-| RSC-GestureNet (P4) | 2026 | RGB → MediaPipe Pose (BlazePose Lite) + RGB appearance descriptor → RSC causal/fusion | **MediaPipe Pose detector/landmarker: NR**; **RSC full-fusion network: 815.270 [code]**; tổng cấu hình cuối: NR | MediaPipe Pose: NR; RSC fusion: NR; **full pipeline: NR** | RSC full-fusion checkpoint **≈3,15 MiB [repo]**; không gồm MediaPipe Pose | **93,33 ± 0,24%** | **91,71 ± 0,27%** |
-| **VideoMamba-Tiny (Ours, RAW)** | **2026** | **RGB video → VideoMamba-Tiny** | **Toàn bộ VideoMamba-Tiny: 6.959.817 (≈6,96M)** | **29,026 GFLOPs/clip** (16×224×224, custom estimate) | **80,14 MiB** (`checkpoint-best.pth`) | **83,98%** | **80,61%** |
+| MD-GCN (P1) | 2021 | RGB → OpenPose → GSE → MD-GCN | NR | NR | **11,7 M [P1, Table 1]** | — | — |
+| NTPGR (P2) | 2025 | RGB → keyframe selection → EPFFNet → MSNet (CNN + LSTM + attention) | NR | NR | NR | — | — |
+| BiLSTM–Transformer (P3) | 2026 | RGB → YOLO11m-Pose → 40-frame pose sequence → BiLSTM–Transformer | **YOLO11m-Pose: ≈20,9M [U]**; **BiLSTM–Transformer head: 86,41K [P3]** | **YOLO11m-Pose: 71,5 GFLOPs/ảnh 640×640 [U]** | NR | — | — |
+| RSC-GestureNet (P4) | 2026 | RGB → MediaPipe Pose (BlazePose Lite) + RGB appearance descriptor → RSC causal/fusion | **RSC full-fusion network: 815.270 [code]** | NR | RSC full-fusion checkpoint **≈3,15 MiB [repo]** | **93,33 ± 0,24%** | **91,71 ± 0,27%** |
+| **VideoMamba-Tiny (Ours, RAW)** | **2026** | **RGB video → VideoMamba-Tiny** | **6.959.817 (≈6,96M)** | **29,026 GFLOPs/clip** (16×224×224, custom estimate) | **80,14 MiB** (`checkpoint-best.pth`) | **83,98%** | **80,61%** |
 
 **Nguồn Accuracy/Macro-F1 continuous:** P4, [Section 4.1 / Table 1](2608.02200v1.pdf) (CTPGesture v1, causal 32-frame window, stride 4, 3 seeds); VideoMamba-Tiny, notebook Cell 22 (11 test videos, 32-frame window, stride 8, overlapping-probability frame aggregation, 1 checkpoint). Dấu **—** ở kết quả P1–P3 chỉ **không có kết quả đánh giá full-frame continuous tương ứng do các bài gốc báo cáo**; không có nghĩa phương pháp không xử lý chuỗi thời gian.
 
 **Chú giải Parameters / GFLOPs / Model Size (áp dụng cho cả hai bảng):**
+
+- **Cách trình bày:** Nếu một cột không có thông số xác minh được thì chỉ ghi **NR**, không liệt kê các thành phần chưa có số liệu. Nếu mới có thông số của một phần pipeline, chỉ ghi phần đã xác minh và nêu giới hạn ở chú thích.
 
 - **NR = Not Reported / Not Reliably Established:** không có số liệu đủ căn cứ cho **đúng thành phần và đúng cấu hình pipeline**; tuyệt đối không diễn giải là 0. **— = không có kết quả đánh giá thuộc loại bài toán trong bảng**.
 - **[P1]** Tác giả ghi **`Model Size = 11.7 M`** cho MD-GCN với dilation rates 1, 2, 4 (Table 1); bài không định nghĩa rõ `M` trong bảng và không xác nhận chi phí OpenPose. Không đổi 11,7 M thành số parameters.
