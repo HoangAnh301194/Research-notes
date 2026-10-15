@@ -189,8 +189,9 @@ và đối chiếu các công trình liên quan\par}
 
 % ---------- 05: Setup ----------
 \begin{frame}{1. Cấu hình thử nghiệm được lưu trong notebook}
-\vspace{0.06cm}
-\renewcommand{\arraystretch}{1.34}
+\vspace{0.02cm}
+{\fontsize{8.2}{9.5}\selectfont
+\renewcommand{\arraystretch}{1.16}
 \begin{tabularx}{\linewidth}{@{}L{3.9cm}Y L{3cm}@{}}
 \toprule
 \textbf{Thành phần}&\textbf{Thiết lập}&\textbf{Ghi chú}\\\midrule
@@ -204,7 +205,8 @@ Inference GPU & NVIDIA Tesla T4 & \texttt{native\_cuda}\\
 Evaluation batch & 4 & Isolated và continuous\\
 Runtime benchmark batch & 1 & Đo model-only latency\\\bottomrule
 \end{tabularx}
-\vspace{0.17cm}
+}
+\vspace{0.08cm}
 \srcn{Notebook Cells 6, 8, 10, 26. Training hyperparameters cần bổ sung từ notebook huấn luyện.}
 \end{frame}
 
