@@ -1,3 +1,6 @@
+
+
+
 # Báo cáo nghiên cứu ngày 15/10/2026 
 
 ## A. Công việc đã làm 
@@ -112,15 +115,6 @@
 | Parameter storage (FP32) | 26,55 MiB |
 | **Estimated computation** | **29,026 GFLOPs/clip** |  |
 | Checkpoint file size | 80,14 MiB | |
-| Mean/median/p95 latency | **50,65 / 50,79 / 51,00 ms/clip** | Batch=1; 5 warm-up + 20 runs; CUDA events, native_cuda, Tesla T4 |
-| Model throughput | **19,74 clips/s** | 1000/mean_ms, model-only, batch=1 |
-| Additional peak GPU allocation | 56,58 MiB | |
-| Continuous mean model latency | **48,17 ms/window** |
-| Continuous mean wall time | **115,35 ms/window** |
-| Effective processing throughput | **8,67 windows/s** |
-| Total decode/preprocessing | 495,91 s |
-| Total model forward | 404,23 s |
-| Total wall time | 968,01 s |
 
 
 
@@ -148,7 +142,6 @@
 * **Kết quả công bố (*Section 6.3, Table 3, trang in 12/14*):**
   * **MD-GCN (đề xuất):** **98,95%** Accuracy.
   * **Baselines RGB (tác giả P1 tự re-evaluate):** Hara/3D ResNet: **81,16%** | Tran/C3D: **87,12%** | Qiu/P3D: **92,21%**.
-* **Lưu ý đối chứng:** Các chỉ số của Hara / Tran / Qiu là kết quả **re-evaluation trong P1**, không phải kết quả công bố trong các bài kiến trúc gốc.
 * **Nguồn & Tài liệu:** [MDPI Electronics (2021)](https://www.mdpi.com/2079-9292/10/5/551) | PDF: [electronics-10-00551-v2.pdf](electronics-10-00551-v2.pdf).
 
 ---
@@ -255,3 +248,7 @@
 - Tiếp tục upload dữ liệu lên kaggle và triển khai huấn luyện trên dataset **EgoEvGesture**
 - Tiếp tục khảo sát các bài báo có dùng bộ dataset đang thực nghiệm 
 - Em xin phép nhận hướng đi tiếp theo từ Thầy ạ 
+- tổng kết lại kết quả 
+- tìm các bài báo có dùng bộ CTPGesture SOTA trong 3 năm gần nhất , ưu tiên journal ( khoảng 5 method SOTA) 
+- Show ra error keyframe   ( tạo txt lỗi và show visual)
+- Tổng hợp lại bảng ( parameter )-
