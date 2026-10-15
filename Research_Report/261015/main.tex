@@ -12,7 +12,7 @@
 \usepackage{ragged2e}
 \usepackage{tcolorbox}
 
-\graphicspath{{assets/}}
+\graphicspath{{./}{assets/}}
 
 \definecolor{PTITRed}{RGB}{166,25,31}
 \definecolor{Ink}{RGB}{42,44,52}
@@ -68,591 +68,494 @@
 \newcolumntype{C}[1]{>{\Centering\arraybackslash}p{#1}}
 \newcolumntype{Y}{>{\RaggedRight\arraybackslash}X}
 
+
+\usepackage{tikz}
+\usetikzlibrary{positioning}
+\newcommand{\srcn}[1]{{\fontsize{7.0}{8.2}\selectfont\color{Muted}Nguồn: #1}}
+\newcommand{\kpi}[2]{\begin{tcolorbox}[panel]\centering{\color{PTITRed}\bfseries\fontsize{18}{19}\selectfont #1\par}\vspace{0.04cm}\smallnote{#2}\end{tcolorbox}}
+
 \begin{document}
 
-% Slide 1
-\begin{frame}
-  \centering
-  \vspace{-0.20cm}
-  {\fontsize{10.2}{12}\selectfont Báo cáo nghiên cứu khoa học\par}
-  \vspace{0.40cm}
-  {\color{PTITRed}\bfseries\fontsize{12.4}{14.5}\selectfont HỌC VIỆN CÔNG NGHỆ BƯU CHÍNH VIỄN THÔNG\par}
-  \vspace{-0.02cm}
-  {\bfseries\fontsize{8.9}{10.3}\selectfont Khoa Kĩ thuật Điện tử 1\par}
-  \vspace{0.26cm}
-  {\color{PTITRed}\rule{0.70\paperwidth}{0.55pt}\par}
-  \vspace{0.20cm}
-  {\color{PTITRed}\bfseries\fontsize{15.2}{17.2}\selectfont MAMBA\par}
-  \vspace{0.02cm}
-  {\bfseries\fontsize{11.3}{13.1}\selectfont
-    MÔ HÌNH HÓA CHUỖI THỜI GIAN TUYẾN TÍNH\par
-    VỚI KHÔNG GIAN TRẠNG THÁI CHỌN LỌC\par}
-  \vspace{0.16cm}
-  {\fontsize{8.1}{9.4}\selectfont Phân tích bài báo \textit{Mamba: Linear-Time Sequence Modeling with Selective State Spaces}\par}
-  \vspace{0.28cm}
-  {\fontsize{8.0}{9.4}\selectfont
-  \begin{tabular}{@{}l@{\hspace{0.48cm}}l@{}}
-    \textcolor{PTITRed}{\bfseries Sinh viên thực hiện:} & Nguyễn Hữu Hoàng Anh\\[0.10cm]
-    \textcolor{PTITRed}{\bfseries Hướng nghiên cứu:} & Action Recognition trên thiết bị biên\\[0.10cm]
-    \textcolor{PTITRed}{\bfseries Tác giả bài báo:} & Albert Gu, Tri Dao\\[0.10cm]
-    \textcolor{PTITRed}{\bfseries Mã bài báo:} & arXiv:2312.00752\\
-  \end{tabular}}\par
-  \vspace{0.22cm}
-  {\color{Muted}\fontsize{7.4}{8.6}\selectfont Hà Nội, tháng 07 năm 2026\par}
+% ---------- 01: Cover ----------
+\begin{frame}[plain]
+\centering\vspace{0.12cm}
+{\color{PTITRed}\bfseries\fontsize{12.2}{14}\selectfont HỌC VIỆN CÔNG NGHỆ BƯU CHÍNH VIỄN THÔNG\par}
+\vspace{0.08cm}{\fontsize{8.5}{10}\selectfont Khoa Kĩ thuật Điện tử 1\par}
+\vspace{0.20cm}{\color{PTITRed}\rule{0.76\linewidth}{0.75pt}\par}
+\vspace{0.36cm}
+{\color{PTITRed}\bfseries\fontsize{17}{20}\selectfont BÁO CÁO TIẾN ĐỘ NGHIÊN CỨU\par}
+\vspace{0.24cm}
+{\bfseries\fontsize{14.5}{17}\selectfont VideoMamba-Tiny trên CTPGesture v1\par}
+\vspace{0.10cm}
+{\fontsize{9.8}{11.5}\selectfont Isolated Gesture Classification, Continuous Recognition\\
+và đối chiếu các công trình liên quan\par}
+\vspace{0.48cm}
+{\fontsize{8.4}{10}\selectfont
+\begin{tabular}{@{}l@{\hspace{0.5cm}}l@{}}
+\textcolor{PTITRed}{\bfseries Sinh viên:}& Nguyễn Hữu Hoàng Anh\\[0.1cm]
+\textcolor{PTITRed}{\bfseries Lĩnh vực:}& Video Action / Gesture Recognition\\[0.1cm]
+\textcolor{PTITRed}{\bfseries Đầu vào:}& RGB video, CTPGesture v1 (9 lớp)
+\end{tabular}\par}
+\vfill
+{\color{Muted}\fontsize{7.9}{9}\selectfont Hà Nội, ngày 15 tháng 10 năm 2026\par}
 \end{frame}
 
-% Slide 2
-\begin{frame}{Nội dung trình bày}
-  \vspace{0.24cm}
-  {\fontsize{10.0}{11.8}\selectfont
-  \renewcommand{\arraystretch}{1.72}
-  \begin{tabularx}{\linewidth}{@{}C{0.72cm}L{3.65cm}Y@{}}
-    \numlabel{1} & \textcolor{PTITRed}{\bfseries Bối cảnh nghiên cứu} & Hạn chế của dense attention và yêu cầu mô hình hóa chuỗi dài.\\
-    \numlabel{2} & \textcolor{PTITRed}{\bfseries Nền tảng Selective SSM} & SSM, giả thiết LTI, cơ chế chọn lọc và thuật toán S4--S6.\\
-    \numlabel{3} & \textcolor{PTITRed}{\bfseries Triển khai hiệu quả} & Selective scan tối ưu phần cứng và kiến trúc Mamba.\\
-    \numlabel{4} & \textcolor{PTITRed}{\bfseries Bằng chứng thực nghiệm} & Bài toán tổng hợp, kết quả đa miền và hiệu quả tính toán.\\
-    \numlabel{5} & \textcolor{PTITRed}{\bfseries Liên hệ và triển khai NCKH} & Mức độ phù hợp, pipeline YOLO pose--TensorRT và kết quả bước đầu trên Jetson.\\
-  \end{tabularx}}
+% ---------- 02: Outline ----------
+\begin{frame}{Nội dung báo cáo}
+\vspace{0.18cm}
+\renewcommand{\arraystretch}{1.68}
+\begin{tabularx}{\linewidth}{@{}C{0.7cm}L{3.55cm}Y@{}}
+\toprule
+\textbf{STT}&\textbf{Nhóm nội dung}&\textbf{Trọng tâm}\\\midrule
+1&\textcolor{PTITRed}{\bfseries Thiết lập}&Dataset, checkpoint, đánh giá isolated / continuous.\\
+2&\textcolor{PTITRed}{\bfseries Thực nghiệm}&Accuracy, Macro-F1, confusion matrices, post-processing.\\
+3&\textcolor{PTITRed}{\bfseries Hiệu năng}&Parameters, estimated GFLOPs, latency, throughput.\\
+4&\textcolor{PTITRed}{\bfseries Bốn bài đối chứng}&Venue, phương pháp, bằng chứng Table/Page, khác protocol.\\
+5&\textcolor{PTITRed}{\bfseries Hướng tiếp theo}&Fair causal benchmark và phân đoạn chuỗi hành động.\\\bottomrule
+\end{tabularx}
+\vspace{0.23cm}
+\begin{tcolorbox}[keypanel]\centering
+\bfseries Phân biệt kết quả nhận dạng đoạn đã biết ranh giới và kết quả nhận dạng trên toàn bộ video.
+\end{tcolorbox}
 \end{frame}
 
-% Slide 3
-\begin{frame}{1. Bối cảnh nghiên cứu: Hai cơ chế lưu trữ ngữ cảnh}
-  \vspace{0.02cm}
-  \begin{columns}[T,onlytextwidth]
-    \begin{column}{0.48\textwidth}
-      \heading{SSM--LTI: nén lịch sử vào trạng thái ẩn}
-      \vspace{0.05cm}
-      \centering
-      \includegraphics[height=3.48cm]{lssl_recurrent_principle_crop.png}\par
-      \vspace{0.04cm}
-      {\fontsize{8.0}{9.2}\selectfont
-        \(\displaystyle h_t=\bar A h_{t-1}+\bar Bx_t,
-        \qquad y_t=Ch_t+Dx_t\)\par}
-      \vspace{0.08cm}
-      \begin{itemize}\tightitems
-        \item \smallnote{\(h_t\in\mathbb{R}^{N}\) có kích thước cố định, tóm tắt toàn bộ lịch sử \(x_{1:t}\); các token cũ không được giữ riêng.}
-        \item \smallnote{\(\bar A,\bar B,C,D\) không đổi theo \(t\): hệ tuyến tính bất biến theo thời gian; tính toán tăng theo \(O(L)\).}
-      \end{itemize}
-    \end{column}
-    \begin{column}{0.48\textwidth}
-      \heading{Self-attention: lưu KV của toàn bộ token}
-      \vspace{0.05cm}
-      \centering
-      \includegraphics[width=5.05cm]{self_attention_tokens_crop.png}\par
-      \vspace{0.04cm}
-      {\fontsize{7.6}{8.8}\selectfont
-        \(\displaystyle \mathrm{KVCache}_t=
-        [(K_1,V_1),\ldots,(K_t,V_t)]\)\par
-        \vspace{0.06cm}
-        \(\displaystyle y_t=
-        \operatorname{softmax}\!\left(\frac{Q_tK_{1:t}^{\mathsf T}}{\sqrt{d_k}}\right)V_{1:t}\)\par}
-      \vspace{0.08cm}
-      \begin{itemize}\tightitems
-        \item \smallnote{Query hiện tại \(Q_t\) so khớp với mọi \(K_i\), sau đó tổng hợp thông tin từ toàn bộ \(V_i\).}
-        \item \smallnote{KV cache tăng theo độ dài ngữ cảnh; khi huấn luyện, \(QK^{\mathsf T}\in\mathbb{R}^{L\times L}\) tạo chi phí \(O(L^2)\).}
-      \end{itemize}
-    \end{column}
-  \end{columns}
+% ---------- 03: Dataset ----------
+\begin{frame}{1. Dataset CTPGesture v1 và kiểm kê test set}
+\begin{columns}[T,onlytextwidth]
+\begin{column}{0.50\textwidth}
+\begin{tcolorbox}[titlepanel,title=Dữ liệu đầu vào,height=4.7cm]
+\begin{itemize}\tightitems
+\item Video RGB, nhãn \textbf{theo từng frame}.
+\item \textbf{9 lớp}: 8 lệnh giao thông và No Gesture.
+\item Frame rate: \textbf{15 FPS}.
+\item Test audit trong notebook: \textbf{11 video}.
+\item Tổng cộng \textbf{67.356 frames}.
+\end{itemize}
+\end{tcolorbox}
+\end{column}
+\begin{column}{0.48\textwidth}
+\begin{tcolorbox}[titlepanel,title=Đơn vị đánh giá,height=4.7cm]
+\centering\vspace{0.08cm}
+{\fontsize{19}{21}\selectfont\color{PTITRed}\bfseries 1.728\par}
+\smallnote{Temporal segments}\vspace{0.19cm}
+{\fontsize{15}{17}\selectfont\bfseries 869 / 859\par}
+\smallnote{No Gesture / Gesture}\vspace{0.19cm}
+\smallnote{\textbf{Test video IDs}:\\002, 004, 008, 010, 012, 014, 016, 018, 101, 102, 104}
+\end{tcolorbox}
+\end{column}
+\end{columns}
+\vspace{0.08cm}\srcn{Notebook Cell 10: OFFICIAL CTPGesture TEST SPLIT.}
 \end{frame}
 
-% Slide 4
-\begin{frame}{1. Bối cảnh nghiên cứu: Hạn chế và mục tiêu}
-  \vspace{0.05cm}
-  \begin{columns}[T,onlytextwidth]
-    \begin{column}{0.322\textwidth}
-      \begin{tcolorbox}[equalpanel]
-        \heading{Transformer}
-        \vspace{0.12cm}
-        \begin{itemize}\tightitems
-          \item Self-attention cho phép tương tác trực tiếp giữa mọi cặp token.
-          \item Dense attention có thời gian và bộ nhớ huấn luyện tăng theo \(O(L^2)\).
-          \item Suy luận tự hồi quy cần KV cache tăng theo độ dài ngữ cảnh.
-        \end{itemize}
-      \end{tcolorbox}
-    \end{column}
-    \begin{column}{0.322\textwidth}
-      \begin{tcolorbox}[equalpanel]
-        \heading{Mô hình dưới bậc hai}
-        \vspace{0.12cm}
-        \begin{itemize}\tightitems
-          \item RNN, linear attention, convolution và structured SSM giảm chi phí theo \(L\).
-          \item Các mô hình trước Mamba chưa đạt chất lượng attention trên ngôn ngữ.
-          \item Nguyên nhân chính được bài báo xác định: thiếu suy luận phụ thuộc nội dung.
-        \end{itemize}
-      \end{tcolorbox}
-    \end{column}
-    \begin{column}{0.322\textwidth}
-      \begin{tcolorbox}[equalpanel]
-        \heading{Mục tiêu của Mamba}
-        \vspace{0.12cm}
-        \begin{itemize}\tightitems
-          \item Bổ sung khả năng chọn thông tin cần ghi nhớ hoặc loại bỏ theo input.
-          \item Duy trì thời gian tính toán tuyến tính theo chiều dài chuỗi.
-          \item Xây dựng backbone chung cho dữ liệu rời rạc và liên tục.
-        \end{itemize}
-      \end{tcolorbox}
-    \end{column}
-  \end{columns}
-  \vspace{0.20cm}
-  \begin{tcolorbox}[keypanel]
-    \centering\bfseries Bài toán đặt ra: nén ngữ cảnh dài vào trạng thái hữu hạn, đồng thời duy trì khả năng chọn lọc thông tin theo nội dung.
-  \end{tcolorbox}
+% ---------- 04: Pipeline ----------
+\begin{frame}{1. Pipeline VideoMamba-Tiny và hai giao thức}
+\vspace{0.08cm}
+\begin{center}
+\begin{tikzpicture}[every node/.style={font=\fontsize{8}{9}\selectfont}]
+\node[draw=Line,fill=Panel,rounded corners=2pt,minimum height=0.82cm,text width=2.3cm,align=center] (a) {RGB video\\15 FPS};
+\node[draw=Line,fill=Panel,rounded corners=2pt,minimum height=0.82cm,text width=2.3cm,align=center,right=0.55cm of a] (b) {16 sampled frames\\$224\times224$};
+\node[draw=Line,fill=Panel,rounded corners=2pt,minimum height=0.82cm,text width=2.3cm,align=center,right=0.55cm of b] (c) {VideoMamba-Tiny\\Selective SSM};
+\node[draw=Line,fill=Panel,rounded corners=2pt,minimum height=0.82cm,text width=2.3cm,align=center,right=0.55cm of c] (d) {Class probabilities\\9 labels};
+\draw[-stealth,thick,PTITRed] (a)--(b);\draw[-stealth,thick,PTITRed] (b)--(c);\draw[-stealth,thick,PTITRed] (c)--(d);
+\end{tikzpicture}
+\end{center}
+\vspace{0.18cm}
+\begin{columns}[T,onlytextwidth]
+\begin{column}{0.49\textwidth}
+\begin{tcolorbox}[panel]
+\heading{A. Isolated classification}
+\begin{itemize}\tightitems
+\item Ground-truth boundaries tạo clip.
+\item Lấy 16 frame đều trong mỗi segment.
+\item 1 dự đoán / segment.
+\item Báo cáo Accuracy và Macro-F1.
+\end{itemize}
+\end{tcolorbox}
+\end{column}
+\begin{column}{0.49\textwidth}
+\begin{tcolorbox}[panel]
+\heading{B. Continuous recognition}
+\begin{itemize}\tightitems
+\item Window \textbf{32 frames}, step \textbf{8 frames}.
+\item Overlap \textbf{75\%}; sample 16 frames.
+\item Tổng hợp xác suất các cửa sổ lên frame.
+\item Không phải phép dự đoán causal thuần.
+\end{itemize}
+\end{tcolorbox}
+\end{column}
+\end{columns}
+\vspace{0.05cm}\srcn{Notebook Cells 13--18, 22.}
 \end{frame}
 
-% Slide 4
-\begin{frame}{2. Tổng quan Selective State Space Model}
-  \vspace{-0.04cm}
-  \centering
-  \includegraphics[width=0.78\linewidth]{figure_1_overview.png}
-  \vspace{0.02cm}
-  \begin{columns}[T,onlytextwidth]
-    \begin{column}{0.49\textwidth}
-      \begin{tcolorbox}[titlepanel,title=Selection trong mô hình trạng thái]
-        \smallnote{Input \(x_t\) sinh \(B_t,C_t,\Delta_t\). State \(h_t\) nén lịch sử; \(B_t\) điều khiển ghi, \(C_t\) điều khiển đọc, \(\Delta_tA\) điều khiển chuyển trạng thái.}
-      \end{tcolorbox}
-    \end{column}
-    \begin{column}{0.49\textwidth}
-      \begin{tcolorbox}[titlepanel,title=Thiết kế phù hợp phần cứng]
-        \smallnote{State expansion được tạo và xử lý trong SRAM; HBM chỉ lưu input, tham số cần thiết và output. Mục tiêu là giảm memory I/O của recurrence.}
-      \end{tcolorbox}
-    \end{column}
-  \end{columns}
+% ---------- 05: Setup ----------
+\begin{frame}{1. Cấu hình thử nghiệm được lưu trong notebook}
+\vspace{0.06cm}
+\renewcommand{\arraystretch}{1.34}
+\begin{tabularx}{\linewidth}{@{}L{3.9cm}Y L{3cm}@{}}
+\toprule
+\textbf{Thành phần}&\textbf{Thiết lập}&\textbf{Ghi chú}\\\midrule
+Model & VideoMamba-Tiny & 24 layers\\
+Weights & \texttt{checkpoint-best.pth} & Epoch 17\\
+Input tensor & $[B,3,16,224,224]$ & FP32\\
+Số lớp & 9 & No Gesture + 8 gestures\\
+Window / step & 32 / 8 frames & 2,13 s / 0,53 s @15 FPS\\
+Sample offsets & $0,2,4,\ldots,30$ & 16 frames mỗi window\\
+Inference GPU & NVIDIA Tesla T4 & \texttt{native\_cuda}\\
+Evaluation batch & 4 & Isolated và continuous\\
+Runtime benchmark batch & 1 & Đo model-only latency\\\bottomrule
+\end{tabularx}
+\vspace{0.17cm}
+\srcn{Notebook Cells 6, 8, 10, 26. Training hyperparameters cần bổ sung từ notebook huấn luyện.}
 \end{frame}
 
-% Slide 5
-\begin{frame}{3. Nền tảng SSM: Từ hệ liên tục đến chuỗi rời rạc}
-  \vspace{0.02cm}
-  \begin{columns}[T,onlytextwidth]
-    \begin{column}{0.48\textwidth}
-      \begin{tcolorbox}[titlepanel,title=Vì sao cần rời rạc hóa?]
-        \smallnote{SSM xuất phát từ hệ động lực liên tục theo thời gian. Trong mạng nơ-ron, dữ liệu được đưa vào theo từng token hoặc frame, nên state phải được cập nhật tại các bước rời rạc.}
-        \vspace{0.05cm}
-        \centering
-        \(\displaystyle \mathbf h'(t)=\mathbf A\mathbf h(t)+\mathbf Bx(t),
-        \quad y(t)=\mathbf C\mathbf h(t)\)\par
-        \vspace{0.06cm}
-        {\color{PTITRed}\bfseries\(\Downarrow\quad\) lấy mẫu với bước \(\Delta\)\par}
-        \vspace{0.06cm}
-        \(\displaystyle \mathbf h_t=\overline{\mathbf A}\mathbf h_{t-1}
-        +\overline{\mathbf B}x_t,
-        \quad y_t=\mathbf C\mathbf h_t\)\par
-        \vspace{0.08cm}
-        \tinytext{Với zero-order hold: \(\overline{\mathbf A}=\exp(\Delta\mathbf A)\); \(\overline{\mathbf B}\) tích lũy tác động của input trong khoảng thời gian \(\Delta\).}
-      \end{tcolorbox}
-    \end{column}
-    \begin{column}{0.50\textwidth}
-      \begin{tcolorbox}[titlepanel,title=Hai cách tính sau khi rời rạc hóa]
-        \smallnote{Khi \(\Delta,\mathbf A,\mathbf B,\mathbf C\) cố định theo timestep, cùng một hệ rời rạc có hai cách triển khai tương đương:}
-        \vspace{0.14cm}
-        \renewcommand{\arraystretch}{1.28}
-        \begin{tabularx}{\linewidth}{@{}L{1.80cm}Y C{1.55cm}@{}}
-          \toprule
-          \textbf{Dạng} & \textbf{Vai trò} & \textbf{Chi phí}\\
-          \midrule
-          Recurrence & Suy luận tuần tự, state cố định. & \(O(1)\)/bước\\
-          Convolution & Huấn luyện song song bằng kernel toàn cục. & \(O(L\log L)\)\\
-          \bottomrule
-        \end{tabularx}
-      \end{tcolorbox}
-    \end{column}
-  \end{columns}
-  \vspace{0.18cm}
-  \begin{tcolorbox}[keypanel]
-    \textbf{Ý nghĩa của rời rạc hóa:} chuyển động lực học liên tục thành recurrence chạy một lần tại mỗi token/frame. \(\Delta\) xác định lượng thời gian liên tục tương ứng với một bước chuỗi; giả thiết LTI giữ quy tắc chuyển state không đổi giữa các bước.
-  \end{tcolorbox}
+% ---------- 06: Isolated ----------
+\begin{frame}{2. Isolated Classification -- kết quả 9 lớp}
+\begin{columns}[T,onlytextwidth]
+\begin{column}{0.51\textwidth}
+\begin{columns}[T,onlytextwidth]
+\begin{column}{0.49\textwidth}\kpi{98,55\%}{Top-1 Accuracy\\1.728 segments}\end{column}
+\begin{column}{0.49\textwidth}\kpi{97,96\%}{Macro-F1\\9 classes}\end{column}
+\end{columns}
+\vspace{0.13cm}
+\begin{tcolorbox}[panel]
+\heading{Gesture-only (GT lớp 1--8)}
+\begin{itemize}\tightitems
+\item \textbf{859} gesture segments.
+\item Accuracy: \textbf{98,02\%}.
+\item Macro-F1: \textbf{98,24\%}.
+\item Balanced Accuracy (9 lớp): 98,12\%.
+\end{itemize}
+\end{tcolorbox}
+\smallnote{\textbf{Diễn giải:} Phân loại chính xác cao khi \emph{đã biết trước} ranh giới cử chỉ.}
+\end{column}
+\begin{column}{0.46\textwidth}
+\centering
+\IfFileExists{cell17_output5.png}{\includegraphics[height=5.05cm,keepaspectratio]{cell17_output5.png}}{\begin{tcolorbox}[panel]Thiếu ảnh confusion matrix\end{tcolorbox}}
+\tinytext{Confusion matrix -- isolated}
+\end{column}
+\end{columns}
+\vspace{0.04cm}\srcn{Notebook Cell 16, ảnh \texttt{cell17\_output5.png}.}
 \end{frame}
 
-% Slide 6
-\begin{frame}{4. Selection như một cơ chế nén ngữ cảnh}
-  \vspace{-0.08cm}
-  \centering
-  \includegraphics[width=0.97\linewidth]{figure_2_synthetic_tasks_wide.png}\par
-  \vspace{0.08cm}
-  \begin{columns}[T,onlytextwidth]
-    \begin{column}{0.49\textwidth}
-      \begin{tcolorbox}[titlepanel,title=Selective Copying,height=1.72cm,valign=top]
-        \smallnote{Vị trí token cần nhớ thay đổi giữa các token nhiễu. State phải chọn thông tin để ghi theo nội dung; LTI/convolution cố định không thể chỉ dựa vào khoảng cách.}
-      \end{tcolorbox}
-    \end{column}
-    \begin{column}{0.49\textwidth}
-      \begin{tcolorbox}[titlepanel,title=Induction Heads,height=1.72cm,valign=top]
-        \smallnote{Khi cặp \([A,B]\) đã xuất hiện, gặp lại \(A\) phải truy hồi \(B\). Bài toán kiểm tra associative recall và khả năng truy xuất thông tin trong ngữ cảnh dài.}
-      \end{tcolorbox}
-    \end{column}
-  \end{columns}
+% ---------- 07: Continuous ----------
+\begin{frame}{2. Continuous Recognition -- RAW, toàn bộ test video}
+\begin{columns}[T,onlytextwidth]
+\begin{column}{0.51\textwidth}
+\begin{columns}[T,onlytextwidth]
+\begin{column}{0.49\textwidth}\kpi{83,98\%}{Global Frame Accuracy}\end{column}
+\begin{column}{0.49\textwidth}\kpi{80,61\%}{Global Macro-F1}\end{column}
+\end{columns}
+\vspace{0.13cm}
+\begin{tcolorbox}[panel]
+\heading{Thiết lập và temporal metrics}
+\begin{itemize}\tightitems
+\item 11 videos / \textbf{67.356 frames}.
+\item \textbf{8.392} windows (32/8).
+\item Mean Gesture Recall: \textbf{94,80\%}.
+\item Mean Temporal Overlap: \textbf{65,32\%}.
+\end{itemize}
+\end{tcolorbox}
+\smallnote{\textbf{Vấn đề:} Hiệu năng giảm ở bài toán liên tục, cần kiểm tra transitions và temporal boundaries.}
+\end{column}
+\begin{column}{0.46\textwidth}
+\centering
+\IfFileExists{cell23_output5.png}{\includegraphics[height=5.05cm,keepaspectratio]{cell23_output5.png}}{\begin{tcolorbox}[panel]Thiếu ảnh confusion matrix\end{tcolorbox}}
+\tinytext{Confusion matrix -- continuous RAW}
+\end{column}
+\end{columns}
+\vspace{0.04cm}\srcn{Notebook Cell 22, ảnh \texttt{cell23\_output5.png}.}
 \end{frame}
 
-% Slide 7
-\begin{frame}{5. Thuật toán S4 và Selective SSM S6}
-  \vspace{0.00cm}
-  \begin{columns}[T,onlytextwidth]
-    \begin{column}{0.49\textwidth}
-      \begin{tcolorbox}[titlepanel,title=Algorithm 1: SSM (S4)]
-        {\fontsize{7.4}{8.8}\selectfont
-        \renewcommand{\arraystretch}{1.20}
-        \begin{tabularx}{\linewidth}{@{}L{1.55cm}Y@{}}
-          \textbf{Input} & \(x:(B,L,D)\)\\
-          \textbf{Parameters} & \(A:(D,N),\ B:(D,N),\ C:(D,N),\ \Delta:(D)\)\\
-          \midrule
-          \textbf{Discretize} & \(\overline A,\overline B:(D,N)\leftarrow \mathrm{discretize}(\Delta,A,B)\)\\
-          \textbf{Transform} & \(y:(B,L,D)\leftarrow \mathrm{SSM}(\overline A,\overline B,C)(x)\)\\
-          \textbf{Return} & \(y\)\\
-        \end{tabularx}}
-      \end{tcolorbox}
-      \vspace{0.14cm}
-      \begin{tcolorbox}[panel]
-        \smallnote{Tham số không có chiều \(L\); lớp là LTI và có thể tính bằng global convolution.}
-      \end{tcolorbox}
-    \end{column}
-    \begin{column}{0.49\textwidth}
-      \begin{tcolorbox}[titlepanel,title=Algorithm 2: SSM + Selection (S6)]
-        {\fontsize{7.4}{8.8}\selectfont
-        \renewcommand{\arraystretch}{1.20}
-        \begin{tabularx}{\linewidth}{@{}L{1.55cm}Y@{}}
-          \textbf{Input} & \(x:(B,L,D)\)\\
-          \textbf{Parameter} & \(A:(D,N)\)\\
-          \textbf{Selection} & \(B:(B,L,N)\leftarrow s_B(x)\)\\
-          & \(C:(B,L,N)\leftarrow s_C(x)\)\\
-          & \(\Delta:(B,L,D)\leftarrow \tau_\Delta(\mathrm{Param}+s_\Delta(x))\)\\
-          \midrule
-          \textbf{Discretize} & \(\overline A,\overline B:(B,L,D,N)\)\\
-          \textbf{Transform} & \(y:(B,L,D)\leftarrow \mathrm{SSM}(\overline A,\overline B,C)(x)\)\\
-        \end{tabularx}}
-      \end{tcolorbox}
-      \vspace{0.14cm}
-      \begin{tcolorbox}[panel]
-        \smallnote{Tham số có chiều \(L\); lớp trở thành time-varying và phải được tính bằng recurrence/scan.}
-      \end{tcolorbox}
-    \end{column}
-  \end{columns}
+% ---------- 08: Postprocessing ----------
+\begin{frame}{2. Hậu xử lí -- hiệu quả và giới hạn suy luận}
+\vspace{0.04cm}
+\renewcommand{\arraystretch}{1.44}
+\begin{tabularx}{\linewidth}{@{}L{4cm}C{2.35cm}C{2.35cm}Y@{}}
+\toprule
+\textbf{Cấu hình}&\textbf{Frame Acc.}&\textbf{Macro-F1}&\textbf{Temporal overlap}\\\midrule
+RAW, không hậu xử lí & 83,98\% & 80,61\% & 65,32\%\\
+R3, loại đoạn ngắn dưới 1 s & \textbf{83,99\%} & \textbf{80,63\%} & \textbf{65,90\%}\\
+S1, smoothing & 83,81\% & 79,71\% & 64,85\%\\\bottomrule
+\end{tabularx}
+\vspace{0.20cm}
+\begin{columns}[T,onlytextwidth]
+\begin{column}{0.49\textwidth}
+\begin{tcolorbox}[panel]
+\heading{Quan sát}
+\begin{itemize}\tightitems
+\item R3 tăng overlap 0,58 điểm \%.
+\item Frame Accuracy tăng rất nhỏ.
+\item Probability smoothing làm giảm Macro-F1.
+\end{itemize}
+\end{tcolorbox}
+\end{column}
+\begin{column}{0.49\textwidth}
+\begin{tcolorbox}[keypanel]
+\heading{Giới hạn methodology}
+\smallnote{R3 được chọn khi thử các cấu hình trên \textbf{test set}. Do vậy R3 chỉ có ý nghĩa thăm dò; báo cáo \textbf{RAW} là kết quả chính cho đến khi tune trên validation.}
+\end{tcolorbox}
+\end{column}
+\end{columns}
+\vspace{0.04cm}\srcn{Notebook Cell 24: post-processing ablation.}
 \end{frame}
 
-% Slide 8
-\begin{frame}{6. Cơ chế vận hành của Selective SSM}
-  \vspace{0.00cm}
-  \begin{columns}[T,onlytextwidth]
-    \begin{column}{0.48\textwidth}
-      \begin{tcolorbox}[titlepanel,title=Vai trò của \(\Delta_t\)]
-        \smallnote{Với \(N=1\), \(A=-1\), \(B=1\), selective SSM rút gọn thành recurrence có gate:}
-        \[g_t=\sigma(\mathrm{Linear}(x_t))\]
-        \[h_t=(1-g_t)h_{t-1}+g_tx_t\]
-        \begin{itemize}\tightitems
-          \item \(\Delta_t\) nhỏ: duy trì state, giảm ảnh hưởng của input hiện tại.
-          \item \(\Delta_t\) lớn: tập trung vào input hiện tại, làm mờ state trước đó.
-        \end{itemize}
-      \end{tcolorbox}
-    \end{column}
-    \begin{column}{0.50\textwidth}
-      \begin{tcolorbox}[titlepanel,title={Vai trò của \(B_t\), \(C_t\) và \(A\)}]
-        \begin{itemize}\tightitems
-          \item \(B_t\) điều khiển cách input \(x_t\) được ghi vào state \(h_t\).
-          \item \(C_t\) điều khiển phần thông tin trong state được đọc thành output \(y_t\).
-          \item \(A\) không cần selective vì selectivity đã đi vào \(\overline A_t=\exp(\Delta_tA)\).
-          \item Kết hợp \(\Delta_t,B_t,C_t\) cho phép context filtering và boundary resetting.
-        \end{itemize}
-      \end{tcolorbox}
-      \vspace{0.14cm}
-      \begin{tcolorbox}[keypanel]
-        \smallnote{Selection không chỉ là phép nhân gate trong kiến trúc; nó trực tiếp thay đổi động lực học lan truyền state dọc chiều thời gian.}
-      \end{tcolorbox}
-    \end{column}
-  \end{columns}
+% ---------- 09: Complexity ----------
+\begin{frame}{3. Model Complexity và Runtime (NVIDIA Tesla T4)}
+\vspace{0.01cm}
+\begin{columns}[T,onlytextwidth]
+\begin{column}{0.24\textwidth}\kpi{6,96M}{Parameters}\end{column}
+\begin{column}{0.24\textwidth}\kpi{29,03}{Estimated GFLOPs/clip}\end{column}
+\begin{column}{0.24\textwidth}\kpi{50,65}{ms/clip, batch 1}\end{column}
+\begin{column}{0.24\textwidth}\kpi{19,74}{clips/s, batch 1}\end{column}
+\end{columns}
+\vspace{0.09cm}
+\renewcommand{\arraystretch}{1.24}
+\begin{tabularx}{\linewidth}{@{}L{3.9cm}X L{2.6cm}@{}}
+\toprule
+\textbf{Phép đo}&\textbf{Kết quả}&\textbf{Điều kiện}\\\midrule
+Mean / median / p95 latency & 50,65 / 50,79 / 51,00 ms & Batch=1, FP32\\
+Continuous model forward & 48,17 ms/window & Batch=4\\
+Full-test wall time & 968,01 s / 8.392 windows & 11 videos\\
+Effective throughput & 8,67 windows/s & Full evaluation loop\\
+Extra GPU allocation & 56,58 MiB & Không phải peak VRAM tổng\\\bottomrule
+\end{tabularx}
+\vspace{0.10cm}
+\srcn{Notebook Cells 22, 26. 29,03 GFLOPs là \textbf{ước lượng custom counter}, cần kiểm tra quy ước MAC/FLOP.}
 \end{frame}
 
-% Slide 9
-\begin{frame}{7. Thuật toán selective scan tối ưu phần cứng}
-  \vspace{0.00cm}
-  \begin{columns}[T,onlytextwidth]
-    \begin{column}{0.35\textwidth}
-      \begin{tcolorbox}[titlepanel,title=Thách thức triển khai]
-        \begin{itemize}\tightitems
-          \item Selection phá vỡ dạng global convolution của S4.
-          \item Recurrence mở rộng state thành tensor \((B,L,D,N)\).
-          \item Materialize state trong HBM tạo chi phí memory I/O lớn.
-          \item Recurrence cần được song song hóa để khai thác GPU.
-        \end{itemize}
-      \end{tcolorbox}
-      \vspace{0.14cm}
-      \begin{tcolorbox}[panel]
-        \smallnote{Mục tiêu triển khai: giữ tensor mở rộng trong SRAM và chỉ ghi output \((B,L,D)\) về HBM.}
-      \end{tcolorbox}
-    \end{column}
-    \begin{column}{0.63\textwidth}
-      \begin{tcolorbox}[titlepanel,title=Thiết kế của bài báo]
-        {\fontsize{7.6}{9.0}\selectfont
-        \renewcommand{\arraystretch}{1.22}
-        \begin{tabularx}{\linewidth}{@{}L{2.00cm}Y L{1.85cm}@{}}
-          \toprule
-          \textbf{Kỹ thuật} & \textbf{Cách thực hiện} & \textbf{Tác động}\\
-          \midrule
-          Kernel fusion & Fuse discretization, scan và projection \(C_t\) trong một GPU kernel; state expansion nằm trong SRAM. & Giảm đọc/ghi HBM.\\
-          Parallel scan & Dùng toán tử kết hợp để tổ chức recurrence theo cây song song. & Công việc \(O(L)\), khai thác GPU.\\
-          Recomputation & Tính lại state trong backward thay vì lưu toàn bộ activation. & Giảm bộ nhớ huấn luyện.\\
-          \bottomrule
-        \end{tabularx}}
-      \end{tcolorbox}
-    \end{column}
-  \end{columns}
+% ---------- 10: Realtime ----------
+\begin{frame}{3. Giải thích số đo latency và khả năng real-time}
+\begin{columns}[T,onlytextwidth]
+\begin{column}{0.49\textwidth}
+\begin{tcolorbox}[titlepanel,title=Những gì đã đo,height=4.5cm]
+\begin{itemize}\tightitems
+\item \textbf{50,65 ms}: chạy 1 clip / model forward, FP32, Tesla T4.
+\item \textbf{8,67 windows/s}: throughput của phép đánh giá offline, có decode.
+\item 1 window gồm 32 frames (2,13 s ở 15 FPS).
+\item Bước dịch window: 8 frames (0,53 s).
+\end{itemize}
+\end{tcolorbox}
+\end{column}
+\begin{column}{0.49\textwidth}
+\begin{tcolorbox}[titlepanel,title=Những gì chưa đo,height=4.5cm]
+\begin{itemize}\tightitems
+\item End-to-end latency trên luồng camera.
+\item Tốc độ và bộ nhớ trên Jetson/thiết bị biên.
+\item Delay xuất lệnh causal theo frame.
+\item Tổng peak GPU memory và mean$\pm$std qua nhiều seeds.
+\end{itemize}
+\end{tcolorbox}
+\end{column}
+\end{columns}
+\vspace{0.10cm}
+\begin{tcolorbox}[keypanel]\centering
+\smallnote{\textbf{Không được suy ra 19,74 clips/s là 19,74 camera FPS.} Cách gán xác suất từ cửa sổ chồng lấn có thể dùng frame tương lai với một số frame đích.}
+\end{tcolorbox}
 \end{frame}
 
-% Slide 10
-\begin{frame}{8. Kiến trúc Mamba}
-  \vspace{-0.02cm}
-  \centering
-  \includegraphics[width=0.78\linewidth]{figure_3_architecture.png}
-  \vspace{0.02cm}
-  \begin{columns}[T,onlytextwidth]
-    \begin{column}{0.32\textwidth}
-      \begin{tcolorbox}[panel]
-        \textbf{Nhánh biến đổi chuỗi}\par
-        \smallnote{Linear projection \(\rightarrow\) short Conv1D \(\rightarrow\) SiLU \(\rightarrow\) selective SSM.}
-      \end{tcolorbox}
-    \end{column}
-    \begin{column}{0.32\textwidth}
-      \begin{tcolorbox}[panel]
-        \textbf{Nhánh điều biến}\par
-        \smallnote{Linear projection \(\rightarrow\) SiLU; nhân theo phần tử với đầu ra nhánh SSM.}
-      \end{tcolorbox}
-    \end{column}
-    \begin{column}{0.32\textwidth}
-      \begin{tcolorbox}[panel]
-        \textbf{Block đồng nhất}\par
-        \smallnote{Output projection và residual; không cần xen kẽ attention block với MLP block.}
-      \end{tcolorbox}
-    \end{column}
-  \end{columns}
-  \vspace{0.00cm}
-  \tinytext{Mamba kết hợp H3-style sequence transformation và gated MLP thành một block duy nhất; expansion factor mặc định \(E=2\), state dimension thường dùng \(N=16\).}
+% ---------- 11: Literature venues ----------
+\begin{frame}{4. Bốn công trình đối chứng: nơi công bố}
+\vspace{0.07cm}
+\renewcommand{\arraystretch}{1.55}
+\begin{tabularx}{\linewidth}{@{}C{0.54cm}L{3.95cm}L{3.4cm}Y@{}}
+\toprule
+\textbf{ID}&\textbf{Bài báo}&\textbf{Venue / Năm}&\textbf{Ranking / trạng thái}\\\midrule
+P1&Xiong et al. -- MD-GCN&Electronics, 2021&JCR 2025 Q2 (Engineering, EEE)\\
+P2&Xiao et al. -- NTPGR&Scientific Reports, 2025&JCR 2025 Q1 (Multidisciplinary)\\
+P3&Zhang et al. -- BiLSTM--Transformer&Electronics, 2026&JCR 2025 Q2 (Engineering, EEE)\\
+P4&Li et al. -- RSC-GestureNet&arXiv preprint, 2026&Không gán quartile/CORE\\\bottomrule
+\end{tabularx}
+\vspace{0.16cm}
+\begin{tcolorbox}[keypanel]
+\smallnote{Quartile áp dụng cho \textbf{tạp chí} trong một \textbf{ngành và năm cụ thể}, không phản ánh mức trích dẫn của bài báo. Thông tin PRCV Oral của P4 do tác giả tự ghi, chưa đối chiếu proceedings.}
+\end{tcolorbox}
+\vspace{0.05cm}\srcn{Bốn PDF trong thư mục 261015; Electronics Journal Statistics (MDPI), số JCR 2025.}
 \end{frame}
 
-% Slide 11
-\begin{frame}{9. Bằng chứng trên các bài toán tổng hợp}
-  \vspace{0.00cm}
-  \begin{columns}[T,onlytextwidth]
-    \begin{column}{0.42\textwidth}
-      \begin{tcolorbox}[titlepanel,title=Selective Copying]
-        \renewcommand{\arraystretch}{1.18}
-        \begin{tabularx}{\linewidth}{@{}Y L{1.15cm}R{0.90cm}@{}}
-          \toprule
-          \textbf{Architecture} & \textbf{Layer} & \textbf{Acc.}\\
-          \midrule
-          No gate & S4 & 18.3\\
-          H3 & S4 & 57.0\\
-          H3 & Hyena & 30.1\\
-          H3 & S6 & 99.7\\
-          \textbf{Mamba} & \textbf{S6} & \textbf{99.8}\\
-          \bottomrule
-        \end{tabularx}
-      \end{tcolorbox}
-      \vspace{0.14cm}
-      \begin{tcolorbox}[panel]
-        \smallnote{Kết quả tách biệt ảnh hưởng của architectural gating và selection: thay S4 bằng S6 tạo cải thiện quyết định.}
-      \end{tcolorbox}
-    \end{column}
-    \begin{column}{0.56\textwidth}
-      \centering
-      \includegraphics[width=\linewidth]{figure_2_induction_heads.png}
-      \vspace{0.04cm}
-      \smallnote{Mô hình huấn luyện tại \(L=256\). Mamba duy trì accuracy gần hoàn hảo tới \(L=2^{20}\), trong khi H3, Hyena và các biến thể attention suy giảm hoặc bị giới hạn bộ nhớ.}
-    \end{column}
-  \end{columns}
+% ---------- 12: Methods P1/P2 ----------
+\begin{frame}{4. Phương pháp đối chứng: Xiong (2021) và Xiao (2025)}
+\begin{columns}[T,onlytextwidth]
+\begin{column}{0.49\textwidth}
+\begin{tcolorbox}[titlepanel,title=P1 -- MD-GCN (2021),height=5.45cm]
+\smallnote{\textbf{Input / Model:} Gesture Skeleton Extractor rồi Multichannel Dilated Graph CNN, học quan hệ khớp theo không gian và thời gian.}
+\vspace{0.18cm}
+\smallnote{\textbf{Published:} MD-GCN \textbf{98,95\%}; các baseline RGB P3D \textbf{92,21\%}, C3D \textbf{87,12\%}.}
+\vspace{0.18cm}
+\smallnote{\textbf{Vị trí:} Section 6.1 (11 video train, 9 video test); \textbf{Table 3, trang 12} (Accuracy).}
+\vspace{0.18cm}
+\smallnote{\textbf{Lưu ý:} C3D/P3D là kết quả P1 đánh giá lại, không phải kết quả dataset trong bài C3D/P3D gốc.}
+\end{tcolorbox}
+\end{column}
+\begin{column}{0.49\textwidth}
+\begin{tcolorbox}[titlepanel,title=P2 -- NTPGR (2025),height=5.45cm]
+\smallnote{\textbf{Input / Model:} EPFFNet lấy skeleton; MSNet kết hợp CNN, LSTM và temporal/channel attention.}
+\vspace{0.18cm}
+\smallnote{\textbf{Published:} \textbf{97,56\% Accuracy}; 759/778 cử chỉ nhận dạng đúng; response time 0,76 s.}
+\vspace{0.18cm}
+\smallnote{\textbf{Vị trí:} \textbf{Table 2, trang 11}; Tables 3--4, trang 13--14.}
+\vspace{0.18cm}
+\smallnote{\textbf{Lưu ý:} 10 test videos / 778 gesture instances; không đồng nhất split 11 videos của notebook.}
+\end{tcolorbox}
+\end{column}
+\end{columns}
+\vspace{0.05cm}\srcn{P1: electronics-10-00551-v2.pdf; P2: s41598-025-02833-y.pdf.}
 \end{frame}
 
-% Slide 12
-\begin{frame}{10. So sánh Mamba và các kiến trúc khác}
-  \vspace{0.04cm}
-  \renewcommand{\arraystretch}{1.38}
-  \begin{tabularx}{\linewidth}{@{}L{2.15cm}L{3.15cm}Y L{3.20cm}@{}}
-    \toprule
-    \textbf{Miền dữ liệu} & \textbf{Thiết lập chính} & \textbf{Kết quả của Mamba} & \textbf{Ý nghĩa kiến trúc}\\
-    \midrule
-    Language modeling & The Pile; mô hình tới 2.8B tham số & Mamba-2.8B đạt average 63.3 trên 6 benchmark, vượt Pythia-2.8B và RWKV-3B. & Selection khắc phục điểm yếu của LTI SSM trên token rời rạc.\\
-    DNA & HG38; context từ \(2^{10}\) tới \(2^{20}\) & Perplexity tiếp tục cải thiện tới khoảng một triệu base pair; vượt HyenaDNA theo context. & State chọn lọc khai thác ngữ cảnh rất dài thay vì tích lũy nhiễu.\\
-    Audio & YouTubeMix và SC09 waveform & Pretraining cải thiện tới gần một triệu sample; FID SC09 đạt 0.67 ở mô hình 24.3M. & Mamba vẫn hiệu quả trên modality liên tục, nhưng tồn tại đánh đổi LTI--selective.\\
-    \bottomrule
-  \end{tabularx}
-  \vspace{0.22cm}
-  \begin{tcolorbox}[keypanel]
-    \centering Đối với video, các kết quả này chỉ chứng minh năng lực backbone chuỗi tổng quát; bài báo chưa đánh giá trực tiếp action recognition hoặc triển khai edge.
-  \end{tcolorbox}
+% ---------- 13: Methods P3/P4 ----------
+\begin{frame}{4. Phương pháp đối chứng: Zhang (2026) và Li (2026)}
+\begin{columns}[T,onlytextwidth]
+\begin{column}{0.49\textwidth}
+\begin{tcolorbox}[titlepanel,title=P3 -- BiLSTM--Transformer (2026),height=5.45cm]
+\smallnote{\textbf{Input / Model:} YOLOv11m-Pose (17 keypoints), chuỗi \textbf{40 frames}, BiLSTM kết hợp Transformer.}
+\vspace{0.18cm}
+\smallnote{\textbf{Published:} \textbf{98,91\% Accuracy}, F1=98,91\%.}
+\vspace{0.18cm}
+\smallnote{\textbf{Vị trí:} Table 1 (test 10 videos); \textbf{Tables 2--4, trang 16--19}.}
+\vspace{0.18cm}
+\smallnote{\textbf{Cảnh báo:} Table 3 ghi BiLSTM 96,48\%, đoạn diễn giải không nhất quán; thời gian suy luận bỏ qua chi phí pose extractor.}
+\end{tcolorbox}
+\end{column}
+\begin{column}{0.49\textwidth}
+\begin{tcolorbox}[titlepanel,title=P4 -- RSC-GestureNet (2026),height=5.45cm]
+\smallnote{\textbf{Input / Model:} Reliability-aware pose features, graph reasoning, pose--RGB fusion và causal temporal recognition.}
+\vspace{0.18cm}
+\smallnote{\textbf{Published:} \textbf{93,33$\pm$0,24\% Accuracy}; \textbf{91,71$\pm$0,27\% Macro-F1}.}
+\vspace{0.18cm}
+\smallnote{\textbf{Vị trí:} Section 4.1, \textbf{Table 1 trang 9}: official CTPGesture v1, causal window 32/4, trung bình 3 seeds.}
+\vspace{0.18cm}
+\smallnote{\textbf{Vai trò:} Đối chứng gần nhất cho continuous nhưng hiện vẫn khác cách suy luận.}
+\end{tcolorbox}
+\end{column}
+\end{columns}
+\vspace{0.05cm}\srcn{P3: electronics-15-02578.pdf; P4: 2608.02200v1.pdf.}
 \end{frame}
 
-% Slide 13
-\begin{frame}{11. Hiệu quả tính toán và khả năng triển khai}
-  \vspace{-0.02cm}
-  \centering
-  \includegraphics[width=0.86\linewidth]{figure_8_efficiency_benchmarks.png}
-  \vspace{0.05cm}
-  \begin{columns}[T,onlytextwidth]
-    \begin{column}{0.32\textwidth}
-      \begin{tcolorbox}[panel]
-        \centering\bfseries Phép toán selective scan\par
-        \smallnote{Nhanh hơn scan PyTorch 20--40 lần; vượt FlashAttention-2 trong phép toán lõi từ khoảng 2K token.}
-      \end{tcolorbox}
-    \end{column}
-    \begin{column}{0.32\textwidth}
-      \begin{tcolorbox}[panel]
-        \centering\bfseries Suy luận tự hồi quy\par
-        \smallnote{Throughput cao hơn Transformer cùng kích thước khoảng 4--5 lần trong benchmark A100.}
-      \end{tcolorbox}
-    \end{column}
-    \begin{column}{0.32\textwidth}
-      \begin{tcolorbox}[panel]
-        \centering\bfseries Bộ nhớ\par
-        \smallnote{Không cần KV cache tăng theo \(L\); memory huấn luyện tương đương Transformer dùng FlashAttention-2.}
-      \end{tcolorbox}
-    \end{column}
-  \end{columns}
-  \vspace{0.10cm}
-  \tinytext{Các số liệu trên đo trên NVIDIA A100 80GB; không thể suy ra trực tiếp latency trên Jetson, NPU hoặc CPU edge.}
+% ---------- 14: Evidence ----------
+\begin{frame}{4. Evidence matrix: số liệu trích từ đâu?}
+\vspace{0.06cm}
+\renewcommand{\arraystretch}{1.44}
+\begin{tabularx}{\linewidth}{@{}C{0.65cm}L{3.5cm}L{3.4cm}Y@{}}
+\toprule
+\textbf{ID}&\textbf{Chỉ số công bố}&\textbf{Bằng chứng}&\textbf{Đơn vị / split}\\\midrule
+P1&C3D 87,12\%; P3D 92,21\%; MD-GCN 98,95\%&\textbf{Table 3, PDF trang 12}&Clip-level, 9 video test\\
+P2&NTPGR \textbf{97,56\%}&\textbf{Table 2, PDF trang 11}&Gesture-instance, 778 samples\\
+P3&BiLSTM--Transformer \textbf{98,91\%}&\textbf{Tables 2--4, trang 16--19}&Pose sequence, 10 video test\\
+P4&RSC \textbf{93,33\% Acc}; \textbf{91,71\% Macro-F1}&\textbf{Table 1, PDF trang 9}&Causal-frame, official split, 3 seeds\\\bottomrule
+\end{tabularx}
+\vspace{0.20cm}
+\begin{tcolorbox}[keypanel]\centering
+\smallnote{\textbf{Không gộp các giá trị Accuracy thành một leaderboard duy nhất:} clip classification, gesture-instance recognition và frame-level causal evaluation đo các nhiệm vụ khác nhau.}
+\end{tcolorbox}
 \end{frame}
 
-% Slide 15
-\begin{frame}{12. Mức độ phù hợp với bài toán Action Recognition}
-  \vfill
-  \begin{columns}[T,onlytextwidth]
-    \begin{column}{0.49\textwidth}
-      \begin{tcolorbox}[titlepanel,title=Giới hạn từ bài báo]
-        \begin{itemize}\tightitems
-          \item Quy mô language model đánh giá tối đa khoảng 3B tham số.
-          \item Hệ sinh thái fine-tuning, quantization và adaptation chưa được khảo sát hệ thống.
-          \item Selection có thể làm suy yếu inductive bias liên tục mà LTI SSM vốn khai thác tốt.
-          \item Benchmark hiệu quả thực hiện trên GPU A100, không phải thiết bị biên.
-        \end{itemize}
-      \end{tcolorbox}
-    \end{column}
-    \begin{column}{0.49\textwidth}
-      \begin{tcolorbox}[titlepanel,title=Khoảng trống đối với video]
-        \begin{itemize}\tightitems
-          \item Mamba chỉ mô hình hóa chuỗi feature; thông tin không gian vẫn cần CNN hoặc ViT backbone.
-          \item Nén toàn bộ lịch sử vào state hữu hạn có thể mất chi tiết chuyển động ngắn hạn.
-          \item Offline recognition có thể cần ngữ cảnh hai chiều; selective scan gốc mang tính causal.
-          \item Kernel tối ưu của Mamba có thể không sẵn có trên NPU, TensorRT hoặc CPU edge.
-        \end{itemize}
-      \end{tcolorbox}
-    \end{column}
-  \end{columns}
-  \vfill
+% ---------- 15: Isolated comparison ----------
+\begin{frame}{4. Isolated: published results dưới các protocol khác nhau}
+\vspace{0.04cm}
+\renewcommand{\arraystretch}{1.35}
+\begin{tabularx}{\linewidth}{@{}L{3.8cm}L{2.7cm}C{2.0cm}Y@{}}
+\toprule
+\textbf{Model}&\textbf{Modality}&\textbf{Accuracy}&\textbf{Bối cảnh}\\\midrule
+3D ResNet (P1 re-eval.) & RGB video & 81,16\% & P1 Table 3, 9 test videos\\
+C3D (P1 re-eval.) & RGB video & 87,12\% & P1 Table 3, 9 test videos\\
+P3D (P1 re-eval.) & RGB video & 92,21\% & P1 Table 3, 9 test videos\\
+MD-GCN (P1) & Skeleton & 98,95\% & P1 Table 3, 9 test videos\\
+NTPGR (P2) & Skeleton + temporal & 97,56\% & P2 Table 2, 778 gestures\\
+BiLSTM--Transformer (P3) & Skeleton + temporal & 98,91\% & P3 Table 2, 10 videos\\
+\textbf{VideoMamba-Tiny (ours)} & \textbf{RGB video} & \textbf{98,55\%} & \textbf{11 videos, 1.728 segments, 9 classes}\\\bottomrule
+\end{tabularx}
+\vspace{0.11cm}
+\smallnote{\textbf{Đây là bảng đối chiếu literature, không phải fair SOTA.} Kết quả gesture-only của nhóm: 98,02\% trên 859 segments với GT labels 1--8.}
 \end{frame}
 
-% Slide 17
-\begin{frame}{13. Kết luận}
-  \vspace{0.16cm}
-  \begin{columns}[T,onlytextwidth]
-    \begin{column}{0.32\textwidth}
-      \begin{tcolorbox}[equalpanel,height=5.15cm]
-        \heading{Đóng góp mô hình hóa}
-        \vspace{0.12cm}
-        {\fontsize{7.10}{8.20}\selectfont
-        \textcolor{PTITRed}{\bfseries Tham số chọn lọc}\par
-        \(B_t,C_t,\Delta_t=s(x_t)\); dynamics nền \(A\) vẫn cố định.\par
-        \vspace{0.12cm}
-        \textcolor{PTITRed}{\bfseries Cơ chế ghi--giữ--đọc}\par
-        \(\Delta_t\) điều khiển mức cập nhật; \(B_t\) ghi input vào state; \(C_t\) đọc state để tạo output.\par
-        \vspace{0.12cm}
-        \textcolor{PTITRed}{\bfseries Kết quả}\par
-        State trở thành bộ nhớ phụ thuộc nội dung; selection giải quyết bài toán sao chép chọn lọc và khái quát induction sang chuỗi dài hơn huấn luyện.\par}
-      \end{tcolorbox}
-    \end{column}
-    \begin{column}{0.32\textwidth}
-      \begin{tcolorbox}[equalpanel,height=5.15cm]
-        \heading{Đóng góp thuật toán}
-        \vspace{0.12cm}
-        {\fontsize{7.10}{8.20}\selectfont
-        \textcolor{PTITRed}{\bfseries Fused selective scan}\par
-        Hợp nhất rời rạc hóa, scan và phép chiếu; giữ state expansion trong SRAM để giảm trao đổi HBM.\par
-        \vspace{0.12cm}
-        \textcolor{PTITRed}{\bfseries Song song và bộ nhớ}\par
-        Parallel scan giữ công việc tuyến tính theo \(L\); recomputation giảm activation memory; suy luận dùng state cố định, không cần KV cache tăng theo ngữ cảnh.\par}
-      \end{tcolorbox}
-    \end{column}
-    \begin{column}{0.32\textwidth}
-      \begin{tcolorbox}[equalpanel,height=5.15cm]
-        \heading{Kiến trúc và đánh giá}
-        \vspace{0.12cm}
-        {\fontsize{7.10}{8.20}\selectfont
-        \textcolor{PTITRed}{\bfseries Mamba block}\par
-        Short Conv1D, SiLU, selective SSM và multiplicative gate được hợp nhất trong residual block đồng nhất, không sử dụng attention.\par
-        \vspace{0.12cm}
-        \textcolor{PTITRed}{\bfseries Kết quả benchmark}\par
-        Kết quả mạnh trên language, DNA, audio và tác vụ tổng hợp cần chọn lọc ngữ cảnh dài.\par
-        \vspace{0.12cm}
-        \textcolor{PTITRed}{\bfseries Phạm vi}\par
-        Mô hình dưới khoảng 3B tham số, đo hiệu quả trên A100; chưa đánh giá trực tiếp video, Action Recognition hoặc thiết bị biên.\par}
-      \end{tcolorbox}
-    \end{column}
-  \end{columns}
+% ---------- 16: Continuous comparison ----------
+\begin{frame}{4. Continuous: đặt cạnh causal benchmark của P4}
+\vspace{0.04cm}
+\renewcommand{\arraystretch}{1.4}
+\begin{tabularx}{\linewidth}{@{}L{4.05cm}C{2.15cm}C{2.15cm}Y@{}}
+\toprule
+\textbf{Model}&\textbf{Frame Acc.}&\textbf{Macro-F1}&\textbf{Protocol}\\\midrule
+GRU (P4 reimplementation)&88,82\%&87,10\%&Causal 32/4\\
+TCN (P4 reimplementation)&89,88\%&88,29\%&Causal 32/4\\
+MD-GCN (P4 reimplementation)&90,08\%&88,48\%&Causal 32/4\\
+RSC-GestureNet (P4)&\textbf{93,33\%}&\textbf{91,71\%}&Causal 32/4, 3 seeds\\
+\textbf{VideoMamba-Tiny RAW (ours)}&\textbf{83,98\%}&\textbf{80,61\%}&Window 32/8, overlap aggregation\\\bottomrule
+\end{tabularx}
+\vspace{0.16cm}
+\begin{tcolorbox}[keypanel]
+\smallnote{\textbf{Ranh giới so sánh:} P4 gán nhãn theo quá khứ (causal). Notebook cộng xác suất từ các cửa sổ phủ lên frame nên có thể sử dụng frame tương lai. P4 báo cáo mean$\pm$std qua ba seed; notebook mới có một checkpoint.}
+\end{tcolorbox}
+\vspace{0.05cm}\srcn{P4 Table 1 (trang 9); notebook Cell 22.}
 \end{frame}
 
-% Slide 17
-\begin{frame}{14. Tiến độ triển khai phát hiện người cần phục vụ cho robot}
-  \vspace{-0.03cm}
-  \begin{columns}[T,onlytextwidth]
-    \begin{column}{0.56\textwidth}
-      \begin{tcolorbox}[titlepanel,title=So sánh mô hình nano pose]
-        {\fontsize{7.2}{8.4}\selectfont
-        \renewcommand{\arraystretch}{1.25}
-        \begin{tabularx}{\linewidth}{@{}Y C{1.50cm} C{1.55cm} C{1.18cm}@{}}
-          \toprule
-          \textbf{Chỉ số} & \textbf{YOLOv8n-pose} & \textbf{YOLO26n-pose} & \textbf{Thay đổi}\\
-          \midrule
-          COCO pose mAP$_{50:95}$ & 50.4 & \textbf{57.2} & +6.8 điểm\\
-          Tham số & 3.3 M & \textbf{2.9 M} & $-12\%$\\
-          FLOPs tại 640 px & 9.2 B & \textbf{7.5 B} & $-18\%$\\
-          \bottomrule
-        \end{tabularx}}
-      \end{tcolorbox}
-      \vspace{0.12cm}
-      \begin{tcolorbox}[panel]
-        \smallnote{YOLO26n-pose thay YOLOv8n-pose vì đạt độ chính xác cao hơn với ít tham số và FLOPs hơn.}
-      \end{tcolorbox}
-    \end{column}
-    \begin{column}{0.42\textwidth}
-      \centering
-      \includegraphics[height=3.05cm]{skeleton.png}\par
-      \vspace{0.04cm}
-      \smallnote{Sơ đồ keypoint dùng để minh họa skeleton và kiểm tra điều kiện vẫy tay của người mục tiêu.}
-    \end{column}
-  \end{columns}
-  \vspace{-0.18cm}
-  \begin{tcolorbox}[titlepanel,title=Luồng triển khai phát hiện người]
-    {\fontsize{6.5}{7.5}\selectfont
-    \setlength{\tabcolsep}{1.2pt}
-    \begin{tabularx}{\linewidth}{@{}C{1.65cm} c C{2.25cm} c C{1.65cm} c C{1.35cm} c C{1.20cm} c Y@{}}
-      \textbf{YOLO26n-pose FP32} & $\rightarrow$ & \textbf{Export ONNX FP16, ONNX Runtime} & $\rightarrow$ & \textbf{TensorRT \texttt{.engine}} & $\rightarrow$ & \textbf{Jetson run} & $\rightarrow$ & \textbf{Skeleton} & $\rightarrow$ & \textbf{Check wave condition}
-    \end{tabularx}}
-  \end{tcolorbox}
+% ---------- 17: Risks ----------
+\begin{frame}{5. Những gì đã chứng minh và các hạn chế}
+\begin{columns}[T,onlytextwidth]
+\begin{column}{0.49\textwidth}
+\begin{tcolorbox}[titlepanel,title=Kết quả đã có,height=4.65cm]
+\begin{itemize}\tightitems
+\item RGB end-to-end; không cần skeleton extractor.
+\item Isolated: \textbf{98,55\%} Accuracy, \textbf{97,96\%} Macro-F1.
+\item Continuous RAW: \textbf{83,98\%} FrameAcc, \textbf{80,61\%} Macro-F1.
+\item \textbf{6,96M} params, \textbf{50,65 ms/clip} trên T4.
+\item Có nguồn Table/Page cho bốn bài đối chứng.
+\end{itemize}
+\end{tcolorbox}
+\end{column}
+\begin{column}{0.49\textwidth}
+\begin{tcolorbox}[titlepanel,title=Chưa đủ bằng chứng,height=4.65cm]
+\begin{itemize}\tightitems
+\item Cùng tên dataset nhưng khác test split/metric.
+\item Chưa phải inference causal end-to-end.
+\item GFLOPs mới là custom estimate.
+\item Chưa có multi-seed, Edit Score và Segmental F1.
+\item Chưa tách được đóng góp mới so với VideoMamba-Tiny gốc bằng ablation.
+\end{itemize}
+\end{tcolorbox}
+\end{column}
+\end{columns}
+\vspace{0.15cm}
+\smallnote{\textbf{Ý nghĩa:} Sự chênh lệch isolated / continuous chỉ ra yêu cầu cải thiện temporal transition, boundary modeling và protocol đánh giá.}
 \end{frame}
 
-% Slide 18
-\begin{frame}[t]{15. Tiến độ triển khai phát hiện người cần phục vụ cho robot}
-  \vspace{0.02cm}
-  \begin{columns}[T,onlytextwidth]
-    \begin{column}{0.42\textwidth}
-      \begin{tcolorbox}[titlepanel,title=Hạn chế hiện tại,height=4.55cm,valign=top]
-        \begin{itemize}\tightitems
-          \item Khoảng cách phát hiện tối đa trong thử nghiệm hiện tại khoảng \textbf{5 m}.
-          \item Hệ thống mới chỉ xử lý ổn định \textbf{một người} trong khung hình.
-          \item Khi xuất hiện thêm người, FPS giảm mạnh, gây giật/lag và làm hệ thống có nguy cơ quá tải.
-        \end{itemize}
-      \end{tcolorbox}
-    \end{column}
-    \begin{column}{0.56\textwidth}
-      \begin{tcolorbox}[titlepanel,title=Hướng triển khai đề xuất,height=4.55cm,valign=top]
-        \begin{itemize}\tightitems
-          \item Dùng mô hình \textbf{person detection} nhẹ để lấy bounding box.
-          \item Crop từng ROI người; phân tích skeleton bằng mô hình nhẹ như \textbf{MediaPipe Pose}.
-          \item Thêm \textbf{object tracking} để duy trì ID và vị trí người giữa các frame.
-          \item Áp dụng \textbf{frame skipping}: cập nhật detection/pose theo chu kỳ, dùng tracking ở các frame trung gian.
-        \end{itemize}
-      \end{tcolorbox}
-    \end{column}
-  \end{columns}
-  \vspace{0.16cm}
-  \begin{tcolorbox}[panel]
-    {\fontsize{7.1}{8.3}\selectfont\centering
-      \textbf{Person detector} $\rightarrow$ \textbf{Bounding box} $\rightarrow$ \textbf{Crop ROI} $\rightarrow$ \textbf{MediaPipe Pose} $\rightarrow$ \textbf{Tracking + frame skipping} $\rightarrow$ \textbf{Wave condition}\par}
-  \end{tcolorbox}
+% ---------- 18: Roadmap ----------
+\begin{frame}{5. Kế hoạch thực nghiệm tiếp theo}
+\vspace{0.04cm}
+\renewcommand{\arraystretch}{1.52}
+\begin{tabularx}{\linewidth}{@{}C{0.7cm}L{4.1cm}Y@{}}
+\toprule
+\textbf{P}&\textbf{Đầu việc}&\textbf{Kết quả cần bàn giao}\\\midrule
+P0&Validation split riêng từ train&Không tune R3/post-processing trên official test.\\
+P0&Causal end-aligned VideoMamba&Đánh giá 32/4, không dùng future frames, cùng metric P4.\\
+P1&Temporal segmentation metrics&Edit Score, Segmental F1@10/25/50, per-class F1.\\
+P1&Multi-seed experiments&Mean$\pm$std từ tối thiểu ba seeds.\\
+P1&Đánh giá efficiency chuẩn&Xác thực GFLOPs, peak VRAM, streaming latency.\\
+P2&So sánh cùng RGB modality&Triển khai lại P3D/C3D trên cùng video split.\\
+P2&Ablation cho đề xuất&Chỉ rõ modification mới và đóng góp so với backbone gốc.\\\bottomrule
+\end{tabularx}
+\vspace{0.14cm}
+\begin{tcolorbox}[keypanel]\centering
+\smallnote{\textbf{Ưu tiên:} Causal protocol chung với RSC-GestureNet, sau đó bổ sung thí nghiệm so sánh công bằng.}
+\end{tcolorbox}
+\end{frame}
+
+% ---------- 19: References ----------
+\begin{frame}{Kết luận và danh mục tài liệu}
+\begin{tcolorbox}[keypanel]\centering
+{\bfseries\fontsize{12}{14}\selectfont Đánh giá bước đầu trên CTPGesture v1\par}
+\vspace{0.10cm}
+\smallnote{VideoMamba-Tiny đạt \textbf{98,55\% isolated Accuracy} và \textbf{83,98\% continuous Frame Accuracy}; các kết quả literature được đối chiếu theo nguồn, không suy diễn thành bảng SOTA chung protocol.}
+\end{tcolorbox}
+\vspace{0.14cm}
+\smallnote{\textbf{Bốn công trình có PDF trong thư mục báo cáo:}}\par\vspace{0.08cm}
+\tinytext{[P1] Xiong et al., \emph{Electronics} (2021), DOI: 10.3390/electronics10050551 -- Table 3.}\par\vspace{0.07cm}
+\tinytext{[P2] Xiao et al., \emph{Scientific Reports} (2025), DOI: 10.1038/s41598-025-02833-y -- Table 2.}\par\vspace{0.07cm}
+\tinytext{[P3] Zhang et al., \emph{Electronics} (2026), DOI: 10.3390/electronics15122578 -- Tables 2--4.}\par\vspace{0.07cm}
+\tinytext{[P4] Li et al., arXiv:2608.02200v1 (2026) -- Table 1.}\par
+\vspace{0.20cm}
+\begin{tcolorbox}[panel]
+\smallnote{\textbf{Tài liệu, notebook và nguồn kết quả:}\\
+\url{https://github.com/HoangAnh301194/Research-notes/tree/main/Research_Report/261015}}
+\end{tcolorbox}
 \end{frame}
 
 \end{document}
