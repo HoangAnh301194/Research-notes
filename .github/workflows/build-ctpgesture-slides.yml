@@ -1,0 +1,50 @@
+name: Build CTPGesture Report Slides
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'Research_Report/261015/main.tex'
+      - 'Research_Report/261015/cell17_output5.png'
+      - 'Research_Report/261015/cell23_output5.png'
+      - '.github/workflows/build-ctpgesture-slides.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout report
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+
+      - name: Compile LaTeX PDF
+        uses: xu-cheng/latex-action@v4
+        with:
+          root_file: main.tex
+          working_directory: Research_Report/261015
+          texlive_version: 2025
+          os: debian
+          args: "-pdf -file-line-error -halt-on-error -interaction=nonstopmode"
+
+      - name: Verify compiled slide deck
+        run: |
+          test -s Research_Report/261015/main.pdf
+          pdfinfo Research_Report/261015/main.pdf | grep -E 'Pages:|Page size:|File size:' || true
+
+      - name: Publish PDF into report folder
+        run: |
+          cp Research_Report/261015/main.pdf Research_Report/261015/CTPGesture_VideoMamba_Report_20261015.pdf
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add Research_Report/261015/CTPGesture_VideoMamba_Report_20261015.pdf
+          if git diff --cached --quiet; then
+            echo "PDF unchanged, no commit needed."
+          else
+            git commit -m "docs: publish compiled CTPGesture slides PDF"
+            git push
+          fi
