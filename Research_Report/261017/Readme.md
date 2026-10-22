@@ -335,3 +335,8 @@ YOLO11m-**Pose** có **20,9M params, 71,5 GFLOPs/ảnh 640×640** theo [Ultralyt
 ## C. Công việc tiếp theo
 - Tiếp trục train với bộ EgoEv Gesture 
 - Đánh giá, so sánh với **CoboGesture HUST 2026**
+
+
+- frame wise accuracy 
+- tìm gflops từ các nguồn fill vào bảng 
+- 4 bảng ( mỗi dataset 2 bảng )
