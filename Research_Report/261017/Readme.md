@@ -346,3 +346,6 @@ YOLO11m-**Pose** có **20,9M params, 71,5 GFLOPs/ảnh 640×640** theo [Ultralyt
 - liệt kê 1 bnarg mẫu trước , sau đó list từ các bài báo vào : param , acc, F1 , GFlops ,.... 
 - accuracy@10 20 50%
 - early@10%
+
+- list ra các bài báo, gửi bảng tổng quan các bài cho THầy trước . 
+- Deadline hoàn thành trong tối nay ( 22.10.2026)
