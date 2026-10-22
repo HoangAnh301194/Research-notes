@@ -272,128 +272,74 @@ Do video CTPGesture là 15 FPS, window được giảm từ 64 xuống 32 frame 
 
 
 
-# 9. Literature trên CTPGesture / Police Gesture Dataset
+# 9. Khảo sát và đối chứng CTPGesture v1 (22/10/2023–22/10/2026)
 
-## 9.1. MD-GCN — Electronics 2021
+**Phạm vi:** phương pháp dự đoán cử chỉ từ chuỗi **RGB video** trên đúng [CTPGesture v1 chính thức](https://github.com/zc402/traffic-gesture-datasets) (15 FPS, 1080×1080, nhãn từng frame, 9 lớp). Chỉ giữ tối đa **hai tài liệu pose/skeleton** để tham chiếu. Dấu **---** là *không báo cáo/không xác minh*, **không phải 0**. Số liệu của các bài dùng protocol khác **không được xem là xếp hạng SOTA trực tiếp**.
 
-**Xiong et al., “Traffic Police Gesture Recognition Based on Gesture Skeleton Extractor and Multichannel Dilated Graph Convolution Network”, Electronics, 2021.**
+## 9.1. Kết quả hiện tại, đọc từ notebook ngày 15/10/2026
 
-Pipeline:
+Nguồn: [VideoMambaTinyCTPGestureFinal.ipynb, cells 16/22/26](../261015/VideoMambaTinyCTPGestureFinal.ipynb) và [Readme ngày 15/10](../261015/Readme.md).
 
-    RGB video
-      → pose estimation
-      → Gesture Skeleton Extractor
-      → MD-GCN
-      → classification
+| Protocol | Đơn vị đánh giá | Test | Accuracy | Macro-F1 | Parameters | GFLOPs |
+|---|---|---|---:|---:|---:|---:|
+| **Isolated (VideoMamba-Tiny)** | 1 nhãn / đoạn GT | 1.728 đoạn, 11 video; 9 lớp | **98,55%** | **97,96%** | **6.959.817** | **29,026/clip** |
+| Isolated, gesture-only | 1 nhãn / đoạn GT | 859 đoạn, 8 lớp, không tính lớp 0 | 98,02% | 98,24% | Như trên | Như trên |
+| **Continuous RAW (VideoMamba-Tiny)** | frame-level sau tổng hợp cửa sổ | 67.356 frame, 11 video | **83,98%** | **80,61%** | **6.959.817** | **29,026/window** |
+| Continuous R3 | frame-level, bỏ đoạn dự đoán <1 s | Cùng dữ liệu RAW | 83,99% | 80,63% | Như trên | Như trên |
 
-Kết quả Table 3:
+Thông số tự đo: RGB 16×224×224, FP32, cửa sổ 32 frame / bước 8 (continuous), một lần forward trên 16 frame đã lấy mẫu, **Tesla T4**. GFLOPs = phép đếm *ước lượng trong notebook*, không đồng nhất mặc định với thống kê GFLOPs của các bài khác. Isolated dùng ranh giới GT; continuous không dùng ranh giới GT để tạo đầu vào. [Confusion matrix isolated](../261015/cell17_output5.png) · [Confusion matrix continuous](../261015/cell23_output5.png).
 
-| Model | Accuracy |
-|---|---:|
-| 3D ResNet / Hara | 81.16% |
-| C3D / Tran | 87.12% |
-| P3D / Qiu | 92.21% |
-| Zhang et al. | 91.18% |
-| Pigou et al. | 91.04% |
-| **MD-GCN** | **98.95%** |
+## 9.2. Hai nghiên cứu gần đây có nguồn dữ liệu liên quan được kiểm chứng
 
-MD-GCN cấu hình dilation 1,2,4 có:
+| Bài báo | Dữ liệu / điều kiện | Đầu vào recognition | Đơn vị báo cáo | Accuracy | Macro-F1 | **Toàn pipeline parameters** | **Toàn pipeline GFLOPs** | Chứng cứ trực tiếp |
+|---|---|---|---|---:|---:|---|---|---|
+| **Li et al. (2026), RSC-GestureNet** | **CTPGesture v1 chính thức**, 32-frame causal/stride 4; 11 test videos | **Pose + RGB descriptor** (không RGB-only) | Causal window/end-frame | **93,33 ± 0,24%** | **91,71 ± 0,27%** | --- | --- | [Table 1, PDF tr.9](https://raw.githubusercontent.com/HoangAnh301194/Research-notes/main/Research_Report/261017/papers/Li_Gao_Fu_2026_RSC-GestureNet_CTPGestureV1.pdf#page=9); [protocol, tr.5](https://raw.githubusercontent.com/HoangAnh301194/Research-notes/main/Research_Report/261017/papers/Li_Gao_Fu_2026_RSC-GestureNet_CTPGestureV1.pdf#page=5) |
+| **Zhang et al. (2026), BiLSTM–Transformer** | *Police Gesture Dataset* liên quan V1, **10 test videos**, không trùng split chuẩn 11 video | **YOLOv11m-Pose → BiLSTM+Transformer** (không RGB-only) | Sequence-to-one (last-frame label), không phải toàn video | **98,91%** | --- (bài ghi “F1-score”, không xác định là Macro-F1) | **---**; chỉ head **86,41 K** được công bố | --- | [Table 1, tr.12](https://raw.githubusercontent.com/HoangAnh301194/Research-notes/main/Research_Report/261017/papers/Zhang_et_al_2026_BiLSTM_Transformer_Pose.pdf#page=12); [Table 3, tr.17](https://raw.githubusercontent.com/HoangAnh301194/Research-notes/main/Research_Report/261017/papers/Zhang_et_al_2026_BiLSTM_Transformer_Pose.pdf#page=17) |
+| **VideoMamba-Tiny (nhóm)** | **CTPGesture v1 chính thức**, 11 test videos | **RGB thuần** | **Isolated** | **98,55%** | **97,96%** | **6,959817 M** | **29,026/clip** | [Notebook cell 16](../261015/VideoMambaTinyCTPGestureFinal.ipynb) |
+| **VideoMamba-Tiny (nhóm)** | **CTPGesture v1 chính thức**, window 32 / stride 8 | **RGB thuần** | **Continuous frame-level** | **83,98%** | **80,61%** | **6,959817 M** | **29,026/window** | [Notebook cell 22](../261015/VideoMambaTinyCTPGestureFinal.ipynb) |
 
-- model size: **11.7M**;
-- reported inference time: 3.0 s theo định nghĩa của bài.
+**Không tính parameters thiếu:** 86,41 K trong [Zhang Table 3](https://raw.githubusercontent.com/HoangAnh301194/Research-notes/main/Research_Report/261017/papers/Zhang_et_al_2026_BiLSTM_Transformer_Pose.pdf#page=17) là **recognition head**, **chưa tính YOLOv11m-Pose**. Bài RSC-GestureNet cũng không đưa ra số parameter/FLOPs toàn pipeline bao gồm MediaPipe. Không chuyển “model size” hoặc dung lượng checkpoint thành parameter. Bài Zhang ghi inference **1,3299 s/sequence nhưng không tính pose extractor**. Bài RSC công bố thêm **Online-F1 91,69 ± 0,29%** và TTC 0,153 ± 0,013 s ([Table 1](https://raw.githubusercontent.com/HoangAnh301194/Research-notes/main/Research_Report/261017/papers/Li_Gao_Fu_2026_RSC-GestureNet_CTPGestureV1.pdf#page=9)); TTC không phải độ trễ end-to-end.
 
-> Protocol của P1 là clip-level trên split cũ 11 train / 9 test, không trùng split final của notebook hiện tại.
+**Giới hạn so sánh:** 98,91% của Zhang không phải isolated clip accuracy; 93,33% của RSC là causal-window accuracy chứ không phải frame accuracy được tổng hợp từ cửa sổ như VideoMamba. **Không lấy hiệu hai con số làm mức vượt trội.**
 
----
+## 9.3. Nhóm RGB: kết quả có số liệu, nhưng không thỏa điều kiện “công bố trong 3 năm gần nhất”
 
-## 12.2. NTPGR — Scientific Reports 2025
+Bài **Xiong et al. (2021), Electronics 10(5):551** đánh giá các mạng **RGB-video** trên *Police Gesture Dataset*, cắt clip từ nhãn GT, **11 train / 9 test videos**. Đây là **đối chứng lịch sử**, không phải bài SOTA thuộc giai đoạn 2023–2026 và cũng **không trùng split 11-video** của notebook.
 
-**Xiao et al., “A Lightweight and Efficient Gesture Recognizer for Traffic Police Commands Using Spatiotemporal Feature Fusion”, Scientific Reports, 2025.**
+| RGB baseline do Xiong et al. báo cáo | Clip Accuracy | Params đầy đủ (bài đối chứng) | GFLOPs | Bằng chứng |
+|---|---:|---:|---:|---|
+| **3D ResNet (Hara)** | 81,16% | --- | --- | [Table 3, tr.12](https://raw.githubusercontent.com/HoangAnh301194/Research-notes/main/Research_Report/261015/electronics-10-00551-v2.pdf#page=12) |
+| **C3D (Tran)** | 87,12% | --- | --- | [Table 3, tr.12](https://raw.githubusercontent.com/HoangAnh301194/Research-notes/main/Research_Report/261015/electronics-10-00551-v2.pdf#page=12) |
+| **P3D (Qiu)** | 92,21% | --- | --- | [Table 3, tr.12](https://raw.githubusercontent.com/HoangAnh301194/Research-notes/main/Research_Report/261015/electronics-10-00551-v2.pdf#page=12) |
+| **ConvLSTM** | 82,40% | --- | --- | [Table 3, tr.12](https://raw.githubusercontent.com/HoangAnh301194/Research-notes/main/Research_Report/261015/electronics-10-00551-v2.pdf#page=12) |
 
-- EPFFNet trích xuất pose/keypoint geometric feature.
-- MSNet kết hợp CNN + LSTM + temporal/channel attention.
-- Reported Accuracy: **97.56%** = 759/778 gesture instances.
-- Average response time: **0.76 s** trên GTX TITAN XP.
+**Không dùng MD-GCN 98,95% như RGB baseline:** phương pháp chính của Xiong sử dụng skeleton. Con số “**11,7 M**” của bài nằm trong cột **Model Size**, *không được xác định là 11,7 triệu parameters*, và chưa tính OpenPose: xem [Table 1, tr.10](https://raw.githubusercontent.com/HoangAnh301194/Research-notes/main/Research_Report/261015/electronics-10-00551-v2.pdf#page=10).
 
-Protocol là gesture-instance, không tương đương trực tiếp với frame-level continuous evaluation.
+## 9.4. Nguồn đã sàng lọc nhưng không được đưa vào benchmark chính
 
----
+| Công trình | Quyết định | Lý do | Nguồn |
+|---|---|---|---|
+| **Zhu & Fang (2024), SlowFast** | **Ứng viên RGB, chờ xác minh** | Có DOI/ấn phẩm SPIE nhưng chưa lấy được PDF toàn văn và chưa kiểm chứng được đúng V1/split/accuracy | [DOI 10.1117/12.3048304](https://doi.org/10.1117/12.3048304) |
+| **Xiao et al. (2025), NTPGR** | **Không chọn (skeleton thứ ba)** | EPFFNet trích xuất pose; tác giả mô tả 21 video, test 10 video / 778 gesture instances khác protocol; Table 3 còn đối chiếu nhiều nghiên cứu vốn dùng sEMG/Wi-Fi, không xem là chứng cứ RGB trên V1 | [Table 2, tr.11](https://raw.githubusercontent.com/HoangAnh301194/Research-notes/main/Research_Report/261015/s41598-025-02833-y.pdf#page=11); [Table 3, tr.13](https://raw.githubusercontent.com/HoangAnh301194/Research-notes/main/Research_Report/261015/s41598-025-02833-y.pdf#page=13); [References, tr.18–19](https://raw.githubusercontent.com/HoangAnh301194/Research-notes/main/Research_Report/261015/s41598-025-02833-y.pdf#page=18) |
+| **He et al. (2026), PR-Graph/EPS** | **Loại** | Báo cáo chính trên **CTPGesture v2**, không phải V1 | [DOI 10.1016/j.jvcir.2025.104698](https://doi.org/10.1016/j.jvcir.2025.104698) |
+| **Liu et al. (2026), YOLOv8n lightweight** | **Loại khỏi clip/continuous** | Bài báo đánh giá **object detection mAP** trên dữ liệu cử chỉ, chưa kiểm chứng là đúng tập V1 và không phải cùng tác vụ classification/segmentation | [DOI 10.3785/j.issn.1008-973X.2026.08.007](https://doi.org/10.3785/j.issn.1008-973X.2026.08.007) |
 
-## 12.3. BiLSTM–Transformer — Electronics 2026
+**Kết quả sàng lọc:** chưa xác minh được đủ 3–5 bài RGB-only (2023–2026) *đồng thời* dùng **CTPGesture v1**, cung cấp **PDF toàn văn** và **số liệu đúng loại protocol**. Vì vậy **không lập bảng xếp hạng SOTA giả định**. Hướng bổ sung thực nghiệm đối chứng trực tiếp: fine-tune **C3D / 3D ResNet / P3D / SlowFast** trên **cùng 11-video test split**, cùng mẫu 16×224×224 (hoặc báo rõ khác biệt input), rồi đánh giá riêng isolated và continuous.
 
-**Zhang et al., “A Traffic Police Gesture Recognition Method Based on BiLSTM-Transformer Architecture”, Electronics, 2026.**
+## 9.5. PDF có thể mở tới đúng bảng/figure
 
-Pipeline:
+Hai PDF đã có từ báo cáo ngày 15/10 được **sao chép và đặt tên chuẩn**, giữ nguyên bản gốc (không thêm bản tải trùng):
 
-    RGB
-      → YOLOv11m-Pose
-      → 17 keypoints/frame
-      → 40-frame sequence
-      → BiLSTM + Transformer
+- [Li_Gao_Fu_2026_RSC-GestureNet_CTPGestureV1.pdf](https://raw.githubusercontent.com/HoangAnh301194/Research-notes/main/Research_Report/261017/papers/Li_Gao_Fu_2026_RSC-GestureNet_CTPGestureV1.pdf) — [Fig. 1, tr.6](https://raw.githubusercontent.com/HoangAnh301194/Research-notes/main/Research_Report/261017/papers/Li_Gao_Fu_2026_RSC-GestureNet_CTPGestureV1.pdf#page=6), [Table 1, tr.9](https://raw.githubusercontent.com/HoangAnh301194/Research-notes/main/Research_Report/261017/papers/Li_Gao_Fu_2026_RSC-GestureNet_CTPGestureV1.pdf#page=9), [Table 7, tr.13](https://raw.githubusercontent.com/HoangAnh301194/Research-notes/main/Research_Report/261017/papers/Li_Gao_Fu_2026_RSC-GestureNet_CTPGestureV1.pdf#page=13).
+- [Zhang_et_al_2026_BiLSTM_Transformer_Pose.pdf](https://raw.githubusercontent.com/HoangAnh301194/Research-notes/main/Research_Report/261017/papers/Zhang_et_al_2026_BiLSTM_Transformer_Pose.pdf) — [Fig. 5, tr.11](https://raw.githubusercontent.com/HoangAnh301194/Research-notes/main/Research_Report/261017/papers/Zhang_et_al_2026_BiLSTM_Transformer_Pose.pdf#page=11), [Table 1, tr.12](https://raw.githubusercontent.com/HoangAnh301194/Research-notes/main/Research_Report/261017/papers/Zhang_et_al_2026_BiLSTM_Transformer_Pose.pdf#page=12), [Table 3, tr.17](https://raw.githubusercontent.com/HoangAnh301194/Research-notes/main/Research_Report/261017/papers/Zhang_et_al_2026_BiLSTM_Transformer_Pose.pdf#page=17).
+- PDF lịch sử RGB: [Xiong et al. (2021), Table 3, tr.12](https://raw.githubusercontent.com/HoangAnh301194/Research-notes/main/Research_Report/261015/electronics-10-00551-v2.pdf#page=12).
+- PDF NTPGR (đã có, không chọn benchmark chính): [Xiao et al. (2025), Table 2, tr.11](https://raw.githubusercontent.com/HoangAnh301194/Research-notes/main/Research_Report/261015/s41598-025-02833-y.pdf#page=11).
 
-Kết quả:
-
-| Head | Accuracy |
-|---|---:|
-| BiLSTM | 96.48% |
-| Transformer | 91.24% |
-| **BiLSTM–Transformer** | **98.91%** |
-
-- temporal head: 86.41K parameters;
-- reported 1.3299 s/sequence;
-- thời gian này không bao gồm toàn bộ cost pose extractor.
-
-Bài chỉ liệt kê 10 test videos và thiếu 101 so với split 11-video đang dùng.
+**Quy ước:** tất cả liên kết `#page=N` trỏ tới **trang PDF đếm từ 1**; hệ thống xem PDF của trình duyệt cần hỗ trợ fragment `#page`. Không sử dụng figure/table của bài khác để suy ra kết quả mới của nhóm.
 
 ---
 
-## 12.4. RSC-GestureNet — 2026 preprint
-
-**Li et al., “RSC-GestureNet: Reliability-Aware Selective Causal Recognition of Chinese Traffic Police Gestures”, arXiv:2608.02200v1.**
-
-Đây là đối chứng phù hợp nhất cho continuous CTPGesture:
-
-- official CTPGesture v1 split;
-- 9 classes;
-- 32-frame causal window;
-- stride 4;
-- đánh giá 3 random seeds;
-- không dùng future frame.
-
-Kết quả:
-
-| Method | Accuracy | Macro-F1 |
-|---|---:|---:|
-| GRU | 88.82% | 87.10% |
-| TCN | 89.88% | 88.29% |
-| MD-GCN reimplementation | 90.08% | 88.48% |
-| **RSC-GestureNet** | **93.33 ± 0.24%** | **91.71 ± 0.27%** |
-| **VideoMamba RAW hiện tại** | **83.98%** | **80.61%** |
-
-VideoMamba evaluator hiện tại chưa cùng protocol causal:
-
-- VideoMamba: window 32 / stride 8, probability từ overlapping windows được phân xuống frame.
-- RSC: causal window 32 / stride 4, prediction end-aligned.
-
-Vì vậy chưa được kết luận trực tiếp “RSC hơn VideoMamba 9.35%” theo nghĩa fair benchmark.
-
----
-
-# 13. Bảng literature context cho CTPGesture isolated
-
-| Method | Year | Representation | Params / size được report | Accuracy | Protocol |
-|---|---:|---|---:|---:|---|
-| 3D ResNet | 2021 | RGB | NR | 81.16% | legacy 9-video test |
-| C3D | 2021 | RGB | NR | 87.12% | legacy 9-video test |
-| P3D | 2021 | RGB | NR | 92.21% | legacy 9-video test |
-| NTPGR | 2025 | pose + temporal | NR | 97.56% | 778 gesture instances |
-| **VideoMamba-Tiny** | 2026 | **RGB** | **6.96M** | **98.55%** | **11 test videos / 9 classes** |
-| BiLSTM–Transformer | 2026 | pose + temporal | head 86.41K | 98.91% | 10 test videos |
-| MD-GCN | 2021 | skeleton GCN | 11.7M | 98.95% | legacy 9-video test |
-
----
-
-# 14. So sánh hai dataset đã chạy
+# 10. So sánh hai dataset đã chạy
 
 | Hạng mục | IPN-Hand | CTPGesture v1 |
 |---|---:|---:|
