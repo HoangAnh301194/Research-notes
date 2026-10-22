@@ -254,5 +254,5 @@
 - Em xin phép nhận hướng đi tiếp theo từ Thầy ạ 
 - tổng kết lại kết quả 
 - tìm các bài báo có dùng bộ CTPGesture SOTA trong 3 năm gần nhất , ưu tiên journal ( khoảng 5 method SOTA) 
-- Show ra error keyframe   ( tạo txt lỗi và show visual)
+- Show ra error keyframe , ( tạo txt lỗi và show visual)
 - Tổng hợp lại bảng ( parameter )-
