@@ -1,15 +1,14 @@
 # Báo cáo nghiên cứu ngày 17/10/2026
 
 ## A. Công việc đã làm
+- Tổng hợp toàn bộ công việc đã làm , dữ liệu đã có để tiến hành viết sơ lược bài báo. 
+   - Đánh giá **isolated và continuous gesture recognition** trên IPN-Hand.
+   - Đo complexity, parameter của VideoMamba-Tiny và đối chiếu với VideoMAE / VideoMAEv2.
 
-- Đánh giá **isolated gesture recognition** trên IPN-Hand.
-- Đánh giá **continuous gesture recognition** bằng sliding window trên IPN-Hand.
-- Khảo sát post-processing theo thời gian: linking, loại đoạn ngắn, fill, smoothing.
-- So sánh với bài báo **CoboGesture** trên cùng IPN-Hand.
-- Đo complexity, parameter của VideoMamba-Tiny và đối chiếu với VideoMAE / VideoMAEv2.
-- Fine-tuning VideoMamba-Tiny trên **CTPGesture v1**.
-- Đánh giá CTPGesture theo cả isolated và continuous protocol.
-- Khảo sát post-processing trên CTPGesture.
+   - Đánh giá **isolated và continuous gesture recognition** trên CTPGesture.
+   - Khảo sát các mức cấu hình **post-processing** theo thời gian: linking, loại đoạn ngắn, fill, smoothing.
+   - So sánh với bài báo **CoboGesture** trên cùng IPN-Hand.
+   - So sánh với một số bài SOTA của bộ dataset CTPGesture.
 
 # 1. Cấu hình đã triển khai
 
@@ -98,7 +97,7 @@ Protocol đánh giá:
 | RGB-CoGes + VideoMAEv2 | **84.59%** | 303.8M |
 | **VideoMamba-Tiny (our method)** | **84.65%** | **6.96M** |
 
-### Chênh lệch
+### So sánh
 
 - VideoMamba-Tiny cao hơn VideoMAE: **+5.84 percentage points**.
 - VideoMamba-Tiny cao hơn VideoMAEv2: **+0.06 percentage points**.
@@ -267,6 +266,12 @@ Do video CTPGesture là 15 FPS, window được giảm từ 64 xuống 32 frame 
 - Gesture Recall giảm khoảng **−0.35 pp**.
 ---
 
+
+
+
+
+
+
 # 9. Literature trên CTPGesture / Police Gesture Dataset
 
 ## 9.1. MD-GCN — Electronics 2021
@@ -365,8 +370,6 @@ Kết quả:
 | **RSC-GestureNet** | **93.33 ± 0.24%** | **91.71 ± 0.27%** |
 | **VideoMamba RAW hiện tại** | **83.98%** | **80.61%** |
 
-### Cảnh báo so sánh
-
 VideoMamba evaluator hiện tại chưa cùng protocol causal:
 
 - VideoMamba: window 32 / stride 8, probability từ overlapping windows được phân xuống frame.
@@ -388,8 +391,6 @@ Vì vậy chưa được kết luận trực tiếp “RSC hơn VideoMamba 9.35%
 | BiLSTM–Transformer | 2026 | pose + temporal | head 86.41K | 98.91% | 10 test videos |
 | MD-GCN | 2021 | skeleton GCN | 11.7M | 98.95% | legacy 9-video test |
 
-> Đây là **literature context**, không phải fair SOTA leaderboard.
-
 ---
 
 # 14. So sánh hai dataset đã chạy
@@ -410,178 +411,10 @@ Vì vậy chưa được kết luận trực tiếp “RSC hơn VideoMamba 9.35%
 | **Raw Temporal Overlap** | **49.11%** | **65.32%** |
 | **Raw Gesture Recall** | **78.90%** | **94.80%** |
 
-### Nhận xét
 
-CTPGesture dễ phân loại isolated hơn rõ rệt vì gesture toàn thân có biên độ lớn và hình thái khác nhau rõ hơn.
-
-Tuy nhiên continuous Frame Accuracy của hai dataset đều quanh 84%.
-
-Điều này cho thấy:
-
-> **Classifier accuracy cao không tự động giải quyết continuous temporal segmentation.**
-
-Đây là vấn đề nghiên cứu quan trọng nhất đang xuất hiện từ các thực nghiệm.
-
----
-
-# 15. Khả năng real-time hiện tại
-
-## IPN-Hand
-
-- 64-frame window tại 30 FPS = khoảng 2.13 s context.
-- step 16 = prediction mỗi khoảng 0.53 s.
-
-## CTPGesture
-
-- 32-frame window tại 15 FPS = khoảng 2.13 s context.
-- step 8 = prediction mỗi khoảng 0.53 s.
-- yêu cầu xử lý khoảng **1.875 window/s**.
-
-Trong benchmark:
-
-- model-only khoảng **20–22 clips/s**;
-- continuous offline pipeline khoảng **8.67 windows/s**.
-
-Về **compute throughput trên Tesla T4**, pipeline đủ nhanh so với tốc độ window sinh ra.
-
-Tuy nhiên chưa thể gọi đây là end-to-end robot latency vì chưa tính:
-
-- camera capture;
-- buffering;
-- online decode;
-- causal waiting time;
-- Jetson latency;
-- post-processing;
-- command emission.
-
----
-
-# 16. Trạng thái EgoEvGesture
-
-Công việc chuẩn bị dữ liệu đã thực hiện:
-
-- 10 subjects;
-- left/right event camera;
-- 20 ZIP raw;
-- tổng ZIP khoảng **40.433 GB**;
-- 38 gesture classes;
-- raw event data dạng .npy;
-- đã kiểm tra cấu trúc và tạo staging dataset;
-- chưa xử lí dedup Subject 5/10 ở bước raw.
-
-Hiện tại chưa train vì gặp giới hạn **Kaggle private dataset quota**:
-
-- canonical dataset cần khoảng 37.656 GB quota;
-- tài khoản chỉ còn khoảng 6.865 GB;
-- đây là **private storage quota của tài khoản**, không phải scratch disk và không liên quan đến T4 ×2.
-
-Session scratch vẫn có đủ dung lượng, nhưng persistent private dataset quota không đủ.
-
----
-
-# 17. Những kết quả có thể báo cáo chắc chắn
-
-1. **VideoMamba-Tiny chỉ ~6.96M params** nhưng đạt hiệu năng rất cạnh tranh.
-2. Trên IPN-Hand isolated: **84.65%**, cao hơn nhẹ VideoMAEv2 84.59% trong CoboGesture.
-3. Trên IPN-Hand continuous: **83.77% Frame Accuracy / 0.5077 overlap** với R3, rất gần CoboGesture VideoMAEv2 **83% / 0.51**.
-4. Trên CTPGesture isolated: **98.55% Accuracy / 97.96% Macro-F1**.
-5. Trên CTPGesture continuous RAW: **83.98% Frame Accuracy / 80.61% Macro-F1 / 65.32% overlap / 94.80% Recall**.
-6. Rule-based post-processing chỉ giúp nhẹ, không giải quyết được boundary problem.
-7. Khoảng cách isolated → continuous chứng minh nhu cầu nghiên cứu thêm **temporal modeling/localization**.
-
----
-
-# 18. Những điểm chưa được phép kết luận quá mức
-
-- Chưa thể nói VideoMamba “SOTA CTPGesture continuous”.
-- Chưa có causal evaluation giống RSC-GestureNet.
-- Chưa chạy multi-seed.
-- Chưa có Segmental F1@10/25/50.
-- Chưa có Edit Score.
-- Chưa benchmark end-to-end trên Jetson.
-- GFLOPs hiện là analytical/custom estimate, cần thống nhất quy ước MAC/FLOP.
-- Các bài CTPGesture isolated không dùng cùng split, nên không so thứ hạng tuyệt đối.
-
----
-
-## B. Khó khăn hiện tại
-
-1. **Giới hạn thời gian Kaggle**
-   - CTPGesture training dừng ở 28/30 epochs do session timeout.
-   - Best checkpoint vẫn đã lưu thành công.
-
-2. **Continuous recognition còn yếu ở temporal boundary**
-   - isolated gần 99%;
-   - continuous Macro-F1 chỉ khoảng 80.6%.
-
-3. **Literature không đồng nhất protocol**
-   - cùng dataset lineage nhưng test split và metric khác nhau.
-
-4. **EgoEvGesture bị giới hạn storage**
-   - private quota chưa đủ để lưu canonical raw dataset ~40 GB.
-
----
+## B. Khó khăn
+- Không
 
 ## C. Công việc tiếp theo
-
-### P0 — ưu tiên cao nhất
-
-1. **Triển khai causal evaluator cho CTPGesture**
-   - 32-frame causal window;
-   - stride 4;
-   - end-aligned prediction;
-   - tuyệt đối không dùng future frame;
-   - report Accuracy, Macro-F1, Online-F1;
-   - so cùng protocol với RSC-GestureNet.
-
-2. **Error/keyframe visualization**
-   - tạo file errors.csv/txt;
-   - lưu video, frame, GT, prediction, confidence;
-   - show keyframe/window sai;
-   - nhóm lỗi theo transition và gesture pair.
-
-3. **Tách validation cho post-processing**
-   - chọn threshold trên validation;
-   - không tune trực tiếp trên official test.
-
-### P1 — publication-quality experiments
-
-4. Chạy ít nhất 3 random seeds.
-5. Bổ sung Segmental F1@10/25/50.
-6. Bổ sung Edit Score.
-7. Phân tích calibration/confidence ở transition.
-8. Đo peak VRAM và latency chuẩn.
-9. Xác minh lại FLOP convention.
-
-### P2 — EgoEvGesture
-
-10. Giải quyết Kaggle storage hoặc đọc trực tiếp từ nguồn ngoài.
-11. Kiểm toán số sequence thực tế.
-12. Xây dựng event representation.
-13. Train VideoMamba baseline.
-14. Đánh giá cross-subject / cross-camera.
-
----
-
-# D. Kết luận ngắn để trình bày
-
-> Trong giai đoạn này em đã hoàn thiện được pipeline đánh giá VideoMamba-Tiny từ isolated tới continuous trên IPN-Hand và CTPGesture v1. Trên IPN-Hand, VideoMamba-Tiny đạt 84.65% isolated accuracy và khoảng 83.77% continuous frame accuracy với overlap 0.508, trong khi chỉ có khoảng 6.96M parameters, thấp hơn khoảng 43 lần so với VideoMAEv2 mà bài CoboGesture sử dụng. Trên CTPGesture, isolated accuracy đạt 98.55%, nhưng khi chuyển sang full-video sliding-window thì frame accuracy giảm xuống 83.98% và Macro-F1 còn 80.61%. Gesture Recall vẫn cao 94.80%, cho thấy vấn đề chính hiện tại nằm ở temporal boundary/localization hơn là khả năng phân biệt gesture class. Em đã thử các bước post-processing nhưng mức cải thiện nhỏ, do đó hướng tiếp theo em đề xuất là xây dựng causal evaluation 32/4 giống RSC-GestureNet và tập trung vào temporal modeling thay vì tiếp tục tối ưu heuristic hậu xử lí.
-
----
-
-# E. Tài liệu tham khảo chính
-
-1. G. Benitez-Garcia et al., **IPN Hand: A Video Dataset and Benchmark for Real-Time Continuous Hand Gesture Recognition**, ICPR.
-2. P.-D. Nguyen et al., **CoboGesture: A Continuous Hand Gesture Dataset and Recognition Method for Human-Collaborative Robot Interaction**, IEEE Access, vol. 14, pp. 27584–27601, 2026. DOI: 10.1109/ACCESS.2026.3664027.
-3. X. Xiong et al., **Traffic Police Gesture Recognition Based on Gesture Skeleton Extractor and Multichannel Dilated Graph Convolution Network**, Electronics, 2021.
-4. Xiao et al., **A Lightweight and Efficient Gesture Recognizer for Traffic Police Commands Using Spatiotemporal Feature Fusion**, Scientific Reports, 2025.
-5. Zhang et al., **A Traffic Police Gesture Recognition Method Based on BiLSTM-Transformer Architecture**, Electronics, 2026.
-6. Li et al., **RSC-GestureNet: Reliability-Aware Selective Causal Recognition of Chinese Traffic Police Gestures**, arXiv:2608.02200v1, 2026.
-
-## Notebook / report nguồn trong repository
-
-- Research_Report/260921
-- Research_Report/261007/videomamba_man_configsBenchmark.ipynb
-- Research_Report/261015/VideoMambaTinyCTPGestureFinal.ipynb
-- Research_Report/261015/Readme.md
-- Research_Report/261015/CTPGesture_VideoMamba_Report_20261015.pdf
+- Tiếp trục train với bộ EgoEv Gesture 
+- Đánh giá, so sánh với **CoboGesture HUST 2026**
