@@ -47,13 +47,15 @@
 | Method / nguồn | Năm | Input | **Params classifier (M)** | **Params pipeline (M)** | GFLOPs/clip | Accuracy (%) | Ghi chú |
 |---|---:|---|---:|---:|---:|---:|---|
 | **VideoMamba-Tiny [O]** | 2026 | RGB, 16f | **6.9608** | **6.9608** | **29.0261 [E]** | **84.65** | 1.101 clips; kiểm tra giao thức |
-| RGB-CoGes + VideoMAEv2 [P] | 2026 | RGB | **303.8** | **303.8** | — | 84.59 | [CoboGesture Table 4] |
-| RGB-CoGes + VideoMAE [P] | 2026 | RGB | **303.8** | **303.8** | — | 78.81 | [CoboGesture Table 4] |
+| RGB-CoGes + VideoMAEv2 [P] | 2026 | RGB | **303.8** | **303.8** | **596.8327†** | 84.59 | [CoboGesture Table 4] |
+| RGB-CoGes + VideoMAE [P] | 2026 | RGB | **303.8** | **303.8** | **596.8327†** | 78.81 | [CoboGesture Table 4] |
 | ResNeXt-101 [P] | 2020/21 | RGB + Flow | **47.56** | **49.000*** | — | 86.32 | SPyNet 1.440M |
 | ResNeXt-101 [P] | 2020/21 | RGB + Seg | **47.56** | **51.674*** | — | 84.77 | HarDNet 4.114M |
 | ResNeXt-101 [P] | 2020/21 | RGB | **47.51** | **47.51** | — | 83.59 | 32f |
 | C3D [P] | 2020/21 | RGB | **50.75** | **50.75** | — | 77.75 | 32f, biến thể IPN gốc |
 | ResNet-50 [P] | 2020/21 | RGB | **46.25** | **46.25** | — | 73.10 | 32f |
+
+**Chú thích GFLOPs VideoMAE:** 596.8327† là số **nhóm tự benchmark** cho VideoMAE v1/v2 ViT-L/16, 16×224², 14-class head, quy ước 1 MAC = 1 FLOP-equivalent; **không phải** số GFLOPs mà CoboGesture Table 4 trực tiếp công bố. Không dùng để suy ra FPS hay so sánh toàn bộ pipeline.
 
 **Nguồn Params (bản gốc):** [Benitez-Garcia et al., IPN-Hand, Table IV/V](https://arxiv.org/abs/2005.02134) ([toàn văn có bảng](https://www.researchgate.net/publication/341175756_IPN_Hand_A_Video_Dataset_and_Benchmark_for_Real-Time_Continuous_Hand_Gesture_Recognition)); [Nguyen et al., CoboGesture 2026, Table 4](https://doi.org/10.1109/ACCESS.2026.3664027); [notebook VideoMamba](../261007/videomamba_man_configsBenchmark.ipynb). `*` Tổng suy ra bằng cách cộng các mô hình **trong chuỗi suy luận**: 47.56+1.440=49.000M (Flow), 47.56+4.114=51.674M (Seg); không phải tổng được tác giả in sẵn. Nếu tiền xử lý Flow/Seg chỉ chạy offline và cache, chi phí inference thực tế cần báo riêng.
 
@@ -91,8 +93,8 @@
 | VideoMamba, gesture-only [O] | 2026 | RGB | 6.959817 | 6.959817 | 29.0261 [E] | 98.0210 | 98.2363 | **Khác subset**, loại class-0 GT |
 | GSE + MD-GCN (Xiong et al.) [P] | 2021 | OpenPose + skeleton | **—** | **—** | — | 98.95 | — | Paper Table 1 ghi **model size 11.7 M**, **không phải** params 11.7M; khác test split |
 | P3D (Qiu, baseline Xiong) [P] | 2021 | RGB | **≈65.3†** | **—** | — | 92.21 | — | † Ước từ **P3D-199 tham khảo**, không biết chính xác variant Xiong |
-| C3D (Tran, baseline Xiong) [P] | 2021 | RGB | **78.4†** | **—** | — | 87.12 | — | † MMAction2 C3D 16×112²; **không** gán cho Xiong như số đo |
-| 3D ResNet (Hara, baseline Xiong) [P] | 2021 | RGB | **33.4†** | **—** | — | 81.16 | — | † torchvision R3D-18 reference, không xác minh Xiong variant |
+| C3D (Tran, baseline Xiong) [P] | 2021 | RGB | **78.4†** | **—** | **38.5†** | 87.12 | — | † MMAction2 C3D 16×112²; **không** gán cho Xiong như số đo |
+| 3D ResNet (Hara, baseline Xiong) [P] | 2021 | RGB | **33.371472†** | **—** | **40.697†** | 81.16 | — | † torchvision R3D-18 reference, không xác minh Xiong variant |
 | YOLO11m-Pose + BiLSTM–Transformer (Zhang et al.) [P] | 2026 | RGB→Pose | **0.08641 [P, recognition head]** | **≈20.98641‡** | — | 98.91 | — | **Nghiên cứu liên quan; sequence-to-one, 10 video**, không phải isolated protocol nhóm |
 | EPFFNet + MSNet (NTPGR, Xiao et al.) [P] | 2025 | RGB→Pose | **—** | **—** | — | 97.56 | — | **Gesture-instance accuracy**, khác protocol/dataset partition |
 
@@ -104,7 +106,7 @@
 
 `†` **Architecture-reference-only:** số chỉ mô tả biến thể phổ biến, chưa xác minh chính xác mạng mà Xiong dùng. Do đó **không thể dùng để kết luận tỷ lệ nén hay độ phức tạp relative to Xiong**. P3D-199 ≈65.3M suy từ 261MB FP32 (xấp xỉ 65.25 triệu tham số, giả thiết kích thước chỉ là tensor weights). `‡` ≈20.9M + 0.08641M = **≈20.99M**, là **ước tính pipeline Zhang** dùng detector chính thức và classifier head của bài báo, không phải số total được bài báo đo trực tiếp.
 
-**Đặc biệt:** **11.7 M** trong Xiong là cột *Model Size*, không phải cột *No. Parameters*. Không được đặt `11.7` vào cột Params (M) dù chữ M giống nhau. Cần source checkpoint/implementation để đếm chính xác, đồng thời tính cả OpenPose nếu so full pipeline.
+**Đặc biệt:** **11.7 M** trong Xiong thuộc cột *Model Size*, chưa đủ định nghĩa đơn vị để kết luận đó là Mparams hay MB. Không tự điền 11.7 vào Params. Nếu giả thiết đó là 11.7 MB FP32 weights-only, suy ra khoảng 11.7/4 = 2.925 triệu phần tử; đây chỉ là **ước tính có điều kiện**, không phải số verified. Cần source checkpoint/implementation để đếm chính xác, đồng thời tính cả OpenPose nếu so full pipeline.
 
 ### Bảng 4 — CTPGesture v1: Continuous Gesture Recognition
 
@@ -226,3 +228,38 @@
 **Cách xác minh code-derived RSC bằng CPU (không inference):** khi clone repo RSC và cài PyTorch trên máy bất kỳ, tạo `RSCGestureNet(num_joints=17,num_classes=9,hidden=96,dropout=0.12,rgb_dim=12)`, `RSCGestureBackbone(17,9,96,0.12)`, `MDGCN(17,9,96,0.12)`, rồi `sum(p.numel() for p in model.parameters())`. Đếm cấu trúc theo đúng layer và kích thước đó cho ra **815270 / 335531 / 399993**. Khối `GRU`, `TCN`, `LayerNorm`, các bias và head đều được tính. Khi dùng một checkpoint cụ thể cần **khớp architecture và version** của code tại thời điểm tác giả release.
 
 **Không tự đồng nhất giữa:** (1) model file size MB, (2) số phần tử tensor trong `state_dict` (có buffer), (3) trainable parameters, (4) FLOPs/MACs, (5) tham số full end-to-end pipeline từ RGB. Chỉ dùng cùng định nghĩa Params để rút ra tỷ lệ model size.
+
+## K. TRUY VẾT CITATION ĐỂ HOÀN THIỆN THÔNG SỐ — 27/10/2026
+
+**Cách thực hiện:** paper đối chứng → reference paper → nguồn tác giả/model zoo/checkpoint → xác định kiến trúc và input đúng biến thể → tham số hoặc FLOPs. Chia bốn mức chứng cứ: **[P]** trực tiếp đúng model trong bài; **[C]** đếm từ code với config đúng; **[R]** số của kiến trúc cùng họ nhưng **chưa chứng minh trùng checkpoint benchmark**; **[E]** số suy ra hoặc ước lượng theo giả thiết. Không dùng [R]/[E] để tuyên bố thắng SOTA.
+
+### K.1. Bảng bổ sung đã truy ngược đến nguồn gốc
+
+| Mô hình và đúng biến thể | Parameters (M) | GFLOPs/clip | Input / giới hạn | Chứng cứ |
+|---|---:|---:|---|---|
+| VideoMamba-Tiny nhóm IPN / CTP | 6.9608 / 6.959817 | 29.0261 | 16×224², FLOPs đếm thủ công của nhóm | [C]/[E] |
+| VideoMamba-Tiny original | khoảng 7 | khoảng 17 | 16×224², FLOPs theo định nghĩa công trình ECCV 2024 | [R] |
+| VideoMAE v1/v2 ViT-L/16 do nhóm dựng | 303.8751 | 596.8327 | 16×224², 14-class, định nghĩa 1 MAC = 1 FLOP-equivalent | [C]/[E] |
+| C3D IPN-Hand original | 50.75 | — | RGB 32 frames, bảng IPN gốc | [P] |
+| C3D MMAction2 | 78.4 | 38.5 | 16×112², UCF-101, **khác C3D IPN/CTP** | [R] |
+| R3D-18 Torchvision Kinetics400 | 33.371472 | 40.697 | 16×112², **chưa xác minh** là bản Xiong sử dụng | [R] |
+| RSC-GestureNet Fusion recognition | 0.815270 | — | model.py, hidden=96, 17 joints, rgb_dim=12; **chưa gồm pose estimator** | [C] |
+| RSC pose backbone | 0.335531 | — | Cùng code/config; chưa gồm bộ trích pose | [C] |
+| MD-GCN-style RSC reimplementation | 0.399993 | — | baselines.py, khác Xiong 2021 | [C] |
+| HLP-GCN-style RSC reimplementation | 0.335817 | — | baselines.py; đối chiếu checkpoint theo kiến trúc | [C] |
+| ST-GCN của CoboGesture Table 3 | 2.8 | — | Trên dataset CoboGesture; **không chứng minh** ST-GCN của RSC dùng cùng cấu hình | [P] trong Cobo / [R] ngoài Cobo |
+| YOLO11m-Pose + BiLSTM–Transformer | khoảng 20.99 | — | 20.9 detector + 0.08641 recognition head, tổng suy ra | [E] |
+| FDMB-YOLOv11 2026 | 1.93 | — | **Single-frame RGB detection**, mAP@0.5 = 97.17%, không phải Accuracy video | [P], related work |
+
+**Nguồn và phạm vi:** [IPN-Hand ICPR Table IV, V, VIII, IX](https://gibranbenitez.github.io/2021_ICPR_IpnHand.pdf); [official IPN leaderboard](https://gibranbenitez.github.io/IPN_Hand/Results.html); [Torchvision R3D-18 model zoo](https://docs.pytorch.org/vision/0.26/models/generated/torchvision.models.video.r3d_18.html); [MMAction2 C3D model zoo](https://github.com/open-mmlab/mmaction2/blob/main/configs/recognition/c3d/README.md); [VideoMamba ECCV 2024, Kunchang Li et al.](https://www.ecva.net/papers/eccv_2024/papers_ECCV/html/3773_ECCV_2024_paper.php); [CoboGesture 2026](https://doi.org/10.1109/ACCESS.2026.3664027); [RSC-GestureNet model.py](https://github.com/chengli24/rsc-gesturenet-prcv2026/blob/main/src/rsc_gesturenet/model.py), [baselines.py](https://github.com/chengli24/rsc-gesturenet-prcv2026/blob/main/src/rsc_gesturenet/baselines.py), [train.yaml](https://github.com/chengli24/rsc-gesturenet-prcv2026/blob/main/configs/train.yaml); [PLOS ONE FDMB-YOLOv11, 28/08/2026](https://doi.org/10.1371/journal.pone.0357212).
+
+### K.2. Những ô trống không thể suy luận như số exact
+
+1. **MD-GCN Xiong 2021:** Model Size = 11.7 M không rõ đơn vị. Trường hợp giả thiết 11.7 MB FP32 weights-only suy ra khoảng 2.925M, nhưng không có đủ bằng chứng dùng làm Params công bố.
+2. **3D ResNet/C3D/P3D của Xiong:** Bảng paper chỉ liệt kê tên họ mô hình và Accuracy; model zoo khác có thể khác độ sâu, số lớp head, input, nên các số 33.371472/78.4 chỉ là kiến trúc [R].
+3. **RSC đầy đủ:** Recognition fusion 0.815270M nhưng model nhận keypoints và RGB descriptors đã xử lý. Chưa có tổng Params của chính xác MediaPipe estimator và bất kỳ mạng tạo descriptor có learned weights.
+4. **GRU, ST-GCN, TCN+VC của RSC:** Chưa tìm thấy class/checkpoint/config đủ xác minh đúng các hàng Table 1. ST-GCN = 2.8M trong Cobo không phải bằng chứng cho ST-GCN reimplemented RSC.
+5. **GFLOPs giữa phương pháp:** 17G vs 29.0261G VideoMamba là **hai quy ước profiling** khác nhau. 596.8327G của VideoMAE thuộc phép đo của nhóm; 38.5/40.697G của model zoo là 16×112², không thể coi trực tiếp so với 16×224².
+6. **Bài mới FDMB-YOLOv11:** Có tham số 1.93M nhưng là nhận dạng ảnh tĩnh với mAP, không nên thêm vào Bảng CTP isolated/continuous với Accuracy giả định.
+
+**Kết luận:** Citation chaining đã giúp bổ sung thông số có nguồn cho họ 3D CNN/VideoMAE/VideoMamba và nhận dạng skeleton 2026, không tốn GPU. Để bảng có giá trị khoa học, nên giữ cột nguồn và mã [P]/[C]/[R]/[E]; không điền các con số chính xác giả tạo cho biến thể không thể xác minh.
