@@ -40,20 +40,22 @@
 
 ## E. BỐN BẢNG ĐỐI CHIẾU
 
+**Cách đọc nguồn ngay trong bảng:** `Notebook` = số tự đo; `Paper/Table` = số tác giả công bố; `model zoo/reference` = thông số của biến thể tham khảo (không đảm bảo trùng checkpoint benchmark). Các số ước lượng vẫn giữ nhãn †/[E] và ghi chú chi tiết dưới bảng.
+
 ### Bảng 1 — IPN-Hand: Isolated Gesture Recognition
 
 **Cột ưu tiên: Parameters (M).** Với mô hình RGB đơn, số tham số của classifier chính là toàn bộ recognition network. Với RGB+Flow/Seg, cần cộng thêm **mô hình sinh modality** khi đánh giá tổng pipeline. Notebook nhóm đánh giá 1.101 đoạn cử chỉ, loại class non-gesture, input 16×224×224; các baseline IPN gốc chủ yếu dùng 32 frames.
 
-| Method / nguồn | Năm | Input | **Params classifier (M)** | **Params pipeline (M)** | GFLOPs/clip | Accuracy (%) | Ghi chú |
-|---|---:|---|---:|---:|---:|---:|---|
-| **VideoMamba-Tiny [O]** | 2026 | RGB, 16f | **6.9608** | **6.9608** | **29.0261 [E]** | **84.65** | 1.101 clips; kiểm tra giao thức |
-| RGB-CoGes + VideoMAEv2 [P] | 2026 | RGB | **303.8** | **303.8** | **596.8327†** | 84.59 | [CoboGesture Table 4] |
-| RGB-CoGes + VideoMAE [P] | 2026 | RGB | **303.8** | **303.8** | **596.8327†** | 78.81 | [CoboGesture Table 4] |
-| ResNeXt-101 [P] | 2020/21 | RGB + Flow | **47.56** | **49.000*** | — | 86.32 | SPyNet 1.440M |
-| ResNeXt-101 [P] | 2020/21 | RGB + Seg | **47.56** | **51.674*** | — | 84.77 | HarDNet 4.114M |
-| ResNeXt-101 [P] | 2020/21 | RGB | **47.51** | **47.51** | — | 83.59 | 32f |
-| C3D [P] | 2020/21 | RGB | **50.75** | **50.75** | — | 77.75 | 32f, biến thể IPN gốc |
-| ResNet-50 [P] | 2020/21 | RGB | **46.25** | **46.25** | — | 73.10 | 32f |
+| Method / nguồn | Năm | Input | **Params classifier (M)** | **Params pipeline (M)** | GFLOPs/clip | Accuracy (%) | Ghi chú | **Nguồn trực tiếp (link)** |
+|---|---:|---|---:|---:|---:|---:|--- |---|
+| **VideoMamba-Tiny [O]** | 2026 | RGB, 16f | **6.9608** | **6.9608** | **29.0261 [E]** | **84.65** | 1.101 clips; kiểm tra giao thức | [Notebook IPN](../261007/videomamba_man_configsBenchmark.ipynb) |
+| RGB-CoGes + VideoMAEv2 [P] | 2026 | RGB | **303.8** | **303.8** | **596.8327†** | 84.59 | [CoboGesture Table 4] | [CoboGesture 2026 · Table 4/7](https://doi.org/10.1109/ACCESS.2026.3664027) |
+| RGB-CoGes + VideoMAE [P] | 2026 | RGB | **303.8** | **303.8** | **596.8327†** | 78.81 | [CoboGesture Table 4] | [CoboGesture 2026 · Table 4/7](https://doi.org/10.1109/ACCESS.2026.3664027) |
+| ResNeXt-101 [P] | 2020/21 | RGB + Flow | **47.56** | **49.000*** | — | 86.32 | SPyNet 1.440M | [IPN-Hand paper](https://arxiv.org/abs/2005.02134) |
+| ResNeXt-101 [P] | 2020/21 | RGB + Seg | **47.56** | **51.674*** | — | 84.77 | HarDNet 4.114M | [IPN-Hand paper](https://arxiv.org/abs/2005.02134) |
+| ResNeXt-101 [P] | 2020/21 | RGB | **47.51** | **47.51** | — | 83.59 | 32f | [IPN-Hand paper](https://arxiv.org/abs/2005.02134) |
+| C3D [P] | 2020/21 | RGB | **50.75** | **50.75** | — | 77.75 | 32f, biến thể IPN gốc | [IPN-Hand paper](https://arxiv.org/abs/2005.02134) · [CoboGesture 2026 · Table 4/7](https://doi.org/10.1109/ACCESS.2026.3664027) |
+| ResNet-50 [P] | 2020/21 | RGB | **46.25** | **46.25** | — | 73.10 | 32f | [IPN-Hand paper](https://arxiv.org/abs/2005.02134) · [CoboGesture 2026 · Table 4/7](https://doi.org/10.1109/ACCESS.2026.3664027) |
 
 **Chú thích GFLOPs VideoMAE:** 596.8327† là số **nhóm tự benchmark** cho VideoMAE v1/v2 ViT-L/16, 16×224², 14-class head, quy ước 1 MAC = 1 FLOP-equivalent; **không phải** số GFLOPs mà CoboGesture Table 4 trực tiếp công bố. Không dùng để suy ra FPS hay so sánh toàn bộ pipeline.
 
@@ -65,17 +67,17 @@
 
 **Bổ sung Params đặc biệt quan trọng:** Continuous pipeline của benchmark IPN gốc có **detector ResLight-10 + classifier**; nếu dùng RGB-Flow/Seg phải cộng thêm mạng SPyNet/HarDNet. **Không** so `47.51M` của classifier-only với `6.96M` của model end-to-end mà không nêu phạm vi. RGB-CoGes dùng lại VideoMAE/VideoMAEv2 và hậu xử lý không học trọng số, nên vẫn khoảng 303.8M learned parameters.
 
-| Method / nguồn | Input | **Params recognition (M)** | **Params toàn pipeline (M)** | Mean per-video FrameAcc (%) | Activity overlap | Levenshtein (%) | Ghi chú |
-|---|---|---:|---:|---:|---:|---:|---|
-| **VideoMamba-Tiny Raw [O]** | RGB | **6.9608** | **6.9608** | **83.4889** | 0.491110 | — | Offline window aggregation |
-| VideoMamba-Tiny R3 [O] | RGB | 6.9608 | 6.9608 | 83.5249 | 0.507705 | — | **Test-tuned** |
-| RGB-CoGes + VideoMAEv2 [P] | RGB | **303.8** | **303.8** | 83.00 | 0.510 | — | Cobo Table 7 |
-| RGB-CoGes + VideoMAE [P] | RGB | **303.8** | **303.8** | 80.00 | 0.370 | — | Cobo Table 7 |
-| DD-Net continuous [P] | Skeleton | **2.4†** | **—** | 57.00 | — | — | 2.4M chỉ từ **DD-Net architecture ở Cobo Table 3**, chưa xác nhận bản IPN; pose extractor chưa gồm |
-| ResNeXt-101 + ResLight + SPyNet [P] | RGB + Flow | 47.56 | **49.908*** | — | — | 42.47 | Classification 47.56 + detector 0.908 + flow 1.440 |
-| ResNeXt-101 + ResLight [P] | RGB | 47.51 | **48.405*** | — | — | 25.34 | 47.51 + 0.895 detector |
-| ResNet-50 + ResLight + SPyNet [P] | RGB + Flow | 46.27 | **48.618*** | — | — | 39.47 | 46.27 + 0.908 + 1.440 |
-| ResNet-50 + ResLight [P] | RGB | 46.25 | **47.145*** | — | — | 19.78 | 46.25 + 0.895 |
+| Method / nguồn | Input | **Params recognition (M)** | **Params toàn pipeline (M)** | Mean per-video FrameAcc (%) | Activity overlap | Levenshtein (%) | Ghi chú | **Nguồn trực tiếp (link)** |
+|---|---|---:|---:|---:|---:|---:|--- |---|
+| **VideoMamba-Tiny Raw [O]** | RGB | **6.9608** | **6.9608** | **83.4889** | 0.491110 | — | Offline window aggregation | [Notebook IPN](../261007/videomamba_man_configsBenchmark.ipynb) |
+| VideoMamba-Tiny R3 [O] | RGB | 6.9608 | 6.9608 | 83.5249 | 0.507705 | — | **Test-tuned** | [Notebook IPN](../261007/videomamba_man_configsBenchmark.ipynb) |
+| RGB-CoGes + VideoMAEv2 [P] | RGB | **303.8** | **303.8** | 83.00 | 0.510 | — | Cobo Table 7 | [CoboGesture 2026 · Table 4/7](https://doi.org/10.1109/ACCESS.2026.3664027) |
+| RGB-CoGes + VideoMAE [P] | RGB | **303.8** | **303.8** | 80.00 | 0.370 | — | Cobo Table 7 | [CoboGesture 2026 · Table 4/7](https://doi.org/10.1109/ACCESS.2026.3664027) |
+| DD-Net continuous [P] | Skeleton | **2.4†** | **—** | 57.00 | — | — | 2.4M chỉ từ **DD-Net architecture ở Cobo Table 3**, chưa xác nhận bản IPN; pose extractor chưa gồm | [CoboGesture 2026 · Table 4/7](https://doi.org/10.1109/ACCESS.2026.3664027) |
+| ResNeXt-101 + ResLight + SPyNet [P] | RGB + Flow | 47.56 | **49.908*** | — | — | 42.47 | Classification 47.56 + detector 0.908 + flow 1.440 | [IPN-Hand paper](https://arxiv.org/abs/2005.02134) · [Benchmark](https://gibranbenitez.github.io/IPN_Hand/Results.html) |
+| ResNeXt-101 + ResLight [P] | RGB | 47.51 | **48.405*** | — | — | 25.34 | 47.51 + 0.895 detector | [IPN-Hand paper](https://arxiv.org/abs/2005.02134) · [Benchmark](https://gibranbenitez.github.io/IPN_Hand/Results.html) |
+| ResNet-50 + ResLight + SPyNet [P] | RGB + Flow | 46.27 | **48.618*** | — | — | 39.47 | 46.27 + 0.908 + 1.440 | [IPN-Hand paper](https://arxiv.org/abs/2005.02134) · [Benchmark](https://gibranbenitez.github.io/IPN_Hand/Results.html) |
+| ResNet-50 + ResLight [P] | RGB | 46.25 | **47.145*** | — | — | 19.78 | 46.25 + 0.895 | [IPN-Hand paper](https://arxiv.org/abs/2005.02134) · [Benchmark](https://gibranbenitez.github.io/IPN_Hand/Results.html) |
 
 **Nguồn:** [IPN-Hand gốc, Tables IV, V, VIII và IX](https://www.researchgate.net/publication/341175756_IPN_Hand_A_Video_Dataset_and_Benchmark_for_Real-Time_Continuous_Hand_Gesture_Recognition); [CoboGesture 2026, Tables 3/4/7](https://www.researchgate.net/publication/400740972_CoboGesture_A_continuous_hand_gesture_dataset_and_recognition_method_for_human-collaborative_robot_interaction); [IPN notebook](../261007/videomamba_man_configsBenchmark.ipynb).
 
@@ -87,16 +89,16 @@
 
 **Yêu cầu Parameters:** Tách số tham số **thực sự được bài báo công bố** khỏi tham số của một kiến trúc **tham khảo khác**. Đặc biệt, model file size (MB) **không** đồng nghĩa với số lượng parameters (M).
 
-| Method / nguồn | Năm | Input | **Params classifier / recognition (M)** | **Params toàn pipeline (M)** | GFLOPs/clip | Accuracy (%) | Macro-F1 (%) | Đối chiếu |
-|---|---:|---|---:|---:|---:|---:|---:|---|
-| **VideoMamba-Tiny, 9 lớp [O]** | 2026 | RGB | **6.959817** | **6.959817** | 29.0261 [E] | **98.5532** | 97.9590 | Official 11 test videos, 1.728 segments |
-| VideoMamba, gesture-only [O] | 2026 | RGB | 6.959817 | 6.959817 | 29.0261 [E] | 98.0210 | 98.2363 | **Khác subset**, loại class-0 GT |
-| GSE + MD-GCN (Xiong et al.) [P] | 2021 | OpenPose + skeleton | **—** | **—** | — | 98.95 | — | Paper Table 1 ghi **model size 11.7 M**, **không phải** params 11.7M; khác test split |
-| P3D (Qiu, baseline Xiong) [P] | 2021 | RGB | **≈65.3†** | **—** | — | 92.21 | — | † Ước từ **P3D-199 tham khảo**, không biết chính xác variant Xiong |
-| C3D (Tran, baseline Xiong) [P] | 2021 | RGB | **78.4†** | **—** | **38.5†** | 87.12 | — | † MMAction2 C3D 16×112²; **không** gán cho Xiong như số đo |
-| 3D ResNet (Hara, baseline Xiong) [P] | 2021 | RGB | **33.371472†** | **—** | **40.697†** | 81.16 | — | † torchvision R3D-18 reference, không xác minh Xiong variant |
-| YOLO11m-Pose + BiLSTM–Transformer (Zhang et al.) [P] | 2026 | RGB→Pose | **0.08641 [P, recognition head]** | **≈20.98641‡** | — | 98.91 | — | **Nghiên cứu liên quan; sequence-to-one, 10 video**, không phải isolated protocol nhóm |
-| EPFFNet + MSNet (NTPGR, Xiao et al.) [P] | 2025 | RGB→Pose | **—** | **—** | — | 97.56 | — | **Gesture-instance accuracy**, khác protocol/dataset partition |
+| Method / nguồn | Năm | Input | **Params classifier / recognition (M)** | **Params toàn pipeline (M)** | GFLOPs/clip | Accuracy (%) | Macro-F1 (%) | Đối chiếu | **Nguồn trực tiếp (link)** |
+|---|---:|---|---:|---:|---:|---:|---:|--- |---|
+| **VideoMamba-Tiny, 9 lớp [O]** | 2026 | RGB | **6.959817** | **6.959817** | 29.0261 [E] | **98.5532** | 97.9590 | Official 11 test videos, 1.728 segments | [Notebook CTP](../261015/VideoMambaTinyCTPGestureFinal.ipynb) |
+| VideoMamba, gesture-only [O] | 2026 | RGB | 6.959817 | 6.959817 | 29.0261 [E] | 98.0210 | 98.2363 | **Khác subset**, loại class-0 GT | [Notebook CTP](../261015/VideoMambaTinyCTPGestureFinal.ipynb) |
+| GSE + MD-GCN (Xiong et al.) [P] | 2021 | OpenPose + skeleton | **—** | **—** | — | 98.95 | — | Paper Table 1 ghi **model size 11.7 M**, **không phải** params 11.7M; khác test split | [Xiong · Tables 1/3](https://www.mdpi.com/2079-9292/10/5/551) |
+| P3D (Qiu, baseline Xiong) [P] | 2021 | RGB | **≈65.3†** | **—** | — | 92.21 | — | † Ước từ **P3D-199 tham khảo**, không biết chính xác variant Xiong | [Xiong](https://www.mdpi.com/2079-9292/10/5/551) · [P3D reference](https://openaccess.thecvf.com/content_ICCV_2017/papers/Qiu_Learning_Spatio-Temporal_Representation_ICCV_2017_paper.pdf) |
+| C3D (Tran, baseline Xiong) [P] | 2021 | RGB | **78.4†** | **—** | **38.5†** | 87.12 | — | † MMAction2 C3D 16×112²; **không** gán cho Xiong như số đo | [Xiong](https://www.mdpi.com/2079-9292/10/5/551) · [C3D model zoo](https://github.com/open-mmlab/mmaction2/blob/main/configs/recognition/c3d/README.md) |
+| 3D ResNet (Hara, baseline Xiong) [P] | 2021 | RGB | **33.371472†** | **—** | **40.697†** | 81.16 | — | † torchvision R3D-18 reference, không xác minh Xiong variant | [Xiong](https://www.mdpi.com/2079-9292/10/5/551) · [R3D model zoo](https://docs.pytorch.org/vision/0.26/models/generated/torchvision.models.video.r3d_18.html) |
+| YOLO11m-Pose + BiLSTM–Transformer (Zhang et al.) [P] | 2026 | RGB→Pose | **0.08641 [P, recognition head]** | **≈20.98641‡** | — | 98.91 | — | **Nghiên cứu liên quan; sequence-to-one, 10 video**, không phải isolated protocol nhóm | [Zhang · Table 3](https://www.mdpi.com/2079-9292/15/12/2578) · [YOLO11](https://github.com/ultralytics/ultralytics/blob/main/docs/en/models/yolo11.md) |
+| EPFFNet + MSNet (NTPGR, Xiao et al.) [P] | 2025 | RGB→Pose | **—** | **—** | — | 97.56 | — | **Gesture-instance accuracy**, khác protocol/dataset partition | [Xiao et al. 2025](https://www.nature.com/articles/s41598-025-02833-y) |
 
 **Nguồn:**
 - [Xiong et al. 2021, Tables 1 và 3 — kích thước MD-GCN 11.7 M và Accuracy 98.95%](https://www.mdpi.com/2079-9292/10/5/551).
@@ -112,16 +114,16 @@
 
 **Cột Params đo từ code gốc RSC:** Công khai [model.py](https://github.com/chengli24/rsc-gesturenet-prcv2026/blob/main/src/rsc_gesturenet/model.py), [baselines.py](https://github.com/chengli24/rsc-gesturenet-prcv2026/blob/main/src/rsc_gesturenet/baselines.py), [train.yaml](https://github.com/chengli24/rsc-gesturenet-prcv2026/blob/main/configs/train.yaml). Với `hidden=96`, `num_joints=17`, `num_classes=9`, `rgb_dim=12`, **đếm tất cả trainable parameters bằng kiến trúc PyTorch tái tạo trên CPU (không chạy inference):** fusion = **815.270**, pose backbone = **335.531**, MD-GCN-style reimplementation = **399.993**. **Các số dưới đây chưa gồm RGB→pose detector.**
 
-| Method / nguồn | Input / protocol | **Params recognition (M)** | **Params RGB→pose (M)** | **Params toàn pipeline (M)** | Accuracy (%) | Macro-F1 (%) | Online-F1 (%) | Early@10 (%) |
-|---|---|---:|---:|---:|---:|---:|---:|---:|
-| **VideoMamba Raw [O]** | RGB, offline, 32/8 | **6.959817** | Không dùng | **6.959817** | **83.9836** | **80.6135** | — | — |
-| VideoMamba R3 [O, test-tuned] | RGB offline + hậu xử lý | 6.959817 | Không dùng | 6.959817 | 83.9940 | 80.6254 | — | — |
-| RSC-GestureNet Fusion [C, code gốc 2026] | Pose + RGB descriptor, causal | **0.815270** | **—** | **—** | 93.33±0.24 | 91.71±0.27 | 91.69±0.29 | 98.80±0.07 |
-| RSC-Gesture-Pose+VC [E, kiến trúc pose] | Pose, causal | **≈0.335531†** | **—** | **—** | 93.09±0.26 | 91.35±0.43 | 91.33±0.39 | 98.41±0.34 |
-| TCN+VC [P] | Pose/temporal features, causal | **—** | **—** | **—** | 92.97±0.18 | 91.16±0.21 | 91.08±0.23 | 98.41±0.07 |
-| MD-GCN-style reimplemented [C, RSC source] | Pose, causal | **0.399993** | **—** | **—** | 90.08±1.38 | 88.48±1.43 | 89.54±0.76 | 98.14±0.42 |
-| ST-GCN [P, RSC baseline] | Pose, causal | **—** | **—** | **—** | 89.45±0.65 | 87.94±0.72 | 82.64±0.43 | 98.06±0.41 |
-| GRU [P, RSC baseline] | Pose/temporal, causal | **—** | **—** | **—** | 88.82±0.43 | 87.10±0.45 | 81.99±0.82 | 98.14±0.31 |
+| Method / nguồn | Input / protocol | **Params recognition (M)** | **Params RGB→pose (M)** | **Params toàn pipeline (M)** | Accuracy (%) | Macro-F1 (%) | Online-F1 (%) | Early@10 (%) | **Nguồn trực tiếp (link)** |
+|---|---|---:|---:|---:|---:|---:|---:|---: |---|
+| **VideoMamba Raw [O]** | RGB, offline, 32/8 | **6.959817** | Không dùng | **6.959817** | **83.9836** | **80.6135** | — | — | [Notebook CTP](../261015/VideoMambaTinyCTPGestureFinal.ipynb) |
+| VideoMamba R3 [O, test-tuned] | RGB offline + hậu xử lý | 6.959817 | Không dùng | 6.959817 | 83.9940 | 80.6254 | — | — | [Notebook CTP](../261015/VideoMambaTinyCTPGestureFinal.ipynb) |
+| RSC-GestureNet Fusion [C, code gốc 2026] | Pose + RGB descriptor, causal | **0.815270** | **—** | **—** | 93.33±0.24 | 91.71±0.27 | 91.69±0.29 | 98.80±0.07 | [RSC 2026 · Table 1](https://arxiv.org/abs/2608.02200) · [Model code](https://github.com/chengli24/rsc-gesturenet-prcv2026/blob/main/src/rsc_gesturenet/model.py) |
+| RSC-Gesture-Pose+VC [E, kiến trúc pose] | Pose, causal | **≈0.335531†** | **—** | **—** | 93.09±0.26 | 91.35±0.43 | 91.33±0.39 | 98.41±0.34 | [RSC 2026 · Table 1](https://arxiv.org/abs/2608.02200) · [Model code](https://github.com/chengli24/rsc-gesturenet-prcv2026/blob/main/src/rsc_gesturenet/model.py) |
+| TCN+VC [P] | Pose/temporal features, causal | **—** | **—** | **—** | 92.97±0.18 | 91.16±0.21 | 91.08±0.23 | 98.41±0.07 | [RSC 2026 · Table 1](https://arxiv.org/abs/2608.02200) |
+| MD-GCN-style reimplemented [C, RSC source] | Pose, causal | **0.399993** | **—** | **—** | 90.08±1.38 | 88.48±1.43 | 89.54±0.76 | 98.14±0.42 | [RSC 2026 · Table 1](https://arxiv.org/abs/2608.02200) · [MD-GCN code](https://github.com/chengli24/rsc-gesturenet-prcv2026/blob/main/src/rsc_gesturenet/baselines.py) |
+| ST-GCN [P, RSC baseline] | Pose, causal | **—** | **—** | **—** | 89.45±0.65 | 87.94±0.72 | 82.64±0.43 | 98.06±0.41 | [RSC 2026 · Table 1](https://arxiv.org/abs/2608.02200) |
+| GRU [P, RSC baseline] | Pose/temporal, causal | **—** | **—** | **—** | 88.82±0.43 | 87.10±0.45 | 81.99±0.82 | 98.14±0.31 | [RSC 2026 · Table 1](https://arxiv.org/abs/2608.02200) |
 
 **Nguồn:** [Li, Gao & Fu, RSC-GestureNet (2026), kết quả thực nghiệm](https://arxiv.org/abs/2608.02200), [repo tác giả](https://github.com/chengli24/rsc-gesturenet-prcv2026), [CTP notebook của nhóm](../261015/VideoMambaTinyCTPGestureFinal.ipynb). `[C]` = **code-derived count**, `[P]` = paper-reported metric, `[E]` = ước tính/cần khớp checkpoint. `†` `RSCGestureBackbone` có 0.335531M tham số; cần xác nhận biến thể Pose+VC trong bảng paper đúng checkpoint/architecture này trước khi coi là exact. `0.399993M` thuộc **bản MD-GCN-style do nhóm RSC tự tái triển khai**, **không** phải tham số của Xiong et al. 2021.
 
