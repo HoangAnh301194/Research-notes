@@ -1,5 +1,12 @@
 # Báo cáo nghiên cứu ngày 22/10/2026
 
+## Tiến độ bổ sung 27/10/2026 — P0 hoàn thiện, P1 hướng dẫn thực nghiệm
+
+- **[P0 — SOTA audit và protocol](P0_SOTA_AUDIT_20261027.md):** ma trận so sánh IPN-Hand/CTPGesture, công trình 2023–2026, nguồn Parameters/GFLOPs, phân biệt benchmark cùng protocol và related work. **Đã có bảng tổng quan gửi thầy**; chưa thể xác nhận đủ 5 bài RGB-only dùng chung official CTPGesture v1 split.
+- **[P1 — Runbook Kaggle/notebook](P1_NOTEBOOK_RUNBOOK_20261027.md):** các cell thực sự cần chạy, code Accuracy@10/20/50%, xử lý cache, trích TXT lỗi và contact sheets cho keyframe, kiểm tra tái lập.
+- **[Tool P1 — offline metrics/keyframe](p1_offline_metrics_keyframes.py):** dùng lại isolated CSV và continuous raw probability cache **không cần GPU**.
+- **Chưa tuyên bố hoàn thành P1:** Chưa chạy lại inference hoặc nhận output metric/keyframe của phiên mới. VideoMamba 2026 Raw/R3 là kết quả notebook đã lưu; các điểm test-tuned vẫn được chú thích.
+
 ## A. Công việc đã làm 
 - Tổng quan lại toàn bộ kết quả đã làm 
 - Khảo sát các bài báo :
