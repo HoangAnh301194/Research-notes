@@ -1,5 +1,21 @@
 # P1 metric protocol and qualitative visualization options — 28/10/2026
 
+## Implemented: two **different visualization protocols**
+
+Both notebook files now have **two separate P1 visualization code cells**. The plots do not require new model inference; they use data already produced earlier in the same full notebook run. They do need original video files for frame extraction.
+
+| Protocol | Notebook position | What constitutes a case? | PNG output |
+|---|---|---|---|
+| Isolated | Immediately after the P1 prefix accuracy cell | **One annotated clip** with GT/pred, confidence. Errors are paired with a correct clip of the **same GT class**, nearest available duration | `isolated_filmstrips/isolated_error_*.png`, `isolated_correct_*.png`, `isolated_pair_*.png` |
+| Continuous | Immediately after the P1 RAW temporal metrics cell | **One complete GT gesture interval** matched one-to-one by class and temporal IoU; correct if best matching prediction tIoU ≥ 0.50; error otherwise. Also sample background false positives | `continuous_timeline_keyframes/continuous_error_*.png`, `continuous_correct_*.png` |
+
+**Continuous images are NOT isolated-style filmstrips**: each has original frames at 5 times in the segment plus a **GT vs RAW Prediction label timeline** with surrounding context, highlighting the region and classification/boundary errors. Continuous case matching is a qualitative selection convention (tIoU 0.50), not a modification to the primary benchmark or metric protocol.
+
+The default limits are 6 isolated error+correct pairs, and 8 continuous error + 8 correct samples. Both protocols save a case manifest CSV. These are time-sampled **representative frames**, not learned-attention-selected keyframes. If the paper calls them keyframes, explain the selection procedure precisely.
+
+**Note:** Continuous error and control examples are selected with different criteria than clip-level isolated examples. Do not compare their counts as though both were clip classification errors.
+
+
 ## Scope and evidence
 
 This P1 update extends the existing checkpoint-based evaluation notebooks; it does not modify training or checkpoint weights. No Kaggle execution or numerical result is claimed yet.
