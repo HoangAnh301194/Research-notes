@@ -122,6 +122,16 @@ def main():
                     if ("ipn-hand" in source_lower or "ipn_hand" in source_lower or
                         "ipn hand" in source_lower) and "videomamba" in source_lower:
                         extra_ipn_eval_candidates+=1
+                        markers={
+                            "isolated": "isolated" in source_lower,
+                            "continuous": "continuous" in source_lower,
+                            "videomae": "videomae" in source_lower,
+                            "eval_calls": "model.eval()" in source_lower,
+                            "checkpoint": "checkpoint-best.pth" in source_lower,
+                            "classification": "classification" in source_lower,
+                            "benchmark": "benchmark" in source_lower
+                        }
+                        print(f"IPN candidate anonymous #{extra_ipn_eval_candidates}, features: "+json.dumps(markers,sort_keys=True))
                     continue
                 count[role]+=1
                 raw_is_private=meta.get("is_private",True)
