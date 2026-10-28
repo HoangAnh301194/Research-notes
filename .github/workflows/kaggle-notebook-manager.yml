@@ -1,0 +1,68 @@
+name: Kaggle Notebook Manager
+
+on:
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: 'Operation (no Kaggle writes)'
+        required: true
+        type: choice
+        default: check
+        options:
+          - check
+          - inventory
+          - pull
+      notebook_ref:
+        description: 'For pull: owner/notebook-slug'
+        required: false
+        type: string
+      version:
+        description: 'For pull: Kaggle version number, blank = latest'
+        required: false
+        type: string
+      export_artifact:
+        description: 'PUBLIC REPO: publish output artifact visible to repo readers'
+        type: boolean
+        required: true
+        default: false
+
+permissions:
+  contents: read
+
+concurrency:
+  group: kaggle-notebook-manager-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  kaggle:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install Kaggle CLI
+        run: python -m pip install --upgrade kaggle
+      - name: Check script syntax
+        run: python -m py_compile Research_Report/KaggleNotebook/_kaggle_manager/kaggle_manager.py
+      - name: Run Kaggle CLI (read only)
+        env:
+          KAGGLE_API_TOKEN: ${{ secrets.KAGGLE_API_TOKEN }}
+          MODE: ${{ inputs.mode }}
+          NOTEBOOK_REF: ${{ inputs.notebook_ref }}
+          VERSION: ${{ inputs.version }}
+        run: |
+          python Research_Report/KaggleNotebook/_kaggle_manager/kaggle_manager.py \
+            --mode "$MODE" \
+            --notebook-ref "$NOTEBOOK_REF" \
+            --version "$VERSION" \
+            --output-dir "$RUNNER_TEMP/kaggle_export"
+      - name: Publish output (ONLY if user opted into public artifact)
+        if: ${{ inputs.export_artifact && inputs.mode != 'check' }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: kaggle-${{ inputs.mode }}-${{ github.run_id }}
+          path: ${{ runner.temp }}/kaggle_export/
+          if-no-files-found: error
+          retention-days: 3
