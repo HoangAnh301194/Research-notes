@@ -7,6 +7,7 @@ on:
       - main
     paths:
       - '.github/workflows/kaggle-notebook-manager.yml'
+      - 'Research_Report/KaggleNotebook/_kaggle_manager/kaggle_manager.py'
   workflow_dispatch:
     inputs:
       mode:
