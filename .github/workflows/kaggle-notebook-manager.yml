@@ -1,6 +1,12 @@
 name: Kaggle Notebook Manager
 
 on:
+  # Safe one-time smoke test on workflow-file updates; no artifacts on push.
+  push:
+    branches:
+      - main
+    paths:
+      - '.github/workflows/kaggle-notebook-manager.yml'
   workflow_dispatch:
     inputs:
       mode:
@@ -46,10 +52,17 @@ jobs:
         run: python -m pip install --upgrade kaggle
       - name: Check script syntax
         run: python -m py_compile Research_Report/KaggleNotebook/_kaggle_manager/kaggle_manager.py
+      - name: Verify Kaggle token on workflow update
+        if: ${{ github.event_name == 'push' }}
+        env:
+          KAGGLE_API_TOKEN: ${{ secrets.KAGGLE_API_TOKEN }}
+        run: |
+          python Research_Report/KaggleNotebook/_kaggle_manager/kaggle_manager.py \
+            --mode check --output-dir "$RUNNER_TEMP/kaggle_authcheck"
       - name: Run Kaggle CLI (read only)
         env:
           KAGGLE_API_TOKEN: ${{ secrets.KAGGLE_API_TOKEN }}
-          MODE: ${{ inputs.mode }}
+          MODE: ${{ github.event_name == 'push' && 'inventory' || inputs.mode }}
           NOTEBOOK_REF: ${{ inputs.notebook_ref }}
           VERSION: ${{ inputs.version }}
         run: |
@@ -59,7 +72,7 @@ jobs:
             --version "$VERSION" \
             --output-dir "$RUNNER_TEMP/kaggle_export"
       - name: Publish output (ONLY if user opted into public artifact)
-        if: ${{ inputs.export_artifact && inputs.mode != 'check' }}
+        if: ${{ github.event_name == 'workflow_dispatch' && inputs.export_artifact && inputs.mode != 'check' }}
         uses: actions/upload-artifact@v4
         with:
           name: kaggle-${{ inputs.mode }}-${{ github.run_id }}
