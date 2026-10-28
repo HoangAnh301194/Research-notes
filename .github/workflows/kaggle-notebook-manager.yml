@@ -8,6 +8,7 @@ on:
     paths:
       - '.github/workflows/kaggle-notebook-manager.yml'
       - 'Research_Report/KaggleNotebook/_kaggle_manager/kaggle_manager.py'
+      - 'Research_Report/KaggleNotebook/_kaggle_manager/provenance_audit.py'
   workflow_dispatch:
     inputs:
       mode:
@@ -72,6 +73,12 @@ jobs:
             --notebook-ref "$NOTEBOOK_REF" \
             --version "$VERSION" \
             --output-dir "$RUNNER_TEMP/kaggle_export"
+      - name: Audit CTP and IPN notebook roles (safe summary only)
+        if: ${{ github.event_name == 'push' }}
+        env:
+          KAGGLE_API_TOKEN: ${{ secrets.KAGGLE_API_TOKEN }}
+        run: |
+          python Research_Report/KaggleNotebook/_kaggle_manager/provenance_audit.py
       - name: Publish output (ONLY if user opted into public artifact)
         if: ${{ github.event_name == 'workflow_dispatch' && inputs.export_artifact && inputs.mode != 'check' }}
         uses: actions/upload-artifact@v4
