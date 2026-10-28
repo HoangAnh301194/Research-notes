@@ -17,7 +17,6 @@ from collections import defaultdict
 from pathlib import Path
 
 ROOT = Path("Research_Report")
-GIT_KEEP = ("IPN", "CTP", "VideoMamba", "videomamba", "evaluation", "train")
 MAX_V = int(os.getenv("KAGGLE_MATCH_MAX_VERSION", "60"))
 GAP_LIMIT = 4
 
@@ -64,8 +63,6 @@ def get_json_nb(dirpath):
 def git_notebooks():
     result={}
     for p in sorted(ROOT.rglob("*.ipynb")):
-        if not any(x in p.name for x in GIT_KEEP):
-            continue
         try:
             nb=json.loads(p.read_text(encoding="utf-8"))
             s=sig(nb)
