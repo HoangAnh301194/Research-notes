@@ -18,12 +18,13 @@ The default limits are 6 isolated error+correct pairs, and 8 continuous error + 
 
 ## Scope and evidence
 
-This P1 update extends the existing checkpoint-based evaluation notebooks; it does not modify training or checkpoint weights. No Kaggle execution or numerical result is claimed yet.
+This P1 update creates standalone copies of the checkpoint-based evaluation notebooks; it does not modify the original notebooks, training or checkpoint weights. No Kaggle execution or numerical result is claimed yet.
 
-- IPN notebook: `Research_Report/261007/videomamba_man_configsBenchmark.ipynb`
-- CTP notebook: `Research_Report/261015/VideoMambaTinyCTPGestureFinal.ipynb`
-- The notebooks now include P1 cells immediately after the existing *isolated* and *full continuous* evaluation cells, BEFORE expensive architecture comparisons. Run setup, data loading, model inference, isolated test, prefix cell, continuous helpers, full continuous test, and P1 continuous metrics. Stop before unrelated architecture/ablation cells if only the P1 metrics are needed.
-- For CTP, `REUSE_PER_VIDEO_CACHE=False` is set by default on this branch to avoid mixing predictions from different checkpoints/configurations. Use a fresh Kaggle output directory for a changed checkpoint.
+- IPN **new P1 notebook**: `Research_Report/KaggleNotebook/VideoMamba_IPN_Hand_P1_Metrics_Keyframes_Python313.ipynb`
+- CTP **new P1 notebook**: `Research_Report/KaggleNotebook/VideoMamba_CTPGesture_P1_Metrics_Keyframes_Python313.ipynb`
+- **Original notebooks are unmodified:** `Research_Report/261007/videomamba_man_configsBenchmark.ipynb` and `Research_Report/261015/VideoMambaTinyCTPGestureFinal.ipynb`.
+- The standalone notebooks contain P1 cells immediately after the original *isolated* and *full continuous* evaluation cells. Unrelated one-video debug, architecture comparison and postprocessing ablation sections have been removed, so **run top-to-bottom** once the GPU, datasets, original checkpoints and new verified wheel Dataset are attached.
+- For CTP P1, `REUSE_PER_VIDEO_CACHE=False` is set to avoid mixing predictions from different checkpoints/configurations. The output directory is also isolated from the original evaluation.
 
 ## Metric definitions and applicability
 
@@ -43,7 +44,7 @@ This P1 update extends the existing checkpoint-based evaluation notebooks; it do
 ## Generated files
 
 IPN root: `/kaggle/working/p1_ipn_re_evaluation/`
-CTP root: `/kaggle/working/ctpgesture_videomamba_evaluation/p1_metric_audit/`
+CTP root: `/kaggle/working/ctpgesture_videomamba_p1_evaluation/p1_metric_audit/`
 
 - `isolated_prefix_010.csv`, `020.csv`, `050.csv`, `075.csv`, `100.csv`: individual sample GT, prediction, confidence and softmax at each observation ratio.
 - `early_accuracy_curve.csv`, `early_auc.json`: observation ratio metrics and normalized AUC.
@@ -75,3 +76,9 @@ Save a Kaggle version and/or export files after the run. Original video files ar
 4. Confirm IPN/CTP frame indexing before inspecting visual frames; inspect ≥10 misclassified and ≥10 correctly predicted examples.
 5. Test the new cells on Kaggle (unavailable in this coding environment). Do not treat unexecuted cells and generated CSV filenames as validated experimental results.
 6. Avoid choosing thresholds on the sealed test split; reserve validation videos for any model/postprocessing selection.
+
+## Native wheel and Python 3.13 compatibility gate
+
+The new notebooks discover a **validated** builder `wheel_manifest.json` under `/kaggle/input`. They check current Python wheel tag (e.g., cp313), full PyTorch version, PyTorch CUDA runtime, C++11 ABI, GPU SM targets, original VideoMamba pinned source commit, wheel SHA-256 and the builder's CUDA smoke-test status. A source checkout, native CUDA activation, and dummy model forward are required before the costly P1 evaluation begins. If any check fails, the run stops with a diagnostic message; it does not silently reinstall cp312 wheel or benchmark with an accidental slow backend.
+
+This is **compatibility checking**, not proof that the user's NEW wheel Dataset is already attached or that the entire notebook has executed successfully on Kaggle. Attach the two native wheels and manifest and confirm runtime logs. If the dataset lacks `wheel_manifest.json`, publish the manifest exported by `EgoEvGesture_VideoMamba_CUDA_Wheel_Builder_Kaggle_EN_v1.ipynb` with the new pair.
