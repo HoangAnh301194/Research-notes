@@ -35,7 +35,11 @@ def list_page(page, size):
         return []
     reader = csv.DictReader(io.StringIO(output))
     if not reader.fieldnames or "ref" not in reader.fieldnames:
-        raise RuntimeError("Unexpected Kaggle CLI CSV format (missing ref column).")
+        # Some CLI versions print a plain-language message instead of CSV for
+        # out-of-range pages. Treat only this known empty-page marker as EOF.
+        if "no kernels found" in output.casefold():
+            return []
+        raise RuntimeError(f"Unexpected Kaggle CLI CSV format on page {page} (missing ref column).")
     return [dict(row) for row in reader if row.get("ref", "").strip()]
 
 
@@ -45,6 +49,7 @@ def inventory(output_dir, page_size, max_pages):
     completed = False
     for page in range(1, max_pages + 1):
         rows = list_page(page, page_size)
+        print(f"Kaggle inventory: read page {page}, {len(rows)} entries.")
         if not rows:
             completed = True
             break
