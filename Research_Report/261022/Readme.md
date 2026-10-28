@@ -144,7 +144,40 @@ R3 dùng post-processing được lựa chọn sau khảo sát test; không trì
 2. Nhiều bài không công bố Params/GFLOPs **đúng toàn pipeline**. Không điền ước lượng model family như số published chính xác.
 3. VideoMamba mới có **một checkpoint**, continuous hiện là **offline**, và cấu hình R3 được thử chọn trên test; chưa có evaluation theo cùng causal protocol với RSC.
 
-## C. Việc tiếp theo phục vụ publication
+## C. Công việc tiếp theo — checklist khôi phục từ lịch sử
+
+**Nguồn nguyên gốc:** phần **H. CHECKLIST ƯU TIÊN** tại [commit f462dcbaf467 (27/10/2026, giờ Việt Nam)](https://github.com/HoangAnh301194/Research-notes/blob/f462dcbaf467/Research_Report/261022/Readme.md). Mục C của README ngày 22/10 vốn để trống; phần checklist P0–P2 ở phụ lục đã mất ở bản README rút gọn ngày 27/10. Đã **giữ nguyên nội dung và trạng thái checkbox [x]/[ ] của bản lịch sử**; các trạng thái đó phản ánh tiến độ tại thời điểm commit, **không phải xác nhận nghiệm thu lại ngày 28/10**.
+
+### C.1 — P0 — Làm ngay, không cần GPU
+
+- [x] Lập 4 bảng cho 2 dataset × (isolated, continuous), có liên kết tới nguồn từng công trình.
+- [x] Gắn trạng thái đối chứng A/B/C và tách RGB, flow-derived, skeleton, causal/offline.
+- [x] Kiểm tra lại công thức Mean per-video Frame Accuracy của CoboGesture; ghi đúng **83.4889% Raw**, **83.5249% R3** cho IPN.
+- [x] Kiểm tra notebook CTP lưu split test, Macro-F1 và output Raw; ghi rõ protocol hiện tại.
+- [x] Đánh dấu R3 là `test-tuned`, không dùng kết luận vượt SOTA.
+- [ ] Kiểm tra danh sách **1.101 IPN isolated samples** và 52 video continuous so với split CoboGesture (nếu xác minh được danh sách từ tác giả).
+- [ ] Gom và giữ bản sao checkpoint, per-video prediction CSV, raw probability cache, annotation manifest, môi trường và commit SHA cho cả hai dataset (các tệp `/kaggle/working` chưa được xác nhận còn tồn tại sau phiên).
+- [ ] Ghi một bảng phiên bản `dataset / split / frames / checkpoint / code commit / input sampling` cố định.
+
+### C.2 — P1 — CPU hoặc xử lý từ cache nếu tệp còn
+
+- [ ] Unit test cho frame aggregation, Temporal IoU/Overlap, unmatched predictions, boundary `+1`, videos rỗng và metric mean-vs-global.
+- [ ] Tính Levenshtein Accuracy IPN từ chuỗi nhãn đã lưu; chỉ chạy nếu còn per-frame predictions, không suy từ bảng tổng hợp.
+- [ ] Tạo validation raw cache (nếu còn) và chọn hậu xử lý chỉ trên validation; khóa config trước test.
+- [ ] Đối chiếu cách đếm MACs/FLOPs với profiler, liệt kê unsupported Mamba ops; nhất quán `GFLOPs/clip` và `GFLOPs/12-view sample`.
+- [x] Bổ sung Params vào 4 bảng từ IPN gốc, CoboGesture, RSC code; phân biệt classifier và full pipeline.
+- [ ] Cần xác minh Params toàn pipeline của RSC (pose estimator/descriptor CNN), nguồn checkpoint baseline còn thiếu và variant CTP lịch sử; để `—` khi không xác thực.
+- [ ] Lập bản biểu `mean±std / CI` bằng bootstrap theo video từ output đã lưu, không báo cáo chỉ một con số phần trăm.
+
+### C.3 — P2 — Chỉ thực hiện khi đã khóa giao thức lần chạy tiếp theo
+
+- [ ] CTP: tạo **causal end-of-window** evaluation, không dùng frame tương lai; tính Online-F1, TTC, Early@10 theo đúng định nghĩa trong RSC-GestureNet.
+- [ ] IPN: nếu thật sự cần fair held-out R3, tách validation ở cấp video/subject theo quy định dataset, chọn ngưỡng trên validation.
+- [ ] Nếu chưa đủ đối chứng RGB: chạy lại **một hoặc hai** baseline trên cùng dataset manifest/protocol thay vì huấn luyện hàng loạt.
+- [ ] Một lần chạy GPU tiếp theo phải lưu `window_logits / timestamps / per-frame predictions / ground_truth / metadata` để các metric đánh giá lại được **không cần forward lại**.
+- [ ] EgoEvGesture là nhánh tiếp theo, chưa đưa vào 4 bảng hiện tại khi chưa có metric kiểm thử.
+
+### C.4 — Nhiệm vụ bổ sung từ lần cập nhật 28/10
 
 1. **Khóa provenance:** DOI, bảng/trang gốc, test IDs, class mapping, split, annotation, preprocessing và định nghĩa metric cho từng hàng; những ô NR vẫn để nguyên nếu paper không công bố.
 2. **Chuẩn hóa complexity nội bộ:** rà soát việc báo 17–29 GFLOPs ở các bản báo cáo trước; chốt một quy ước FLOPs/MAC, ghi tool/precision/input.
