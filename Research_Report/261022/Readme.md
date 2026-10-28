@@ -13,7 +13,7 @@
 - **Proposed baseline:** VideoMamba-Tiny nhận 16 RGB frames (224×224); tách riêng **isolated** (đã biết GT gesture boundaries) và **continuous** (sliding windows trên full video).
 - **IPN-Hand:** isolated 1.101 GT gesture clips; continuous 52 test videos; window 64, stride 16; các kết quả từ [IPN notebook](../261007/videomamba_man_configsBenchmark.ipynb).
 - **CTPGesture v1:** isolated 1.728 GT segments (gồm 869 no-gesture); continuous 11 test videos; window 32, stride 8; các kết quả từ [CTP notebook](../261015/VideoMambaTinyCTPGestureFinal.ipynb).
-- **Đã khảo sát chi tiết 7 công trình:** CoboGesture, Kausar, Gil-Martín, IPN-Hand original, RSC-GestureNet, Zhang, Xiong. Chưa có căn cứ cho tuyên bố *fair SOTA comparison* giữa tất cả công trình.
+- **Đối chứng:** đã kiểm toán chi tiết 7 công trình (CoboGesture, Kausar, Gil-Martín, IPN-Hand original, RSC-GestureNet, Zhang, Xiong) và **bổ sung 4 công trình continuous IPN-Hand** (TY-Net 2023, Nayan 2024, TMMF 2021, TD-Net 2022) vào Bảng 2B. Chưa có căn cứ cho tuyên bố *fair SOTA comparison* với VideoMamba giữa các protocol.
 
 ### Quy ước bằng chứng và mức so sánh
 
@@ -32,6 +32,10 @@
 | IPN-4 | [IPN-Hand original, ICPR 2020/21](https://doi.org/10.1109/ICPR48806.2021.9412317), Tables IV, V, IX | IPN-Hand original baseline; RGB/Flow/Seg | **A có điều kiện (isolated), khác metric ở continuous** |
 | CTP-1 | [RSC-GestureNet, 2026](https://arxiv.org/abs/2608.02200), Section 4.1/Table 1 p.8–9 | Official CTPGesture v1; pose+RGB, full-frame causal | **B với VideoMamba offline — đối chứng continuous ưu tiên** |
 | CTP-2 | [Zhang et al., Electronics 2026](https://doi.org/10.3390/electronics15122578), Tables 1–4 | 20 traffic-police videos; 10-video test, sequence recognition | **B — khác số video test và task** |
+| IPN-5 | [TY-Net, IEEE Access 2023](https://doi.org/10.1109/ACCESS.2023.3341702), Sec. V-A/Table 2 pp. 140389–140391 | IPN-Hand continuous, MediaPipe skeleton + Transformer, Levenshtein | **B với VideoMamba — khác metric; đối chứng sequence hiện đại** |
+| IPN-6 | [Nayan et al., Machine Vision and Applications 2024](https://doi.org/10.1007/s00138-024-01565-9), Table 12, p. 12/15 | IPN-Hand continuous, RGB + Flow + EHTD + Seg, Levenshtein | **B — khác modality và metric** |
+| IPN-7 | [TMMF, IEEE Transactions on Image Processing 2021](https://doi.org/10.1109/TIP.2021.3108349); [Nayan Table 12](https://doi.org/10.1007/s00138-024-01565-9) | IPN-Hand continuous, RGB + Flow, Levenshtein | **B — benchmark lịch sử; khác metric** |
+| IPN-8 | [TD-Net, ICCAIS 2022](https://doi.org/10.1109/ICCAIS56082.2022.9990122) | IPN-Hand continuous, skeleton detector + recognizers, Levenshtein | **B — benchmark lịch sử; khác metric** |
 | CTP-3 | [Xiong et al., Electronics 2021](https://doi.org/10.3390/electronics10050551), Tables 1–3 | 9-video isolated test / 1.565 clips; skeleton + baselines RGB | **B — benchmark lịch sử, khác split** |
 
 ---
@@ -67,17 +71,28 @@
 
 **Lưu ý:** 83.4889 là **mean per-video FrameAcc**, không thay bằng global FrameAcc **83.7308** khi đối chiếu Cobo 83.00. Temporal Overlap và Gesture Recall của nhóm dùng cách matching theo tolerance 2 giây; chỉ xếp hạng overlap với Cobo sau khi xác minh cùng công thức. R3 làm recall giảm so với Raw và được chọn sau khảo sát trên test.
 
-### Bảng 2B — IPN-Hand original continuous Levenshtein benchmark
+### Bảng 2B — IPN-Hand: Continuous Levenshtein Accuracy (đối chứng 2023–2024 và baseline gốc)
 
-**Bảng lịch sử riêng:** Levenshtein Accuracy không phải FrameAcc; VideoMamba hiện chưa có Levenshtein Accuracy theo đúng official IPN protocol. Không so hai đại lượng với nhau.
+**Chỉ so các phương pháp có kết quả Levenshtein trên IPN-Hand.** VideoMamba hiện mới có FrameAcc/Overlap từ offline full-video aggregation, **chưa có Levenshtein Accuracy**; không đưa 83.4889% FrameAcc vào cột Levenshtein. Mọi hàng khác modality, detector, post-processing hoặc cấu hình đánh giá đều chỉ so tham khảo cho đến khi khóa test manifest và evaluator.
 
-| Method | Input | Params classifier (M) | Params pipeline (M) | Levenshtein Accuracy (%) | Nguồn |
-|---|---|---:|---:|---:|---|
-| ResNeXt-101 + ResLight + SPyNet | RGB+Flow | 47.56 | **49.908 [E]** | **42.47** | [IPN Table IX, leaderboard](https://gibranbenitez.github.io/IPN_Hand/Results.html) |
-| ResNeXt-101 + ResLight + HarDNet | RGB+Seg | 47.56 | **52.582 [E]** | **39.01** | [IPN Table IX, leaderboard](https://gibranbenitez.github.io/IPN_Hand/Results.html) |
-| ResNeXt-101 + ResLight | RGB | 47.51 | **48.405 [E]** | **25.34** | [IPN Table IX, leaderboard](https://gibranbenitez.github.io/IPN_Hand/Results.html) |
+| Method | Năm | Input / protocol | Params recognizer (M) | Params full pipeline (M) | GFLOPs recognizer | Levenshtein Accuracy (%) | Nguồn gốc kết quả |
+|---|---:|---|---:|---:|---|---:|---|
+| **Nayan et al. — ME + EHTD + BiLSTM [P]** | **2024** | RGB + Seg + Flow + EHTD; continuous | NR | NR | NR | **73.71** | [Nayan Table 12, p.12/15](https://doi.org/10.1007/s00138-024-01565-9) |
+| Nayan et al. — ME + EHTD + BiLSTM [P] | 2024 | RGB + Flow + EHTD; continuous | NR | NR | NR | **69.40** | [Nayan Table 12, p.12/15](https://doi.org/10.1007/s00138-024-01565-9) |
+| **TY-Net — Doždor et al. [P]** | **2023** | MediaPipe hand skeleton + Transformer; online boundary detection | **≈5 [P]** | NR (thiếu MediaPipe) | **0.18 [P]**, recognizer only | **60.46** | [TY-Net Sec. V-A, p.140390; Table 2 p.140391](https://doi.org/10.1109/ACCESS.2023.3341702) |
+| **TMMF — Gammulle et al. [P]** | 2021 | RGB + Flow; continuous temporal multimodal fusion | NR | NR | NR | **68.12** | [TMMF paper](https://doi.org/10.1109/TIP.2021.3108349) · [Nayan Table 12](https://doi.org/10.1007/s00138-024-01565-9) |
+| **TD-Net — Nguyen et al. [P]** | 2022 | RGB→MediaPipe skeleton; gesture detector + 2 classifiers | NR | NR | NR | **40.10** | [TD-Net, ICCAIS 2022, Results/Conclusion](https://doi.org/10.1109/ICCAIS56082.2022.9990122) |
+| ResNeXt-101 + ResLight + SPyNet [P] | 2020/21 | RGB+Flow; continuous original benchmark | 47.56 | **49.908 [E]** | NR | **42.47** | [IPN Table IX, official leaderboard](https://gibranbenitez.github.io/IPN_Hand/Results.html) |
+| ResNeXt-101 + ResLight + HarDNet [P] | 2020/21 | RGB+Seg; continuous original benchmark | 47.56 | **52.582 [E]** | NR | **39.01** | [IPN Table IX, official leaderboard](https://gibranbenitez.github.io/IPN_Hand/Results.html) |
+| ResNeXt-101 + ResLight [P] | 2020/21 | RGB; continuous original benchmark | 47.51 | **48.405 [E]** | NR | **25.34** | [IPN Table IX, official leaderboard](https://gibranbenitez.github.io/IPN_Hand/Results.html) |
 
-**Chú thích:** Params pipeline [E] cộng recognizer, ResLight detector (~0.895M) và SPyNet/HarDNet khi sử dụng; đây là phép cộng từ module, không phải Params do Table IX công bố nguyên dạng.
+**Lưu ý đối chiếu:**
+- **TY-Net:** 60.46% là kết quả test trong *Section V-A* cho cấu hình đề xuất; *Table 2* còn tổng hợp thí nghiệm nhiều random seeds/folds, **không được thay tùy tiện bằng số trung bình của một giao thức khác**. ≈5M Params và 0.18 GFLOPs là phát biểu ở *Section V-D*, không gồm MediaPipe, không cùng đơn vị input/tác vụ với GFLOPs/clip của VideoMamba.
+- **Nayan:** 73.71% và 69.40% trích từ *Table 12* của bản toàn văn được truy cập, cần xác minh lần cuối trên PDF chính thức từ nhà xuất bản khi chuẩn bị submission. Không phải Accuracy isolated.
+- **TMMF:** 68.12% được đối chiếu trong Nayan Table 12 và survey CVIU 2025, đồng thời liên kết đến [bài gốc IEEE TIP](https://doi.org/10.1109/TIP.2021.3108349); chưa kiểm chứng đầy đủ cấu hình Params/GFLOPs từ paper gốc.
+- **TD-Net:** 40.10% là Levenshtein Accuracy trên IPN-Hand theo bài ICCAIS, không phải isolated Accuracy (84.98% trong một đánh giá khác).
+- **IPN original:** Params pipeline [E] cộng recognizer với ResLight detector (~0.895M) và SPyNet/HarDNet nếu có; không phải tổng Params được Table IX công bố nguyên dạng.
+- **Không có cột GPU latency/runtime:** phần cứng và phạm vi thời gian đo khác nhau. Nhóm cần chạy phép tính **Levenshtein trên predictions VideoMamba** trước khi tuyên bố xếp hạng continuous cùng các bài trong Bảng 2B.
 
 ---
 
