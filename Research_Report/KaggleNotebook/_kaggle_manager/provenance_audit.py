@@ -53,6 +53,25 @@ def known_public_fingerprint(role, body):
     return name.get(role, "Unknown")
 
 
+def known_versions():
+    """Try Kaggle Python API for latest version numbers; never print private ref."""
+    try:
+        from kaggle.api.kaggle_api_extended import KaggleApi
+        api=KaggleApi()
+        api.authenticate()
+        results=api.kernels_list(mine=True, page=1, page_size=100)
+        versions={}
+        for item in results:
+            ref=getattr(item, "ref", None)
+            v=(getattr(item, "currentVersionNumber", None) or
+               getattr(item, "current_version_number", None))
+            if ref and isinstance(v,int) and v>0:
+                versions[ref]=v
+        return versions
+    except Exception:
+        return {}
+
+
 def main():
     p=argparse.ArgumentParser()
     p.add_argument("--page-size", type=int, default=50)
@@ -68,8 +87,11 @@ def main():
     print("Read-only provenance audit, LATEST Kaggle notebook versions only.")
     print(f"Inventory size: {len(rows)}.")
     print("CLI CSV columns: " + ", ".join(rows[0].keys()) if rows else "No notebook rows.")
+    versions=known_versions()
+    print(f"Version numbers resolved from Kaggle API: {len(versions)}.")
     count=Counter()
     errors=0
+    extra_ipn_eval_candidates=0
     for i,row in enumerate(rows):
         ref=row.get("ref","").strip()
         if not re.fullmatch(r"[A-Za-z0-9_-]+/[A-Za-z0-9_-]+", ref):
@@ -96,13 +118,17 @@ def main():
                     continue
                 role=classify(source)
                 if not role:
+                    source_lower=source.lower()
+                    if ("ipn-hand" in source_lower or "ipn_hand" in source_lower or
+                        "ipn hand" in source_lower) and "videomamba" in source_lower:
+                        extra_ipn_eval_candidates+=1
                     continue
                 count[role]+=1
                 raw_is_private=meta.get("is_private",True)
                 is_private=str(raw_is_private).lower() not in ("false","0")
                 # Safety: no notebook titles or refs for private notebooks in public Actions logs.
-                version=(row.get("currentVersionNumber") or row.get("current_version_number")
-                         or row.get("version") or "unknown")
+                version=(versions.get(ref) or row.get("currentVersionNumber")
+                         or row.get("current_version_number") or row.get("version") or "unknown")
                 version=str(version)
                 if not re.fullmatch(r"\d+",version):
                     version="unknown"
@@ -112,6 +138,7 @@ def main():
             errors+=1
             # Deliberately do not expose errors containing private ref or notebook content.
     print("Role counts: "+json.dumps(dict(count),sort_keys=True))
+    print(f"Other IPN VideoMamba candidates (not classified): {extra_ipn_eval_candidates}")
     print(f"Pull/parse errors: {errors}")
     print("WARNING: A matching latest source does not prove which earlier version produced a checkpoint or metric.")
     print("No private Kaggle notebook source, title, or ref was written to public logs or artifacts.")
