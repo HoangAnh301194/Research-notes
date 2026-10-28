@@ -1,28 +1,17 @@
 # Báo cáo nghiên cứu ngày 22/10/2026
 
-## Cập nhật 28/10/2026 — kiểm toán 7 bài báo và chuẩn hóa bảng SOTA
+## A. Công việc đã làm
+- Khảo sát các bài báo nghiên cứu gần đây có sử dụng IPN Hand và CTPGesture 
 
-- **Mục tiêu:** cập nhật bốn nhóm bảng benchmark IPN-Hand/CTPGesture v1 từ bài báo gốc; phân biệt rõ *published* và số tự đo; ưu tiên nghiên cứu 2023–2026 và giữ benchmark nền tảng.
-- **Bỏ hoàn toàn cột latency/inference runtime** khỏi bảng đối chiếu vì không dùng cùng phần cứng, độ chính xác tính toán, input và phạm vi đo (model-only so với full pipeline). Không dùng runtime khác paper để kết luận phương pháp nào nhanh hơn.
-- **Giữ TTC** trong bảng RSC *causal* vì TTC là **Time-to-Correct-Command**, độ trễ phát đúng hiệu lệnh theo định nghĩa đánh giá trực tuyến, **không phải GPU inference runtime**; chưa có TTC tương đương cho VideoMamba.
-- **[P0 — SOTA audit và protocol, 27/10](P0_SOTA_AUDIT_20261027.md):** bản lịch sử kiểm toán ban đầu. Những chỗ còn nhắc runtime trong tài liệu P0 phục vụ truy nguyên kết quả cũ, không phải cột so sánh của báo cáo cập nhật này.
-- **[P1 — Runbook Kaggle/notebook](P1_NOTEBOOK_RUNBOOK_20261027.md)** và **[tool P1 offline metrics/keyframes](p1_offline_metrics_keyframes.py)** được giữ nguyên. **Chưa chạy lại notebook** hoặc tái huấn luyện trong lần cập nhật bảng này.
-
-## A. Tổng quan
-
-- **Proposed baseline:** VideoMamba-Tiny nhận 16 RGB frames (224×224); tách riêng **isolated** (đã biết GT gesture boundaries) và **continuous** (sliding windows trên full video).
-- **IPN-Hand:** isolated 1.101 GT gesture clips; continuous 52 test videos; window 64, stride 16; các kết quả từ [IPN notebook](../261007/videomamba_man_configsBenchmark.ipynb).
-- **CTPGesture v1:** isolated 1.728 GT segments (gồm 869 no-gesture); continuous 11 test videos; window 32, stride 8; các kết quả từ [CTP notebook](../261015/VideoMambaTinyCTPGestureFinal.ipynb).
-- **Đối chứng:** đã kiểm toán chi tiết 7 công trình (CoboGesture, Kausar, Gil-Martín, IPN-Hand original, RSC-GestureNet, Zhang, Xiong) và **bổ sung 4 công trình continuous IPN-Hand** (TY-Net 2023, Nayan 2024, TMMF 2021, TD-Net 2022) vào Bảng 2B. Chưa có căn cứ cho tuyên bố *fair SOTA comparison* với VideoMamba giữa các protocol.
-
-### Quy ước bằng chứng và mức so sánh
+### Quy ước kí hiệu 
 
 - **[O]** số đo/output trong notebook nhóm; **[P]** số công bố trong paper/benchmark gốc; **[E]** đếm/benchmark kiến trúc do nhóm thực hiện, **không phải số tác giả đối chứng công bố**; **[R]** Params/GFLOPs **tham chiếu của model family/variant** từ paper gốc hoặc model zoo (chưa xác nhận trùng checkpoint tác giả); **[D]** phép cộng các module đã biết (không phải số tổng paper công bố); **NR / —** chưa xác minh đúng cấu hình.
-- **A có điều kiện:** cùng dataset và metric gần tương đương, vẫn phải khóa test IDs, annotation version, preprocessing, aggregation và sampling; **B:** cùng nguồn dữ liệu nhưng khác split, modality hoặc giao thức; **C:** khác dataset version/tác vụ/metric, chỉ phục vụ Related Work. **Không dùng A có điều kiện hoặc B như một bảng thứ hạng SOTA đã được chứng minh.**
-- **Parameters recognizer** là phần mô hình nhận dạng; **Parameters full pipeline** phải tính thêm detector/pose/flow/segmenter nếu dùng. **GFLOPs** chỉ có nghĩa khi cùng định nghĩa phép tính, độ phân giải, số frame và phạm vi model/pipeline; không tự chuyển MFLOPS, checkpoint size hoặc model size thành Params.
-- Nơi có dấu **±**, giữ nguyên định nghĩa thống kê của tác giả (seeds, folds hoặc confidence intervals) và không mặc định cùng điều kiện với kết quả một checkpoint của nhóm.
 
-### Danh mục bài báo được kiểm toán
+- **A có điều kiện:** cùng dataset và metric gần tương đương, vẫn phải khóa test IDs, annotation version, preprocessing, aggregation và sampling; **B:** cùng nguồn dữ liệu nhưng khác split, modality hoặc giao thức; **C:** khác dataset version/tác vụ/metric, chỉ phục vụ Related Work.
+
+- **Parameters recognizer** là phần mô hình nhận dạng; **Parameters full pipeline** phải tính thêm detector/pose/flow/segmenter nếu dùng.
+
+### Danh sách bài báo được khảo sát
 
 | ID | Bài báo và nguồn gốc | Dataset / đánh giá | Trạng thái với VideoMamba |
 |---|---|---|---|
@@ -30,21 +19,21 @@
 | IPN-2 | [Kausar et al., Computers, Materials & Continua 2026](https://doi.org/10.32604/cmc.2026.084514), Tables 2, 3, 6–7 | IPN-Hand, multi-stage RGB/optical-flow/geometry + Transformer; **92.34%** | **B — chưa khóa test split** |
 | IPN-3 | [Gil-Martín et al., ICAART 2025](https://doi.org/10.5220/0013053500003890), Table 1 p.28 | IPN-Hand, MediaPipe landmarks + LSTM; subject-wise CV | **B — khác giao thức đánh giá** |
 | IPN-4 | [IPN-Hand original, ICPR 2020/21](https://doi.org/10.1109/ICPR48806.2021.9412317), Tables IV, V, IX | IPN-Hand original baseline; RGB/Flow/Seg | **A có điều kiện (isolated), khác metric ở continuous** |
-| CTP-1 | [RSC-GestureNet, 2026](https://arxiv.org/abs/2608.02200), Section 4.1/Table 1 p.8–9 | Official CTPGesture v1; pose+RGB, full-frame causal | **B với VideoMamba offline — đối chứng continuous ưu tiên** |
-| CTP-2 | [Zhang et al., Electronics 2026](https://doi.org/10.3390/electronics15122578), Tables 1–4 | 20 traffic-police videos; 10-video test, sequence recognition | **B — khác số video test và task** |
 | IPN-5 | [TY-Net, IEEE Access 2023](https://doi.org/10.1109/ACCESS.2023.3341702), Sec. V-A/Table 2 pp. 140389–140391 | IPN-Hand continuous, MediaPipe skeleton + Transformer, Levenshtein | **B với VideoMamba — khác metric; đối chứng sequence hiện đại** |
 | IPN-6 | [Nayan et al., Machine Vision and Applications 2024](https://doi.org/10.1007/s00138-024-01565-9), Table 12, p. 12/15 | IPN-Hand continuous, RGB + Flow + EHTD + Seg, Levenshtein | **B — khác modality và metric** |
 | IPN-7 | [TMMF, IEEE Transactions on Image Processing 2021](https://doi.org/10.1109/TIP.2021.3108349); [Nayan Table 12](https://doi.org/10.1007/s00138-024-01565-9) | IPN-Hand continuous, RGB + Flow, Levenshtein | **B — benchmark lịch sử; khác metric** |
 | IPN-8 | [TD-Net, ICCAIS 2022](https://doi.org/10.1109/ICCAIS56082.2022.9990122) | IPN-Hand continuous, skeleton detector + recognizers, Levenshtein | **B — benchmark lịch sử; khác metric** |
+| CTP-1 | [RSC-GestureNet, 2026](https://arxiv.org/abs/2608.02200), Section 4.1/Table 1 p.8–9 | Official CTPGesture v1; pose+RGB, full-frame causal | **B với VideoMamba offline — đối chứng continuous ưu tiên** |
+| CTP-2 | [Zhang et al., Electronics 2026](https://doi.org/10.3390/electronics15122578), Tables 1–4 | 20 traffic-police videos; 10-video test, sequence recognition | **B — khác số video test và task** |
 | CTP-3 | [Xiong et al., Electronics 2021](https://doi.org/10.3390/electronics10050551), Tables 1–3 | 9-video isolated test / 1.565 clips; skeleton + baselines RGB | **B — benchmark lịch sử, khác split** |
 
 ---
 
 ## Bảng 1 — IPN-Hand: Isolated Gesture Recognition
 
-**Giao thức nhóm:** 1.101 GT gesture clips, loại class no-gesture; 16 RGB frames/clip, 224×224. VideoMamba [O] và kết quả [P] từ bài báo khác chưa xác nhận hoàn toàn cùng test IDs/preprocessing. **Không có cột GPU inference time.**
+**Protocol đánh giá proposed method:** 16 RGB frames/clip, 224×224. 
 
-| Method | Năm | Input / đơn vị đánh giá | Params recognizer (M) | Params full pipeline (M) | GFLOPs/clip | Accuracy (%) | Mức | Nguồn |
+| Method | Năm | Input | Params recognizer (M) | Params full pipeline (M) | GFLOPs/clip | Accuracy (%) | Mức | Nguồn |
 |---|---:|---|---:|---:|---:|---:|---|---|
 | **VideoMamba-Tiny (OURS) [O]** | 2026 | RGB, 16×224²; 1.101 GT clips | **6.9608** | **6.9608** | **29.0261 [E]** | **84.65** | Reference | [Notebook IPN](../261007/videomamba_man_configsBenchmark.ipynb) |
 | RGB-CoGes + **VideoMAEv2 [P]** | 2026 | RGB, isolated IPN | **303.8** | 303.8 recognizer only | **596.8327 [E]** | **84.59** | A có điều kiện | [Cobo Table 4](https://doi.org/10.1109/ACCESS.2026.3664027) · [GFLOPs benchmark nhóm](../261007/videomamba_man_configsBenchmark.ipynb) |
@@ -172,19 +161,9 @@ R3 dùng post-processing được lựa chọn sau khảo sát test; không trì
 
 **Về GFLOPs:** 71.5 (YOLO11m-Pose @640, **một ảnh**), 40.70 (R3D-18 16×112²) và 38.5 (C3D 16×112²) là những số **[R] ở input/model zoo khác**. Không so hoặc cộng trực tiếp với VideoMamba 29.0261 GFLOPs/clip theo quy ước MAC của nhóm. Vẫn để NR cho GFLOPs tổng các pipeline chưa đủ mã nguồn.
 
-## B. Khó khăn còn tồn tại
-
-1. Chưa xác minh exact test manifest/preprocessing của CoboGesture, Kausar và phép 37/13 subjects ở Gil-Martín; Zhang chỉ dùng 10 test videos so với 11 của nhóm.
-2. Nhiều bài không công bố Params/GFLOPs **đúng toàn pipeline**. Không điền ước lượng model family như số published chính xác.
-3. VideoMamba mới có **một checkpoint**, continuous hiện là **offline**, và cấu hình R3 được thử chọn trên test; chưa có evaluation theo cùng causal protocol với RSC.
-
-## C. Công việc tiếp theo — ghi chú khôi phục từ trước ngày 26/10/2026
-
-**Lưu ý nguồn:** Trong `Research_Report/261022/Readme.md` bản tạo ngày 22/10, mục C tồn tại nhưng để trống. Những ghi chú dưới đây được **trích nguyên văn từ mục C của các báo cáo nghiên cứu 07/10, 15/10 và 17/10, tại các commit trước ngày 26/10**. Giữ nguyên lỗi chính tả/cách ghi, không tự đổi trạng thái nhiệm vụ; các deadline là deadline lịch sử.
-
-### C.1 — Bản ghi 22/10/2026 (ghi chú nhiệm vụ tổng hợp trước hạn 22/10)
-
-**Nguồn:** [Mục C tại commit `5eafaa751c49`](https://github.com/HoangAnh301194/Research-notes/blob/5eafaa751c49/Research_Report/261017/Readme.md)
+## B. Khó khăn
+- Không
+## C. Công việc tiếp theo 
 
 - Tiếp trục train với bộ EgoEv Gesture 
   - Đánh giá, so sánh với **CoboGesture HUST 2026**
@@ -199,112 +178,4 @@ R3 dùng post-processing được lựa chọn sau khảo sát test; không trì
 - liệt kê 1 bnarg mẫu trước , sau đó list từ các bài báo vào : param , acc, F1 , GFlops ,.... 
 - accuracy@10 20 50%
 - early@10%
-
 - list ra các bài báo, gửi bảng tổng quan các bài cho THầy trước . 
-- Deadline hoàn thành trong tối nay ( 22.10.2026)
-
-### C.2 — Bản ghi 17/10/2026 (kế hoạch P0/P1/P2 phiên bản ban đầu)
-
-**Nguồn:** [Mục C tại commit `57993ee3fdb6`](https://github.com/HoangAnh301194/Research-notes/blob/57993ee3fdb6/Research_Report/261017/Readme.md)
-
-### P0 — ưu tiên cao nhất
-
-1. **Triển khai causal evaluator cho CTPGesture**
-   - 32-frame causal window;
-   - stride 4;
-   - end-aligned prediction;
-   - tuyệt đối không dùng future frame;
-   - report Accuracy, Macro-F1, Online-F1;
-   - so cùng protocol với RSC-GestureNet.
-
-2. **Error/keyframe visualization**
-   - tạo file errors.csv/txt;
-   - lưu video, frame, GT, prediction, confidence;
-   - show keyframe/window sai;
-   - nhóm lỗi theo transition và gesture pair.
-
-3. **Tách validation cho post-processing**
-   - chọn threshold trên validation;
-   - không tune trực tiếp trên official test.
-
-### P1 — publication-quality experiments
-
-4. Chạy ít nhất 3 random seeds.
-5. Bổ sung Segmental F1@10/25/50.
-6. Bổ sung Edit Score.
-7. Phân tích calibration/confidence ở transition.
-8. Đo peak VRAM và latency chuẩn.
-9. Xác minh lại FLOP convention.
-
-### P2 — EgoEvGesture
-
-10. Giải quyết Kaggle storage hoặc đọc trực tiếp từ nguồn ngoài.
-11. Kiểm toán số sequence thực tế.
-12. Xây dựng event representation.
-13. Train VideoMamba baseline.
-14. Đánh giá cross-subject / cross-camera.
-
----
-
-### C.3 — Bản ghi 15/10/2026 (ghi chú về keyframe và khảo sát paper)
-
-**Nguồn:** [Mục C tại commit `38edc5e0e6ec`](https://github.com/HoangAnh301194/Research-notes/blob/38edc5e0e6ec/Research_Report/261015/Readme.md)
-
-- Tiếp tục upload dữ liệu lên kaggle và triển khai huấn luyện trên dataset **EgoEvGesture**
-- Tiếp tục khảo sát các bài báo có dùng bộ dataset đang thực nghiệm 
-- Em xin phép nhận hướng đi tiếp theo từ Thầy ạ 
-- tổng kết lại kết quả 
-- tìm các bài báo có dùng bộ CTPGesture SOTA trong 3 năm gần nhất , ưu tiên journal ( khoảng 5 method SOTA) 
-- Show ra error keyframe   ( tạo txt lỗi và show visual)
-- Tổng hợp lại bảng ( parameter )-
-
-### C.4 — Bản ghi 08/10/2026 (ghi chú huấn luyện và đánh giá)
-
-**Nguồn:** [Mục C tại commit `e640349588d2`](https://github.com/HoangAnh301194/Research-notes/blob/e640349588d2/Research_Report/261007/Readme.md)
-
-- Một số công việc em còn chưa hoàn thiện như sau : 
-    - Chạy inference đánh giá thêm continuos evaluation trên dataset CTPGesturev1 với checkpoint-best mới train. 
-    - Chạy train model VideoMambaTiny với EgoEv Gesture dataset và đánh giá kết quả Isolated và Continouse Evaluation với các metric tương tự.
-- Em xin phép nhận hướng đi tiếp theo từ Thầy ạ.
-
----
-
-## H. CHECKLIST P0/P1/P2 BỔ SUNG NGÀY 27/10 (LƯU TRỮ)
-
-**Không phải mục C gốc.** Đây là checklist cập nhật sau; được chuyển ra phụ lục để tránh nhầm với ghi chú trước ngày 26/10. Dấu [x] phản ánh trạng thái lịch sử, không phải nghiệm thu lại.
-
-### H.1 — P0 — Làm ngay, không cần GPU
-
-- [x] Lập 4 bảng cho 2 dataset × (isolated, continuous), có liên kết tới nguồn từng công trình.
-- [x] Gắn trạng thái đối chứng A/B/C và tách RGB, flow-derived, skeleton, causal/offline.
-- [x] Kiểm tra lại công thức Mean per-video Frame Accuracy của CoboGesture; ghi đúng **83.4889% Raw**, **83.5249% R3** cho IPN.
-- [x] Kiểm tra notebook CTP lưu split test, Macro-F1 và output Raw; ghi rõ protocol hiện tại.
-- [x] Đánh dấu R3 là `test-tuned`, không dùng kết luận vượt SOTA.
-- [ ] Kiểm tra danh sách **1.101 IPN isolated samples** và 52 video continuous so với split CoboGesture (nếu xác minh được danh sách từ tác giả).
-- [ ] Gom và giữ bản sao checkpoint, per-video prediction CSV, raw probability cache, annotation manifest, môi trường và commit SHA cho cả hai dataset (các tệp `/kaggle/working` chưa được xác nhận còn tồn tại sau phiên).
-- [ ] Ghi một bảng phiên bản `dataset / split / frames / checkpoint / code commit / input sampling` cố định.
-
-### H.2 — P1 — CPU hoặc xử lý từ cache nếu tệp còn
-
-- [ ] Unit test cho frame aggregation, Temporal IoU/Overlap, unmatched predictions, boundary `+1`, videos rỗng và metric mean-vs-global.
-- [ ] Tính Levenshtein Accuracy IPN từ chuỗi nhãn đã lưu; chỉ chạy nếu còn per-frame predictions, không suy từ bảng tổng hợp.
-- [ ] Tạo validation raw cache (nếu còn) và chọn hậu xử lý chỉ trên validation; khóa config trước test.
-- [ ] Đối chiếu cách đếm MACs/FLOPs với profiler, liệt kê unsupported Mamba ops; nhất quán `GFLOPs/clip` và `GFLOPs/12-view sample`.
-- [x] Bổ sung Params vào 4 bảng từ IPN gốc, CoboGesture, RSC code; phân biệt classifier và full pipeline.
-- [ ] Cần xác minh Params toàn pipeline của RSC (pose estimator/descriptor CNN), nguồn checkpoint baseline còn thiếu và variant CTP lịch sử; để `—` khi không xác thực.
-- [ ] Lập bản biểu `mean±std / CI` bằng bootstrap theo video từ output đã lưu, không báo cáo chỉ một con số phần trăm.
-
-### H.3 — P2 — Chỉ thực hiện khi đã khóa giao thức lần chạy tiếp theo
-
-- [ ] CTP: tạo **causal end-of-window** evaluation, không dùng frame tương lai; tính Online-F1, TTC, Early@10 theo đúng định nghĩa trong RSC-GestureNet.
-- [ ] IPN: nếu thật sự cần fair held-out R3, tách validation ở cấp video/subject theo quy định dataset, chọn ngưỡng trên validation.
-- [ ] Nếu chưa đủ đối chứng RGB: chạy lại **một hoặc hai** baseline trên cùng dataset manifest/protocol thay vì huấn luyện hàng loạt.
-- [ ] Một lần chạy GPU tiếp theo phải lưu `window_logits / timestamps / per-frame predictions / ground_truth / metadata` để các metric đánh giá lại được **không cần forward lại**.
-- [ ] EgoEvGesture là nhánh tiếp theo, chưa đưa vào 4 bảng hiện tại khi chưa có metric kiểm thử.
-
-## I. Nhiệm vụ bổ sung từ lần cập nhật 28/10
-
-1. **Khóa provenance:** DOI, bảng/trang gốc, test IDs, class mapping, split, annotation, preprocessing và định nghĩa metric cho từng hàng; những ô NR vẫn để nguyên nếu paper không công bố.
-2. **Chuẩn hóa complexity nội bộ:** rà soát việc báo 17–29 GFLOPs ở các bản báo cáo trước; chốt một quy ước FLOPs/MAC, ghi tool/precision/input.
-3. **Chạy fair baseline:** dùng cùng split/evaluator để đánh giá một số kiến trúc RGB (VideoMamba, một 3D CNN hiệu quả và một Video Transformer). Muốn so trực tiếp với RSC phải xây evaluator causal.
-4. **Không thêm lại latency vào bảng chỉ từ tài liệu công bố:** chỉ lập bảng thời gian hệ thống riêng khi tất cả model được benchmark lại trong điều kiện đồng nhất.
