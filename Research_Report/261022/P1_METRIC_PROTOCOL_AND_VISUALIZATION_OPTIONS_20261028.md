@@ -1,20 +1,25 @@
 # P1 metric protocol and qualitative visualization options — 28/10/2026
 
-## Implemented: two **different visualization protocols**
+## CURRENT IMPLEMENTATION — 16 exact sampled frames, all cases by default
 
-Both notebook files now have **two separate P1 visualization code cells**. The plots do not require new model inference; they use data already produced earlier in the same full notebook run. They do need original video files for frame extraction.
+Both new standalone P1 notebooks now export **two distinct figure protocols**, and the full evaluation remains a checkpoint-only rerun. No original notebook is changed.
 
-| Protocol | Notebook position | What constitutes a case? | PNG output |
-|---|---|---|---|
-| Isolated | Immediately after the P1 prefix accuracy cell | **One annotated clip** with GT/pred, confidence. Errors are paired with a correct clip of the **same GT class**, nearest available duration | `isolated_filmstrips/isolated_error_*.png`, `isolated_correct_*.png`, `isolated_pair_*.png` |
-| Continuous | Immediately after the P1 RAW temporal metrics cell | **One complete GT gesture interval** matched one-to-one by class and temporal IoU; correct if best matching prediction tIoU ≥ 0.50; error otherwise. Also sample background false positives | `continuous_timeline_keyframes/continuous_error_*.png`, `continuous_correct_*.png` |
+1. **Isolated (all evaluated clips):** each gesture-annotated clip produces a 4×4 mosaic of **exactly 16 model temporal input frames**, preprocessed with the matching spatial Resize(224) + CenterCrop(224) before visualization. Export correct and incorrect samples to separate JPEG folders, with complete per-sample metadata, source frame indices, decode-failure audit and same-GT-class nearest-duration error/control pairing CSV. Output: `isolated_16frame/{correct,error}/*.jpg` and `isolated_all_samples_index.csv`. IPN annotation indices are 1-based; CTP are 0-based. The CSV stores source indices zero-based for unambiguous frame retrieval.
 
-**Continuous images are NOT isolated-style filmstrips**: each has original frames at 5 times in the segment plus a **GT vs RAW Prediction label timeline** with surrounding context, highlighting the region and classification/boundary errors. Continuous case matching is a qualitative selection convention (tIoU 0.50), not a modification to the primary benchmark or metric protocol.
+2. **Continuous (all GT gestures + all unmatched predicted gestures):** match GT gesture segments to predicted gesture segments *one-to-one* at temporal IoU≥0.50. Each matched pair is a **correct** case; unmatched GT segments and unmatched predictions are **errors** (different roles are identified in the case manifest; one physical failure may create both an unmatched GT and an unmatched prediction record). For each event, select the **actual model inference window** having greatest overlap with the event, extract that window's **exact 16 sampled input frames** using `build_sample_offsets`, and append a GT-versus-RAW-Prediction timeline. Save the indices of ALL windows contributing to the event and to its midpoint, so the representative window is never misrepresented as the only contributing window. Output: `continuous_16frame_timeline/{correct,error}/*.jpg` and `continuous_all_events_index.csv`. Background-only true-negative frame intervals are not expanded into one image per frame; framewise predictions remain available in the RAW cache.
 
-The default limits are 6 isolated error+correct pairs, and 8 continuous error + 8 correct samples. Both protocols save a case manifest CSV. These are time-sampled **representative frames**, not learned-attention-selected keyframes. If the paper calls them keyframes, explain the selection procedure precisely.
+**Export defaults:** `P1_ISO_LIMIT=None` and `P1_CONT_LIMIT=None` mean **100% of relevant samples/events**. Display only two image previews per folder to keep Kaggle output compact; all exported JPEGs are still saved. Exported image count, disk usage and time depend on the actual number and lengths of samples. The notebook continues recording decode failures if individual frames are unavailable.
 
-**Note:** Continuous error and control examples are selected with different criteria than clip-level isolated examples. Do not compare their counts as though both were clip classification errors.
+**Important scientific scope:** The 16 frames are exact *temporal input samples* and depict the matching spatial crop before pixel normalization, NOT model attention-selected salient keyframes. Continuous predictions aggregate overlapping windows and can use future frames, so they are OFFLINE and do not imply causal TTC/Online-F1.
 
+### P1 extended diagnostics (no extra inference)
+
+- **Isolated:** Top-2/Top-3 Accuracy and Balanced Accuracy at observation ratios 10/20/50/75/100%; per-class precision, recall, F1; first correctly classified ratio; first *stably* correct ratio over the evaluated ratio grid; count of high-confidence ≥0.90 wrong predictions.
+- **Continuous:** TP/FP/FN and precision/recall/F1 at temporal IoU 0.10/0.25/0.50; per-class segment-level F1@50; number of predicted versus GT gesture segments; unmatched predictions per minute; miss rate; matched correct-class onset/offset signed and absolute errors in seconds, conditioned on one-to-one tIoU≥0.50.
+- **Files:** `extra_isolated_metrics/{topk_and_balanced_accuracy_by_ratio.csv,early_correctness_per_sample.csv,early_correctness_summary.json,isolated_per_class_metrics.csv}`, `extra_continuous_metrics/{per_video_detection_precision_recall.csv,per_class_segment_f1_at_50.csv,matched_onset_offset_errors.csv,detection_boundary_summary.json}`.
+- **Reference basis:** MS-TCN CVPR 2019 (Edit/F1@10/25/50): https://openaccess.thecvf.com/content_CVPR_2019/html/Abu_Farha_MS-TCN_Multi-Stage_Temporal_Convolutional_Network_for_Action_Segmentation_CVPR_2019_paper.html ; ASRF WACV 2021 (boundary/oversegmentation): https://openaccess.thecvf.com/content/WACV2021/html/Ishikawa_Alleviating_Over-Segmentation_Errors_by_Detecting_Action_Boundaries_WACV_2021_paper.html ; IPN-Hand original official benchmark: https://gibranbenitez.github.io/IPN_Hand/Results.html ; Guo et al. ICML 2017 calibration: https://proceedings.mlr.press/v70/guo17a.html .
+
+**Validation status:** GitHub notebooks structurally parsed and source cells verified; Kaggle dataset/CUDA execution not yet performed. Compare original accuracy and segment F1 with P1 and inspect example frames to certify exact temporal/spatial sampling before quoting numbers in a paper.
 
 ## Scope and evidence
 
@@ -56,7 +61,7 @@ Save a Kaggle version and/or export files after the run. Original video files ar
 
 ## Visualization choices — choose before rendering
 
-**A. Static contact sheet (isolated, easiest paper figure).** Extract 5 or 7 uniformly spaced frames from *one* GT segment. Heading: video ID, start/end, GT class, predicted class, softmax confidence. Put a red border on errors and a neutral/green border on correct controls. Recommended when studying posture/motion recognition failure.
+**A. Static contact sheet (isolated, easiest paper figure).** Extract the original 16 sampled input frames from *one* GT segment. Heading: video ID, start/end, GT class, predicted class, softmax confidence. Put a red border on errors and a neutral/green border on correct controls. Recommended when studying posture/motion recognition failure.
 
 **B. Matched error vs correct cases (strongest controlled qualitative comparison).** Two rows of equally spaced frames: wrong and correct samples with the **same GT class**, as close as practical in gesture length and recording/viewpoint; record matching criteria. Avoid claiming model mechanisms from the image alone. Recommended for paper qualitative examples.
 
