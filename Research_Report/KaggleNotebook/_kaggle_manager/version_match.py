@@ -40,7 +40,12 @@ def digest(text):
 
 def sig(nb):
     code,md=source_cells(nb)
+    output_cells=[x.get("outputs",[]) for x in nb.get("cells",[]) if x.get("cell_type")=="code"]
+    outputs_with_content=sum(bool(z) for z in output_cells)
+    output_fingerprint=digest(json.dumps(output_cells,sort_keys=True,ensure_ascii=False))
     return {
+        "outputs_with_content":outputs_with_content,
+        "output_fingerprint":output_fingerprint,
         "code": [digest(x) for x in code],
         "md": [digest(x) for x in md],
         "code_exact":digest("\n--CELL--\n".join(code)),
@@ -112,6 +117,7 @@ def main():
     refs=[x for x in refs if re.fullmatch(r"[A-Za-z0-9_-]+/[A-Za-z0-9_-]+",x)]
     print("Kaggle notebook refs inventoried:",len(refs))
     matches=[]
+    best_by_path={}
     candidate_count=0
     successful_versions=0
     unknown_latest=0
@@ -152,12 +158,22 @@ def main():
             successful_versions+=1
             for path,local_sig in local.items():
                 value,method=score(remote,local_sig)
+                prev=best_by_path.get(path)
+                if prev is None or value>prev["score"]:
+                    best_by_path[path]={"score":round(value,4),"alias":alias,
+                                         "version":version,"method":method}
                 if value>=0.80 and remote["n"]>=3 and local_sig["n"]>=3:
+                    outputs_equal=(remote["output_fingerprint"]==local_sig["output_fingerprint"]
+                                   if remote["outputs_with_content"] and local_sig["outputs_with_content"]
+                                   else None)
                     matches.append({"git_path":path,"alias":alias,
                       "public_ref":ref if not private else None,
                       "version":version,"score":round(value,4),
                       "method":method,"local_code_cells":local_sig["n"],
-                      "remote_code_cells":remote["n"]})
+                      "remote_code_cells":remote["n"],
+                      "output_exact":outputs_equal,
+                      "github_output_cells":local_sig["outputs_with_content"],
+                      "kaggle_output_cells":remote["outputs_with_content"]})
                     found+=1
         print(f"Candidate {alias}: tested through v{highest_success}; matched GitHub copies {found}; stopped on {GAP_LIMIT} missing versions or limit.")
     print("Candidate notebooks checked:",candidate_count)
@@ -166,6 +182,12 @@ def main():
     print("MATCHES (never disclose private Kaggle refs):")
     for x in sorted(matches,key=lambda z:(z["git_path"],z["alias"],z["version"])):
         print(json.dumps(x,ensure_ascii=False))
+    print("BEST CELL MATCH PER PUBLIC GITHUB FILE:")
+    for path in sorted(local):
+        if path in best_by_path:
+            print(json.dumps({"git_path":path,**best_by_path[path]},ensure_ascii=False))
+        else:
+            print(json.dumps({"git_path":path,"status":"no_candidate_match"},ensure_ascii=False))
     if not matches:
         print("No >=80% code-cell matches. This does not establish no version matches.")
     print("Audit cap:",MAX_V,"versions; matches are code evidence, not proof of model training output.")
