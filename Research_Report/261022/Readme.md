@@ -144,11 +144,102 @@ R3 dùng post-processing được lựa chọn sau khảo sát test; không trì
 2. Nhiều bài không công bố Params/GFLOPs **đúng toàn pipeline**. Không điền ước lượng model family như số published chính xác.
 3. VideoMamba mới có **một checkpoint**, continuous hiện là **offline**, và cấu hình R3 được thử chọn trên test; chưa có evaluation theo cùng causal protocol với RSC.
 
-## C. Công việc tiếp theo — checklist khôi phục từ lịch sử
+## C. Công việc tiếp theo — ghi chú khôi phục từ trước ngày 26/10/2026
 
-**Nguồn nguyên gốc:** phần **H. CHECKLIST ƯU TIÊN** tại [commit f462dcbaf467 (27/10/2026, giờ Việt Nam)](https://github.com/HoangAnh301194/Research-notes/blob/f462dcbaf467/Research_Report/261022/Readme.md). Mục C của README ngày 22/10 vốn để trống; phần checklist P0–P2 ở phụ lục đã mất ở bản README rút gọn ngày 27/10. Đã **giữ nguyên nội dung và trạng thái checkbox [x]/[ ] của bản lịch sử**; các trạng thái đó phản ánh tiến độ tại thời điểm commit, **không phải xác nhận nghiệm thu lại ngày 28/10**.
+**Lưu ý nguồn:** Trong `Research_Report/261022/Readme.md` bản tạo ngày 22/10, mục C tồn tại nhưng để trống. Những ghi chú dưới đây được **trích nguyên văn từ mục C của các báo cáo nghiên cứu 07/10, 15/10 và 17/10, tại các commit trước ngày 26/10**. Giữ nguyên lỗi chính tả/cách ghi, không tự đổi trạng thái nhiệm vụ; các deadline là deadline lịch sử.
 
-### C.1 — P0 — Làm ngay, không cần GPU
+### C.1 — Bản ghi 22/10/2026 (ghi chú nhiệm vụ tổng hợp trước hạn 22/10)
+
+**Nguồn:** [Mục C tại commit `5eafaa751c49`](https://github.com/HoangAnh301194/Research-notes/blob/5eafaa751c49/Research_Report/261017/Readme.md)
+
+- Tiếp trục train với bộ EgoEv Gesture 
+  - Đánh giá, so sánh với **CoboGesture HUST 2026**
+
+- frame wise accuracy kiểm tra lại xem cách đánh giá acc có đúng không 
+- tìm gflops từ các nguồn fill vào bảng 
+- 4 bảng ( mỗi dataset 2 bảng ) , nếu thêm ego thì 6 bảng
+- CTP gesture: 1 bài baseline video, 1 bài SOTA skeleton 
+  - tìm khoảng 5 bài , kiến trúc , số liệu 
+- IPN-Hand: tìm các bài gần đây , nonskeleton 
+- EgoEv gesture : 
+- liệt kê 1 bnarg mẫu trước , sau đó list từ các bài báo vào : param , acc, F1 , GFlops ,.... 
+- accuracy@10 20 50%
+- early@10%
+
+- list ra các bài báo, gửi bảng tổng quan các bài cho THầy trước . 
+- Deadline hoàn thành trong tối nay ( 22.10.2026)
+
+### C.2 — Bản ghi 17/10/2026 (kế hoạch P0/P1/P2 phiên bản ban đầu)
+
+**Nguồn:** [Mục C tại commit `57993ee3fdb6`](https://github.com/HoangAnh301194/Research-notes/blob/57993ee3fdb6/Research_Report/261017/Readme.md)
+
+### P0 — ưu tiên cao nhất
+
+1. **Triển khai causal evaluator cho CTPGesture**
+   - 32-frame causal window;
+   - stride 4;
+   - end-aligned prediction;
+   - tuyệt đối không dùng future frame;
+   - report Accuracy, Macro-F1, Online-F1;
+   - so cùng protocol với RSC-GestureNet.
+
+2. **Error/keyframe visualization**
+   - tạo file errors.csv/txt;
+   - lưu video, frame, GT, prediction, confidence;
+   - show keyframe/window sai;
+   - nhóm lỗi theo transition và gesture pair.
+
+3. **Tách validation cho post-processing**
+   - chọn threshold trên validation;
+   - không tune trực tiếp trên official test.
+
+### P1 — publication-quality experiments
+
+4. Chạy ít nhất 3 random seeds.
+5. Bổ sung Segmental F1@10/25/50.
+6. Bổ sung Edit Score.
+7. Phân tích calibration/confidence ở transition.
+8. Đo peak VRAM và latency chuẩn.
+9. Xác minh lại FLOP convention.
+
+### P2 — EgoEvGesture
+
+10. Giải quyết Kaggle storage hoặc đọc trực tiếp từ nguồn ngoài.
+11. Kiểm toán số sequence thực tế.
+12. Xây dựng event representation.
+13. Train VideoMamba baseline.
+14. Đánh giá cross-subject / cross-camera.
+
+---
+
+### C.3 — Bản ghi 15/10/2026 (ghi chú về keyframe và khảo sát paper)
+
+**Nguồn:** [Mục C tại commit `38edc5e0e6ec`](https://github.com/HoangAnh301194/Research-notes/blob/38edc5e0e6ec/Research_Report/261015/Readme.md)
+
+- Tiếp tục upload dữ liệu lên kaggle và triển khai huấn luyện trên dataset **EgoEvGesture**
+- Tiếp tục khảo sát các bài báo có dùng bộ dataset đang thực nghiệm 
+- Em xin phép nhận hướng đi tiếp theo từ Thầy ạ 
+- tổng kết lại kết quả 
+- tìm các bài báo có dùng bộ CTPGesture SOTA trong 3 năm gần nhất , ưu tiên journal ( khoảng 5 method SOTA) 
+- Show ra error keyframe   ( tạo txt lỗi và show visual)
+- Tổng hợp lại bảng ( parameter )-
+
+### C.4 — Bản ghi 08/10/2026 (ghi chú huấn luyện và đánh giá)
+
+**Nguồn:** [Mục C tại commit `e640349588d2`](https://github.com/HoangAnh301194/Research-notes/blob/e640349588d2/Research_Report/261007/Readme.md)
+
+- Một số công việc em còn chưa hoàn thiện như sau : 
+    - Chạy inference đánh giá thêm continuos evaluation trên dataset CTPGesturev1 với checkpoint-best mới train. 
+    - Chạy train model VideoMambaTiny với EgoEv Gesture dataset và đánh giá kết quả Isolated và Continouse Evaluation với các metric tương tự.
+- Em xin phép nhận hướng đi tiếp theo từ Thầy ạ.
+
+---
+
+## H. CHECKLIST P0/P1/P2 BỔ SUNG NGÀY 27/10 (LƯU TRỮ)
+
+**Không phải mục C gốc.** Đây là checklist cập nhật sau; được chuyển ra phụ lục để tránh nhầm với ghi chú trước ngày 26/10. Dấu [x] phản ánh trạng thái lịch sử, không phải nghiệm thu lại.
+
+### H.1 — P0 — Làm ngay, không cần GPU
 
 - [x] Lập 4 bảng cho 2 dataset × (isolated, continuous), có liên kết tới nguồn từng công trình.
 - [x] Gắn trạng thái đối chứng A/B/C và tách RGB, flow-derived, skeleton, causal/offline.
@@ -159,7 +250,7 @@ R3 dùng post-processing được lựa chọn sau khảo sát test; không trì
 - [ ] Gom và giữ bản sao checkpoint, per-video prediction CSV, raw probability cache, annotation manifest, môi trường và commit SHA cho cả hai dataset (các tệp `/kaggle/working` chưa được xác nhận còn tồn tại sau phiên).
 - [ ] Ghi một bảng phiên bản `dataset / split / frames / checkpoint / code commit / input sampling` cố định.
 
-### C.2 — P1 — CPU hoặc xử lý từ cache nếu tệp còn
+### H.2 — P1 — CPU hoặc xử lý từ cache nếu tệp còn
 
 - [ ] Unit test cho frame aggregation, Temporal IoU/Overlap, unmatched predictions, boundary `+1`, videos rỗng và metric mean-vs-global.
 - [ ] Tính Levenshtein Accuracy IPN từ chuỗi nhãn đã lưu; chỉ chạy nếu còn per-frame predictions, không suy từ bảng tổng hợp.
@@ -169,7 +260,7 @@ R3 dùng post-processing được lựa chọn sau khảo sát test; không trì
 - [ ] Cần xác minh Params toàn pipeline của RSC (pose estimator/descriptor CNN), nguồn checkpoint baseline còn thiếu và variant CTP lịch sử; để `—` khi không xác thực.
 - [ ] Lập bản biểu `mean±std / CI` bằng bootstrap theo video từ output đã lưu, không báo cáo chỉ một con số phần trăm.
 
-### C.3 — P2 — Chỉ thực hiện khi đã khóa giao thức lần chạy tiếp theo
+### H.3 — P2 — Chỉ thực hiện khi đã khóa giao thức lần chạy tiếp theo
 
 - [ ] CTP: tạo **causal end-of-window** evaluation, không dùng frame tương lai; tính Online-F1, TTC, Early@10 theo đúng định nghĩa trong RSC-GestureNet.
 - [ ] IPN: nếu thật sự cần fair held-out R3, tách validation ở cấp video/subject theo quy định dataset, chọn ngưỡng trên validation.
@@ -177,7 +268,7 @@ R3 dùng post-processing được lựa chọn sau khảo sát test; không trì
 - [ ] Một lần chạy GPU tiếp theo phải lưu `window_logits / timestamps / per-frame predictions / ground_truth / metadata` để các metric đánh giá lại được **không cần forward lại**.
 - [ ] EgoEvGesture là nhánh tiếp theo, chưa đưa vào 4 bảng hiện tại khi chưa có metric kiểm thử.
 
-### C.4 — Nhiệm vụ bổ sung từ lần cập nhật 28/10
+## I. Nhiệm vụ bổ sung từ lần cập nhật 28/10
 
 1. **Khóa provenance:** DOI, bảng/trang gốc, test IDs, class mapping, split, annotation, preprocessing và định nghĩa metric cho từng hàng; những ô NR vẫn để nguyên nếu paper không công bố.
 2. **Chuẩn hóa complexity nội bộ:** rà soát việc báo 17–29 GFLOPs ở các bản báo cáo trước; chốt một quy ước FLOPs/MAC, ghi tool/precision/input.
