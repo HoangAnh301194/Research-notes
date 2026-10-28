@@ -11,6 +11,14 @@ Công cụ này nằm trong repository **Research-notes**, giữ nguyên các no
 - Không có `push`, không chạy notebook, không download checkpoint/output và không xóa dữ liệu.
 - Dữ liệu chỉ tồn tại tạm trên GitHub Actions runner. **Không tự commit vào repo.**
 
+## Kết quả kiểm thử (2026-10-28)
+
+- GitHub Actions [run #3](https://github.com/HoangAnh301194/Research-notes/actions/runs/40643824928): **success**.
+- Kiểm tra xác thực Kaggle API token: **OK**.
+- Kiểm kê Kaggle: **14 notebook refs duy nhất** (page 1 = 14, kết thúc tại trang ngắn).
+- Mã nguồn / danh sách notebook chưa được tự động tải hoặc công khai.
+- Mỗi khi cập nhật file workflow hoặc `kaggle_manager.py` trên nhánh `main`, workflow tự chạy kiểm tra xác thực + đếm notebook (không xuất artifact). Ngoài ra vẫn hỗ trợ chạy thủ công qua `workflow_dispatch`.
+
 ## Chạy trên GitHub
 
 1. Mở [Actions](https://github.com/HoangAnh301194/Research-notes/actions) → **Kaggle Notebook Manager** → **Run workflow**.
