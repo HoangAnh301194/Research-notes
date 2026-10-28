@@ -60,6 +60,12 @@ def inventory(output_dir, page_size, max_pages):
         for row in rows:
             row["source_page"] = page
             all_rows.append(row)
+        # Kaggle can print non-CSV status text for an out-of-range page.
+        # A short page is the normal end-of-pagination condition; do not
+        # request the next page after receiving fewer than page_size results.
+        if len(rows) < page_size:
+            completed = True
+            break
     if not completed:
         raise RuntimeError("Page limit reached; increase --max-pages (no partial export).")
 
