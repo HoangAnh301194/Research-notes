@@ -18,7 +18,9 @@
 *.xdv
 *.nav
 *.snm
-
+*.ipynb
 # Thư mục / File rác hệ thống (tuỳ chọn)
 .DS_Store
 Thumbs.db
+261028/ctpResult
+261028/ipnResult

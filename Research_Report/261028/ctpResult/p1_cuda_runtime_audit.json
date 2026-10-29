@@ -1,0 +1,14 @@
+{
+  "python": "3.13.15",
+  "torch": "2.11.0+cu128",
+  "torch_cuda": "12.8",
+  "gpu": "Tesla T4",
+  "native_backend": "native_cuda",
+  "wheel_manifest": "/kaggle/input/datasets/hoanganh94/kaggle-cuda-wheel-latest-version/videomamba_cuda_wheels/wheel_manifest.json",
+  "checkpoint": "/kaggle/input/models/hoanganh94/videomambactpgesturev1best/pytorch/tiny-16x2-224-fp32/1/checkpoint-best.pth",
+  "checkpoint_sha256": "4114d536bd3f29457f7f528d1babe0b1de5a648063c34f735bdc06a075b111c5",
+  "videomamba_source_commit": "37355c26d0ae99ca2459f6d4044a5f509031a79f",
+  "frames": 16,
+  "image_size": 224,
+  "num_classes": 9
+}

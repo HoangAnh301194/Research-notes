@@ -1,0 +1,11 @@
+{
+  "videos": 11,
+  "frames": 67356,
+  "global_frame_accuracy": 0.839836094779975,
+  "global_macro_f1": 0.8061349046017358,
+  "mean_edit_score_ms_tcn_pct": 93.49680455115944,
+  "protocol": "RAW offline 32-frame/8-stride; background class 0 excluded from segment matching",
+  "segment_f1_at_10": 0.96047197640118,
+  "segment_f1_at_25": 0.9474926253687316,
+  "segment_f1_at_50": 0.855457227138643
+}

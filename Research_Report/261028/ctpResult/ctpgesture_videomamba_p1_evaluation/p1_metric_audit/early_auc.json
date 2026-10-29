@@ -1,0 +1,5 @@
+{
+  "auc_10_to_100_accuracy_all_9_classes": 0.9631397890946501,
+  "auc_10_to_100_accuracy_gt_gesture_only": 0.9692471866511446,
+  "note": "GT-defined isolated prefix; AUC normalized over [10%, 100%]."
+}

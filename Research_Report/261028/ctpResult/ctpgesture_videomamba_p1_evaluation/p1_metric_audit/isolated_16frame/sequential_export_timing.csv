@@ -1,0 +1,12 @@
+requests,exported,failed,decoded_frames,retrieved_unique_frames,elapsed_sec,video_path,reused
+161,161,0,10780,2576,52.317,/kaggle/input/notebooks/hoanganh94/ctpgesturev1-videomambatiny/CTPGesture_v1/police_gesture_v1/test/002.mp4,0
+100,100,0,4291,1589,26.235,/kaggle/input/notebooks/hoanganh94/ctpgesturev1-videomambatiny/CTPGesture_v1/police_gesture_v1/test/004.mp4,0
+161,161,0,5781,2561,39.421,/kaggle/input/notebooks/hoanganh94/ctpgesturev1-videomambatiny/CTPGesture_v1/police_gesture_v1/test/008.mp4,0
+145,145,0,5252,2311,36.797,/kaggle/input/notebooks/hoanganh94/ctpgesturev1-videomambatiny/CTPGesture_v1/police_gesture_v1/test/010.mp4,0
+177,177,0,6274,2832,42.875,/kaggle/input/notebooks/hoanganh94/ctpgesturev1-videomambatiny/CTPGesture_v1/police_gesture_v1/test/012.mp4,0
+165,165,0,6621,2614,46.104,/kaggle/input/notebooks/hoanganh94/ctpgesturev1-videomambatiny/CTPGesture_v1/police_gesture_v1/test/014.mp4,0
+161,161,0,6558,2571,43.247,/kaggle/input/notebooks/hoanganh94/ctpgesturev1-videomambatiny/CTPGesture_v1/police_gesture_v1/test/016.mp4,0
+163,163,0,5729,2578,41.907,/kaggle/input/notebooks/hoanganh94/ctpgesturev1-videomambatiny/CTPGesture_v1/police_gesture_v1/test/018.mp4,0
+163,163,0,5775,2584,38.07,/kaggle/input/notebooks/hoanganh94/ctpgesturev1-videomambatiny/CTPGesture_v1/police_gesture_v1/test/101.mp4,0
+165,165,0,5388,2604,37.249,/kaggle/input/notebooks/hoanganh94/ctpgesturev1-videomambatiny/CTPGesture_v1/police_gesture_v1/test/102.mp4,0
+167,167,0,4907,2615,36.736,/kaggle/input/notebooks/hoanganh94/ctpgesturev1-videomambatiny/CTPGesture_v1/police_gesture_v1/test/104.mp4,0
