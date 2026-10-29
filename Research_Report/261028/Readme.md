@@ -40,12 +40,9 @@
 | Epoch 14 | 99,35% | 67,69% | 64,67% |
 | Epoch 16 — checkpoint mới nhất | **99,31%** | **58,90%** | **53,01%** |
 
-- Đã hoàn thành **16/60 epochs**. Kết quả tốt nhất được ghi tại **epoch 9**, không phải epoch 16.
+- Đã hoàn thành **16/60 epochs**. Kết quả tốt nhất được ghi tại **epoch 9**
 - Kết thúc phiên: lưu **checkpoint-best.pth (epoch 9)**, **checkpoint-latest.pth (epoch 16)**, cấu hình và lịch sử train/validation. Checkpoint chứa trạng thái optimizer để tiếp tục.
-- **Nhận định:** Train Accuracy gần 99% nhưng Validation Accuracy dao động và giảm còn 58,90% tại epoch 16 là **dấu hiệu quá khớp hoặc chênh lệch phân phối giữa subject train và validation**. Chưa đủ cơ sở xác định nguyên nhân duy nhất. Không được trình bày 69,53% là test Accuracy.
-- Chuyển đổi sang PyTorch RMSNorm được dùng để khắc phục lỗi tương thích Triton trên Kaggle; có thể làm thay đổi số học của kernel. Khi so sánh phải ghi nhận phiên bản backend.
-
-**Nguồn:** [Notebook EgoEvGesture và log train](./egoevgesture-videomamba-tiny%20%282%29.ipynb), các ô cấu hình, kiểm tra split, train và checkpoint (cells 4, 6, 18, 21, 23).
+- **Nhận xét:** Train Accuracy gần 99% nhưng Validation Accuracy dao động và giảm còn 58,90% tại epoch 16 là **dấu hiệu quá khớp hoặc chênh lệch phân phối giữa subject train và validation**. Chưa đủ cơ sở xác định nguyên nhân duy nhất. Không được trình bày 69,53% là test Accuracy.
 
 
 ### 2. Xuất ra keyframe correct and error prediction để quan sát
