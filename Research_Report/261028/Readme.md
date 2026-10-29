@@ -54,12 +54,16 @@
 - Kết thúc phiên: lưu **checkpoint-best.pth (epoch 9)**, **checkpoint-latest.pth (epoch 16)**, cấu hình và lịch sử train/validation. Checkpoint chứa trạng thái optimizer để tiếp tục.
 - **Nhận xét:** Train Accuracy gần 99% nhưng Validation Accuracy dao động và giảm còn 58,90% tại epoch 16 là **dấu hiệu quá khớp hoặc chênh lệch phân phối giữa subject train và validation**. Chưa đủ cơ sở xác định nguyên nhân duy nhất. Không được trình bày 69,53% là test Accuracy.
 
+**Notebook làm căn cứ:** [EgoEvGesture — VideoMamba-Tiny: training & resume](./egoevgesture-videomamba-tiny%20%282%29.ipynb) (mục 2: kiểm tra phân chia dữ liệu; mục 5–6: tiền xử lý và mô hình; mục 8: train/validation; mục 9–10: checkpoint và lịch sử huấn luyện). Notebook xác nhận số mẫu và subject của từng split cùng kết quả huấn luyện; **số liệu loại 587 + 1 mẫu trùng** thuộc bước kiểm toán/làm sạch trước huấn luyện và không nên xem notebook train là bằng chứng độc lập về toàn bộ thao tác loại trùng.
+
 
 ### 2. Xuất ra keyframe correct and error prediction để quan sát
 
 Các hình keyframe được dùng để đối chiếu nhãn thực tế (GT) với nhãn dự đoán (Pred) và phân tích nguyên nhân nhận dạng/định vị thời gian chưa đúng. Kết quả isolated và continuous offline được báo cáo riêng do khác giao thức.
 
 #### 2.1 IPN Hand
+
+**Notebook gốc để tái kiểm chứng:** [VideoMamba IPN-Hand — P1 Metrics & Keyframes](./videomamba-ipn-hand-p1-metrics-keyframes-python313%20%281%29.ipynb) (mục 4: Isolated và Early GT-prefix; mục 5: Continuous RAW, segment metrics và xuất ảnh 16 frame). **Notebook đọc kết quả:** [IPN-Hand — Complete P1 Results & Keyframe Explorer](./ipn-hand-complete-videomamba-p1-results-16-fra.ipynb) (bảng class, CSV/JSON, biểu đồ và thư viện ảnh; không thực hiện inference mới).
 
 **Giao thức đánh giá**
 
@@ -90,6 +94,8 @@ Các hình keyframe được dùng để đối chiếu nhãn thực tế (GT) v
 - Đã tạo hình gồm **đúng 16 khung được đưa vào mô hình**, kèm nhãn GT/Pred; isolated: **932 đúng, 169 sai**. Continuous: xuất **820 trường hợp ghép đúng, 706 trường hợp lỗi/không ghép được**, theo tiêu chí ghép nhãn và temporal IoU ≥ 0,5.
 
 #### 2.2 CTP Gesture
+
+**Notebook gốc để tái kiểm chứng:** [VideoMamba CTPGesture — P1 Metrics & Keyframes](./videomamba-ctpgesture-p1-metrics-keyframes-python3%20%283%29.ipynb) (mục 6: Isolated, Early GT-prefix và xuất ảnh; mục 7: Continuous RAW, F1 theo tIoU, sai lệch biên và xuất ảnh 16 frame). **Notebook đọc kết quả:** [CTPGesture — Complete P1 Results & Keyframe Explorer](./ctpgesture-v1-complete-videomamba-p1-results-1.ipynb) (kiểm kê Output, bảng metric và thư viện ảnh; không thực hiện inference mới).
 
 **Giao thức đánh giá**
 
@@ -135,6 +141,8 @@ Các ảnh dưới đây được lấy **trực tiếp từ hai thư mục `ipn
 
 #### 3.1 IPN Hand — Isolated classification
 
+*Nguồn phương pháp và nhãn:* [Notebook đánh giá IPN-Hand — mục 4](./videomamba-ipn-hand-p1-metrics-keyframes-python313%20%281%29.ipynb); [notebook đối chiếu keyframe và mã lớp](./ipn-hand-complete-videomamba-p1-results-16-fra.ipynb); [CSV chỉ mục Isolated](./ipnResult/p1_ipn_re_evaluation/isolated_16frame/isolated_all_samples_index.csv).
+
 | Phân loại đúng | Nhầm nhãn cử chỉ |
 |:---:|:---:|
 | ![IPN isolated correct sample 1](./ipnResult/p1_ipn_re_evaluation/isolated_16frame/correct/correct_00001.jpg) | ![IPN isolated incorrect sample 3](./ipnResult/p1_ipn_re_evaluation/isolated_16frame/error/error_00003.jpg) |
@@ -144,12 +152,16 @@ Các ảnh dưới đây được lấy **trực tiếp từ hai thư mục `ipn
 
 #### 3.2 IPN Hand — Continuous offline
 
+*Nguồn phương pháp và nhãn:* [Notebook đánh giá IPN-Hand — mục 5](./videomamba-ipn-hand-p1-metrics-keyframes-python313%20%281%29.ipynb); [notebook đối chiếu keyframe và lỗi](./ipn-hand-complete-videomamba-p1-results-16-fra.ipynb); [CSV chỉ mục Continuous](./ipnResult/p1_ipn_re_evaluation/continuous_16frame_timeline/continuous_all_events_index.csv).
+
 | Phát hiện và ghép đoạn đúng | Lỗi nhầm lớp |
 |:---:|:---:|
 | ![IPN continuous matched correct event 3](./ipnResult/p1_ipn_re_evaluation/continuous_16frame_timeline/correct/correct_00003.jpg) | ![IPN continuous gesture confusion event 7](./ipnResult/p1_ipn_re_evaluation/continuous_16frame_timeline/error/error_00007.jpg) |
 | **GT B0A — Pointing with one finger → Pred B0A**, frames 72–234 (0-based), **tIoU = 0,7853**; được ghép đúng theo ngưỡng 0,50. | **GT G11 — Zoom out → Pred B0A — Pointing with one finger**, frames 448–508 (0-based); **tIoU = 0** cho cặp lớp cùng nhãn, thuộc nhóm `gesture_class_confusion`. |
 
 #### 3.3 CTPGesture_v1 — Isolated classification
+
+*Nguồn phương pháp và nhãn:* [Notebook đánh giá CTPGesture — mục 6](./videomamba-ctpgesture-p1-metrics-keyframes-python3%20%283%29.ipynb); [notebook đối chiếu keyframe và mã lớp](./ctpgesture-v1-complete-videomamba-p1-results-1.ipynb); [CSV chỉ mục Isolated](./ctpResult/ctpgesture_videomamba_p1_evaluation/p1_metric_audit/isolated_16frame/isolated_all_samples_index.csv).
 
 | Phân loại đúng | Nhầm nhãn cử chỉ |
 |:---:|:---:|
@@ -158,12 +170,16 @@ Các ảnh dưới đây được lấy **trực tiếp từ hai thư mục `ipn
 
 #### 3.4 CTPGesture_v1 — Continuous offline
 
+*Nguồn phương pháp và nhãn:* [Notebook đánh giá CTPGesture — mục 7](./videomamba-ctpgesture-p1-metrics-keyframes-python3%20%283%29.ipynb); [notebook đối chiếu keyframe và lỗi](./ctpgesture-v1-complete-videomamba-p1-results-1.ipynb); [CSV chỉ mục Continuous](./ctpResult/ctpgesture_videomamba_p1_evaluation/p1_metric_audit/continuous_16frame_timeline/continuous_all_events_index.csv).
+
 | Phát hiện và ghép đoạn đúng | Lỗi nhầm lớp |
 |:---:|:---:|
 | ![CTP continuous forward correct event 4](./ctpResult/ctpgesture_videomamba_p1_evaluation/p1_metric_audit/continuous_16frame_timeline/correct/correct_00004.jpg) | ![CTP continuous slow down confusion event 9](./ctpResult/ctpgesture_videomamba_p1_evaluation/p1_metric_audit/continuous_16frame_timeline/error/error_00009.jpg) |
 | Video `002.mp4`, frames 370–415: **GT 2 — Forward → Pred 2 — Forward**, **tIoU = 0,8696**. | Video `002.mp4`, frames 920–965: **GT 7 — Slow Down → Pred 6 — Lane Changing**, **tIoU = 0**, loại `gesture_class_confusion`. |
 
 #### 3.5 Khi lớp dự đoán đúng nhưng vẫn bị tính là lỗi Continuous
+
+*Nguồn định nghĩa lỗi ranh giới và ghép đoạn:* [IPN-Hand — P1 Metrics & Keyframes](./videomamba-ipn-hand-p1-metrics-keyframes-python313%20%281%29.ipynb) và [CTPGesture — P1 Metrics & Keyframes](./videomamba-ctpgesture-p1-metrics-keyframes-python3%20%283%29.ipynb); mã loại lỗi và tIoU được đối chiếu trực tiếp với hai CSV chỉ mục ở bảng nguồn bên dưới.
 
 | IPN Hand: sai biên đoạn | CTPGesture: phân mảnh/dự đoán trùng |
 |:---:|:---:|
@@ -180,6 +196,18 @@ Các ảnh dưới đây được lấy **trực tiếp từ hai thư mục `ipn
 | CTPGesture_v1 | [CSV Isolated](./ctpResult/ctpgesture_videomamba_p1_evaluation/p1_metric_audit/isolated_16frame/isolated_all_samples_index.csv) | [CSV Continuous](./ctpResult/ctpgesture_videomamba_p1_evaluation/p1_metric_audit/continuous_16frame_timeline/continuous_all_events_index.csv) | [ctpResult](./ctpResult/) |
 
 > Ghi chú phương pháp: các hình Continuous là kết quả đánh giá **offline với cửa sổ chồng lấn**, không phải đánh giá độ trễ lệnh trực tuyến (Online Early@10 / TTC).
+
+### 4. Danh mục notebook nguồn và khả năng kiểm chứng
+
+| Notebook trong `Research_Report/261028/` | Vai trò | Những kết quả trong báo cáo có thể đối chiếu |
+|---|---|---|
+| [EgoEvGesture — VideoMamba-Tiny](./egoevgesture-videomamba-tiny%20%282%29.ipynb) | Notebook huấn luyện, resume, kiểm tra split | Số mẫu train/val/test, subject split, cấu hình mô hình, lịch sử epoch, checkpoint; không thay thế báo cáo kiểm toán file trùng |
+| [VideoMamba IPN-Hand — P1 Metrics & Keyframes](./videomamba-ipn-hand-p1-metrics-keyframes-python313%20%281%29.ipynb) | **Notebook tính toán gốc** | Giao thức 16 frame, 1.101 Isolated, Early GT-prefix, 52 video Continuous, metric theo lớp/đoạn, sinh ảnh |
+| [VideoMamba CTPGesture — P1 Metrics & Keyframes](./videomamba-ctpgesture-p1-metrics-keyframes-python3%20%283%29.ipynb) | **Notebook tính toán gốc** | 1.728 Isolated, Early GT-prefix, 11 video Continuous, tIoU/F1, boundary diagnostics, sinh ảnh |
+| [IPN-Hand — Complete P1 Results](./ipn-hand-complete-videomamba-p1-results-16-fra.ipynb) | Notebook **đọc và trình bày Output** | Bảng mã lớp, thống kê CSV/JSON, đối chiếu GT/Pred và ảnh minh họa IPN |
+| [CTPGesture — Complete P1 Results](./ctpgesture-v1-complete-videomamba-p1-results-1.ipynb) | Notebook **đọc và trình bày Output** | Bảng mã lớp, thống kê CSV/JSON, đối chiếu GT/Pred và ảnh minh họa CTP |
+
+**Thứ tự ưu tiên nguồn:** Khi dẫn chứng **quy trình và công thức đánh giá**, tham khảo notebook tính toán gốc; khi dẫn chứng **con số và từng trường hợp đúng/sai**, đối chiếu thêm bảng CSV/JSON và ảnh trong `ipnResult/`, `ctpResult/`. Hai notebook *Complete Results* là công cụ trình bày lại các tệp đã xuất, **không phải lần thử nghiệm độc lập**.
 
 ## B. Khó khăn
 - Không
