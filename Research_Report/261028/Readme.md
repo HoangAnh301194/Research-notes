@@ -7,12 +7,26 @@
 
 ### 1. Đóng gói dataset EgoEv Gesture
 
-**Cấu trúc và chia tập dữ liệu**
+**Phương án chuẩn bị dữ liệu**
 
-- Bộ dữ liệu sự kiện EgoEvGesture được đóng gói để chạy trên Kaggle; bài toán phân loại **38 lớp**.
-- Ghi nhận trong quá trình kiểm tra dữ liệu gốc: **subject 5 và 10 trùng dữ liệu**, có **một tệp trùng giữa subject 4 và 8**. Đây là nguy cơ rò rỉ thông tin giữa các tập; không sử dụng các bản ghi trùng để đưa ra kết luận về khả năng tổng quát hóa.
-- Notebook đang sử dụng **Heterogeneous Cleaned Split v1** với **train: 2.626 mẫu, subjects 3–7** và **validation: 489 mẫu, subject 8**; cả hai tập đều có 38 lớp. Việc đối chiếu số lượng, nhãn, đường dẫn và checksum CSV với manifest đã **PASS**. **Tập test chưa được đọc hoặc đánh giá trong notebook này.**
-- Phạm vi kiểm tra tự động hiện thấy chủ yếu là train/validation; vẫn cần công bố bảng fingerprint/hash và xác nhận **không trùng nội dung giữa toàn bộ train–validation–test** trước khi dùng kết quả test trong bài báo.
+- Sử dụng bộ dữ liệu sự kiện **EgoEvGesture (38 lớp)** đã có trên Kaggle. Xây dựng bộ **Heterogeneous Cleaned Split v1** cố định theo subject để sử dụng thống nhất cho huấn luyện và đánh giá; **không sao chép lại dữ liệu sự kiện gốc** khi tạo split.
+- **Kiểm tra trùng lặp:** đối chiếu Subject 5 và 10; với các file còn lại, sàng lọc theo kích thước, fingerprint và xác nhận trùng tuyệt đối bằng SHA-256. Kiểm tra nguy cơ file trùng xuất hiện giữa train/validation/test.
+
+**Kết quả xử lý dữ liệu**
+
+| Nội dung | Kết quả |
+|---|---|
+| Dữ liệu ban đầu | **5.398 mẫu**, 10 subjects |
+| Subject trùng | **Subject 5 và 10:** 587 cặp có tên/kích thước khớp; loại **587 mẫu Subject 10** (SHA-256 của toàn bộ cặp được dẫn từ kiểm toán trước) |
+| File trùng khác | **1 mẫu trùng nội bộ** được loại theo bộ split đã xuất; cần output kiểm toán để xác định chính xác cặp đường dẫn |
+| Dữ liệu sau làm sạch | **4.810 mẫu**, 9 subjects |
+| **Train** | **2.626 mẫu**, subjects 3, 4, 5, 6, 7 |
+| **Validation** | **489 mẫu**, subject 8 |
+| **Test** | **1.695 mẫu**, subjects 1, 2, 9 |
+
+- Bộ split được xuất dưới dạng CSV và manifest trên Kaggle; notebook huấn luyện đã đọc và xác minh **train/validation** thành công. **Chưa sử dụng tập test để đánh giá mô hình.**
+- Lưu ý: thông tin từng được nhắc tới về một file trùng giữa **Subject 4 và 8** chưa có đường dẫn và hash xác nhận trong bản notebook GitHub; **không coi đó là cặp file đã loại**. Ngoài ra, notebook tạo split không tự tính lại SHA-256 cho toàn bộ 587 cặp Subject 5/10.
+- **Notebook nguồn:** [Tạo split và xử lý trùng](../KaggleNotebook/EgoEvGesture_Notebooks/EgoEvGesture_Heterogeneous_Clean_Split_Publish_Kaggle_EN.ipynb) · [Kiểm tra độc lập bộ split](../KaggleNotebook/EgoEvGesture_Notebooks/EgoEvGesture_Heterogeneous_Published_Split_Validator_v2_PathFix_EN.ipynb). Chưa truy nguyên được **version Kaggle cụ thể** của hai notebook này; mã nguồn GitHub không lưu output thực thi của chúng.
 
 **Cấu hình huấn luyện**
 
