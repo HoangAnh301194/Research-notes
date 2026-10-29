@@ -128,6 +128,59 @@ Các hình keyframe được dùng để đối chiếu nhãn thực tế (GT) v
 - Dữ liệu phục vụ tái kiểm chứng gồm classification report, isolated predictions, per-video CSV, early accuracy, phân tích biên đoạn và các bảng manifest từng trường hợp.
 
 
+
+### 3. Minh họa định tính từ các kết quả keyframe đã xuất
+
+Các ảnh dưới đây được lấy **trực tiếp từ hai thư mục `ipnResult/` và `ctpResult/`** đã lưu trên repository. Mỗi ảnh ghép **16 frame đầu vào mô hình**; ảnh Continuous còn kèm dòng thời gian GT/Pred. Nhãn và chỉ số trong chú thích được đối chiếu theo `isolated_all_samples_index.csv` hoặc `continuous_all_events_index.csv`, **không suy đoán nhãn chỉ từ hình ảnh**. Các ví dụ có tính minh họa, không thay thế thống kê toàn bộ tập test.
+
+#### 3.1 IPN Hand — Isolated classification
+
+| Phân loại đúng | Nhầm nhãn cử chỉ |
+|:---:|:---:|
+| ![IPN isolated correct sample 1](./ipnResult/p1_ipn_re_evaluation/isolated_16frame/correct/correct_00001.jpg) | ![IPN isolated incorrect sample 3](./ipnResult/p1_ipn_re_evaluation/isolated_16frame/error/error_00003.jpg) |
+| **GT G10 — Zoom in → Pred G10 — Zoom in**. Video `1CM1_1_R__217.avi`, frames 29–72 (nhãn 1-based); độ tin cậy **97,09%**. | **GT G07 — Open twice → Pred G01 — Click with one finger**. Cùng video, frames 236–260; độ tin cậy của lớp dự đoán **61,94%**. |
+
+**Nhận xét:** ví dụ sai là lỗi **nhầm lớp** ngay cả khi đoạn cử chỉ được cắt theo biên GT; điều này khác với lỗi xác định thời điểm bắt đầu/kết thúc trong bài toán Continuous.
+
+#### 3.2 IPN Hand — Continuous offline
+
+| Phát hiện và ghép đoạn đúng | Lỗi nhầm lớp |
+|:---:|:---:|
+| ![IPN continuous matched correct event 3](./ipnResult/p1_ipn_re_evaluation/continuous_16frame_timeline/correct/correct_00003.jpg) | ![IPN continuous gesture confusion event 7](./ipnResult/p1_ipn_re_evaluation/continuous_16frame_timeline/error/error_00007.jpg) |
+| **GT B0A — Pointing with one finger → Pred B0A**, frames 72–234 (0-based), **tIoU = 0,7853**; được ghép đúng theo ngưỡng 0,50. | **GT G11 — Zoom out → Pred B0A — Pointing with one finger**, frames 448–508 (0-based); **tIoU = 0** cho cặp lớp cùng nhãn, thuộc nhóm `gesture_class_confusion`. |
+
+#### 3.3 CTPGesture_v1 — Isolated classification
+
+| Phân loại đúng | Nhầm nhãn cử chỉ |
+|:---:|:---:|
+| ![CTP isolated correct left turn segment 6](./ctpResult/ctpgesture_videomamba_p1_evaluation/p1_metric_audit/isolated_16frame/correct/correct_00006.jpg) | ![CTP isolated incorrect stop segment 2](./ctpResult/ctpgesture_videomamba_p1_evaluation/p1_metric_audit/isolated_16frame/error/error_00002.jpg) |
+| Video `002.mp4`, đoạn `002_seg0005`, frames 495–530: **GT 3 — Left Turn → Pred 3 — Left Turn**, độ tin cậy **99,89%**. | Video `002.mp4`, đoạn `002_seg0001`, frames 280–315: **GT 1 — Stop → Pred 8 — Pull Over**, độ tin cậy lớp dự đoán **64,03%**. |
+
+#### 3.4 CTPGesture_v1 — Continuous offline
+
+| Phát hiện và ghép đoạn đúng | Lỗi nhầm lớp |
+|:---:|:---:|
+| ![CTP continuous forward correct event 4](./ctpResult/ctpgesture_videomamba_p1_evaluation/p1_metric_audit/continuous_16frame_timeline/correct/correct_00004.jpg) | ![CTP continuous slow down confusion event 9](./ctpResult/ctpgesture_videomamba_p1_evaluation/p1_metric_audit/continuous_16frame_timeline/error/error_00009.jpg) |
+| Video `002.mp4`, frames 370–415: **GT 2 — Forward → Pred 2 — Forward**, **tIoU = 0,8696**. | Video `002.mp4`, frames 920–965: **GT 7 — Slow Down → Pred 6 — Lane Changing**, **tIoU = 0**, loại `gesture_class_confusion`. |
+
+#### 3.5 Khi lớp dự đoán đúng nhưng vẫn bị tính là lỗi Continuous
+
+| IPN Hand: sai biên đoạn | CTPGesture: phân mảnh/dự đoán trùng |
+|:---:|:---:|
+| ![IPN continuous boundary error event 2](./ipnResult/p1_ipn_re_evaluation/continuous_16frame_timeline/error/error_00002.jpg) | ![CTP continuous fragmented prediction event 2](./ctpResult/ctpgesture_videomamba_p1_evaluation/p1_metric_audit/continuous_16frame_timeline/error/error_00002.jpg) |
+| Video `1CM1_1_R__217.avi`, frames 28–71: **GT G10 → Pred G10**, nhưng **tIoU = 0,4583 < 0,50**; loại `boundary_or_fragmentation`. | Video `002.mp4`, frames 288–295: **GT 1 — Stop → Pred 1 — Stop**, nhưng **tIoU = 0,2222 < 0,50**; dự đoán dư/phân mảnh (`duplicate_or_fragmented_prediction`). |
+
+**Nhận xét chung:** tỷ lệ đúng/sai ở **Isolated** phản ánh phân loại lớp trong đoạn đã biết biên; còn ở **Continuous**, một trường hợp bị đánh dấu lỗi có thể do sai lớp, bỏ sót, xuất hiện đoạn dư hoặc **tIoU thấp dù GT và Pred cùng lớp**. Vì vậy, số ảnh `error/` trong Continuous không được diễn giải trực tiếp thành số lần phân loại sai lớp.
+
+**Nguồn để kiểm tra đầy đủ từng hình:**
+
+| Dataset | Chỉ mục Isolated | Chỉ mục Continuous | Thư mục ảnh |
+|---|---|---|---|
+| IPN Hand | [CSV Isolated](./ipnResult/p1_ipn_re_evaluation/isolated_16frame/isolated_all_samples_index.csv) | [CSV Continuous](./ipnResult/p1_ipn_re_evaluation/continuous_16frame_timeline/continuous_all_events_index.csv) | [ipnResult](./ipnResult/) |
+| CTPGesture_v1 | [CSV Isolated](./ctpResult/ctpgesture_videomamba_p1_evaluation/p1_metric_audit/isolated_16frame/isolated_all_samples_index.csv) | [CSV Continuous](./ctpResult/ctpgesture_videomamba_p1_evaluation/p1_metric_audit/continuous_16frame_timeline/continuous_all_events_index.csv) | [ctpResult](./ctpResult/) |
+
+> Ghi chú phương pháp: các hình Continuous là kết quả đánh giá **offline với cửa sổ chồng lấn**, không phải đánh giá độ trễ lệnh trực tuyến (Online Early@10 / TTC).
+
 ## B. Khó khăn
 - Không
 ## C. Công việc tiếp theo
