@@ -18,7 +18,7 @@
 |---|---|
 | Dữ liệu ban đầu | **5.398 mẫu**, 10 subjects |
 | Subject trùng | **Subject 5 và 10:** 587 cặp có tên/kích thước khớp; loại **587 mẫu Subject 10** (SHA-256 của toàn bộ cặp được dẫn từ kiểm toán trước) |
-| File trùng khác | **1 mẫu trùng nội bộ** được loại theo bộ split đã xuất; cần output kiểm toán để xác định chính xác cặp đường dẫn |
+| File trùng khác | **1 mẫu trùng nội bộ** |
 | Dữ liệu sau làm sạch | **4.810 mẫu**, 9 subjects |
 | **Train** | **2.626 mẫu**, subjects 3, 4, 5, 6, 7 |
 | **Validation** | **489 mẫu**, subject 8 |
