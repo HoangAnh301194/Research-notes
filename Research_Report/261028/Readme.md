@@ -52,7 +52,7 @@
 
 Các hình keyframe được dùng để đối chiếu nhãn thực tế (GT) với nhãn dự đoán (Pred) và phân tích nguyên nhân nhận dạng/định vị thời gian chưa đúng. Kết quả isolated và continuous offline được báo cáo riêng do khác giao thức.
 
-#### 2.1. IPN Hand
+#### 2.1 IPN Hand
 
 **Giao thức đánh giá**
 
@@ -86,7 +86,7 @@ Các hình keyframe được dùng để đối chiếu nhãn thực tế (GT) v
 **Nguồn:** [Notebook IPN P1 — metrics và keyframe](./videomamba-ipn-hand-p1-metrics-keyframes-python313%20%281%29.ipynb), các cells 17, 19, 21, 23, 27, 29, 31, 33.
 
 
-#### 2.2. CTP Gesture
+#### 2.2 CTP Gesture
 
 **Giao thức đánh giá**
 
@@ -135,7 +135,7 @@ Các hình keyframe được dùng để đối chiếu nhãn thực tế (GT) v
 - Bảng đối chiếu thuật toán, Params/GFLOPs và phân loại giao thức đã có ở [báo cáo 22/10](../261022/Readme.md). Khi đưa vào bài báo cần phân biệt số đo từ checkpoint của nhóm, số tác giả công bố và số ước tính từ model zoo.
 
 
-## B. Khó khăn và vấn đề tồn đọng
+## B. Khó khăn
 
 1. **EgoEv: khả năng tổng quát hóa theo subject chưa ổn định.** Validation tốt nhất ở epoch 9 nhưng giảm ở epoch 16; cần kiểm tra dữ liệu, phân phối lớp, subject và hiệu quả regularization; không nên chỉ tiếp tục train đủ 60 epochs theo kế hoạch mà không đánh giá.
 2. **Nguy cơ trùng dữ liệu EgoEv:** phải hoàn thiện kiểm tra hash/nội dung trên cả ba tập train/validation/test, đặc biệt các subject 4/8 và 5/10.
@@ -144,7 +144,7 @@ Các hình keyframe được dùng để đối chiếu nhãn thực tế (GT) v
 5. **So sánh SOTA:** các bài dùng split, modality và giao thức khác nhau; chưa thể tuyên bố phương pháp tốt hơn dựa vào các Accuracy không đồng nhất. Thời gian xử lý trên T4 không được gọi là latency của hệ thống causal thời gian thực.
 
 
-## C. Công việc tiếp theo (ưu tiên)
+## C. Công việc tiếp theo
 
 - **P0 — Nghiệm thu dữ liệu EgoEv:** tạo bảng per-subject/per-class, thống kê số mẫu trước/sau loại trùng và đối chiếu hash toàn bộ train/validation/test. Khóa split trước khi đánh giá test.
 - **P0 — Phân tích EgoEv epoch 9 so với epoch 16:** bảo toàn hai checkpoint, vẽ đường train/validation loss/accuracy/F1; xác định có cần thử early stopping, tăng regularization hoặc kiểm tra domain shift, không tự chọn tham số theo test.
