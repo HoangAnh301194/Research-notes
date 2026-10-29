@@ -1,0 +1,8 @@
+Metric,Value
+Videos,52.0
+Mean per-video raw Frame Accuracy,0.8348886648265202
+Mean per-video final Frame Accuracy,0.8349458877576003
+Global raw Frame Accuracy,0.8373084196562138
+Global final Frame Accuracy,0.8373413493653975
+Mean per-video raw Temporal Overlap,0.49111036077803205
+Mean per-video final Temporal Overlap,0.4940803230677879

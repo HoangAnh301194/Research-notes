@@ -1,0 +1,4 @@
+{
+  "auc_accuracy_10_to_100": 0.7239882934705822,
+  "note": "Trapezoidal AUC normalized over observation ratios [0.10, 1.00]."
+}

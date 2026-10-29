@@ -1,0 +1,17 @@
+{
+  "samples": 1101,
+  "prefix_grid": [
+    0.1,
+    0.2,
+    0.5,
+    0.75,
+    1.0
+  ],
+  "ever_correct_fraction": 0.885558583106267,
+  "correct_at_100_fraction": 0.846503178928247,
+  "never_correct_count": 126,
+  "early_correct_but_wrong_at_100_count": 43,
+  "mean_first_correct_ratio_conditional": 0.30030769230769233,
+  "mean_stable_correct_ratio_conditional": 0.3158798283261802,
+  "warning": "Offline GT-defined isolated prefixes only; not real-time prediction latency."
+}

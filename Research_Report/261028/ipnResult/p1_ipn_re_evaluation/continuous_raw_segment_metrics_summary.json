@@ -1,0 +1,12 @@
+{
+  "videos": 52,
+  "frames": 212574,
+  "global_frame_accuracy": 0.8373084196562138,
+  "global_macro_f1": 0.6440115048359686,
+  "edit_score_ms_tcn_mean_pct": 74.38305922039396,
+  "ipn_levenshtein_gt_normalized_mean_pct_diagnostic": 68.80890848282152,
+  "protocol": "raw offline overlapping windows; IPN gesture labels exclude class 0 in segment metrics",
+  "segment_f1_at_10": 0.7945439045183291,
+  "segment_f1_at_25": 0.7757885763000852,
+  "segment_f1_at_50": 0.6990622335890878
+}
