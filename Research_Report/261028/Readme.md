@@ -24,27 +24,23 @@
 | **Validation** | **489 mẫu**, subject 8 |
 | **Test** | **1.695 mẫu**, subjects 1, 2, 9 |
 
-- Bộ split được xuất dưới dạng CSV và manifest trên Kaggle; notebook huấn luyện đã đọc và xác minh **train/validation** thành công. **Chưa sử dụng tập test để đánh giá mô hình.**
-- Lưu ý: thông tin từng được nhắc tới về một file trùng giữa **Subject 4 và 8** chưa có đường dẫn và hash xác nhận trong bản notebook GitHub; **không coi đó là cặp file đã loại**. Ngoài ra, notebook tạo split không tự tính lại SHA-256 cho toàn bộ 587 cặp Subject 5/10.
-- **Notebook nguồn:** [Tạo split và xử lý trùng](../KaggleNotebook/EgoEvGesture_Notebooks/EgoEvGesture_Heterogeneous_Clean_Split_Publish_Kaggle_EN.ipynb) · [Kiểm tra độc lập bộ split](../KaggleNotebook/EgoEvGesture_Notebooks/EgoEvGesture_Heterogeneous_Published_Split_Validator_v2_PathFix_EN.ipynb). Chưa truy nguyên được **version Kaggle cụ thể** của hai notebook này; mã nguồn GitHub không lưu output thực thi của chúng.
 
 **Cấu hình huấn luyện**
 
-| Tham số | Giá trị theo notebook |
+| Parameter | Giá trị theo notebook |
 |---|---|
-| Mô hình | VideoMamba-Tiny, 38 lớp; khoảng **6,965 triệu tham số** |
-| Đầu vào | Sự kiện Nx4 → 16 khung, 3 kênh, 224×224 |
-| Ba kênh | Số sự kiện dương, số sự kiện âm, tổng số sự kiện |
-| Tiền xử lý | Chia 16 khoảng thời gian; log1p, chuẩn hóa percentile 99, ImageNet mean/std |
-| Giới hạn mẫu sự kiện | 200.000 sự kiện/mẫu |
-| Phần cứng | 2 × Tesla T4, PyTorch DataParallel (không phải DDP) |
-| Global batch / tích lũy gradient | 2 / 4 → effective batch **8** |
+| Model | VideoMamba-Tiny, 38 lớp; khoảng **6,965 triệu tham số** |
+| Input | Sự kiện Nx4 → 16 khung, 3 kênh, 224×224 |
+| Channels | Số sự kiện dương, số sự kiện âm, tổng số sự kiện |
+| Preprocessing | Chia 16 khoảng thời gian; log1p, chuẩn hóa percentile 99, ImageNet mean/std |
+| Event limit | 200.000 sự kiện/mẫu |
+| Hardware | 2 × Tesla T4, PyTorch DataParallel (không phải DDP) |
+| Global batch / Gradient accumulation | 2 / 4 → effective batch **8** |
 | Optimizer | AdamW; learning rate ban đầu **1e-4**, weight decay **0,05** |
-| Lịch học | Warmup 3 epochs, cosine schedule; min LR **1e-6** |
-| Drop path / head dropout | 0,1 / 0,3 |
+| LR schedule | Warmup 3 epochs, cosine schedule; min LR **1e-6** |
+| Drop path / Head dropout | 0,1 / 0,3 |
 | Seed / Precision | 42 / FP32 (không AMP) |
-| Kế hoạch | 60 epochs; mỗi phiên tối đa 8 epochs, có resume checkpoint |
-| Mã nguồn | VideoMamba commit 37355c26d0ae99ca2459f6d4044a5f509031a79f |
+| Training plan | 30 epochs; mỗi phiên tối đa 8 epochs, có resume checkpoint |
 
 **Kết quả huấn luyện sau 16 epochs**
 
@@ -92,10 +88,6 @@ Các hình keyframe được dùng để đối chiếu nhãn thực tế (GT) v
 
 - Các lớp dễ nhầm hơn gồm **G02 (25,00%)**, **G01 (42,31%)** và **G08 (51,92%)**, dựa trên isolated per-class accuracy.
 - Đã tạo hình gồm **đúng 16 khung được đưa vào mô hình**, kèm nhãn GT/Pred; isolated: **932 đúng, 169 sai**. Continuous: xuất **820 trường hợp ghép đúng, 706 trường hợp lỗi/không ghép được**, theo tiêu chí ghép nhãn và temporal IoU ≥ 0,5.
-- **Giới hạn lưu trữ:** kết quả và hình IPN được ghi trong output Kaggle và notebook; **chưa xác minh có thư mục xuất hình IPN riêng trong đường dẫn báo cáo 261028 trên GitHub**. Muốn người xem duyệt tất cả case cần đồng bộ artifact này lên repository.
-
-**Nguồn:** [Notebook IPN P1 — metrics và keyframe](./videomamba-ipn-hand-p1-metrics-keyframes-python313%20%281%29.ipynb), các cells 17, 19, 21, 23, 27, 29, 31, 33.
-
 
 #### 2.2 CTP Gesture
 
@@ -135,37 +127,7 @@ Các hình keyframe được dùng để đối chiếu nhãn thực tế (GT) v
 - Ví dụ continuous: [trường hợp đúng](./ctpResult/ctpgesture_videomamba_p1_evaluation/p1_metric_audit/continuous_16frame_timeline/correct/correct_00004.jpg) · [trường hợp lỗi](./ctpResult/ctpgesture_videomamba_p1_evaluation/p1_metric_audit/continuous_16frame_timeline/error/error_00001.jpg).
 - Dữ liệu phục vụ tái kiểm chứng gồm classification report, isolated predictions, per-video CSV, early accuracy, phân tích biên đoạn và các bảng manifest từng trường hợp.
 
-**Nguồn:** [Notebook CTP P1](./videomamba-ctpgesture-p1-metrics-keyframes-python3%20%283%29.ipynb), [thư mục kết quả CTP](./ctpResult/ctpgesture_videomamba_p1_evaluation/) và [kiểm toán P1](./ctpResult/ctpgesture_videomamba_p1_evaluation/p1_metric_audit/).
-
-
-**Nhận xét tổng hợp về các kết quả keyframe và đánh giá**
-
-- **CTP isolated có kết quả tốt nhưng continuous thấp hơn**, cho thấy phân loại đoạn đã tách sẵn chưa phản ánh đầy đủ độ chính xác nhận dạng trên video dài và biên bắt đầu/kết thúc cử chỉ.
-- **IPN-Hand khó hơn CTP trong cấu hình hiện tại**, đặc biệt ở các lớp G01/G02/G08 và khả năng phân đoạn cử chỉ trên video dài. Đây là nhận xét trên hai tập, không phải kết luận mô hình nào vượt SOTA.
-- **VideoMamba hiện đánh giá continuous theo cách offline** (cửa sổ chồng lấn và tổng hợp dự đoán); các metric này **không đồng nhất** với Online-F1, Early@10 hay Time-to-Correct-Command của hệ thống causal.
-- Bảng đối chiếu thuật toán, Params/GFLOPs và phân loại giao thức đã có ở [báo cáo 22/10](../261022/Readme.md). Khi đưa vào bài báo cần phân biệt số đo từ checkpoint của nhóm, số tác giả công bố và số ước tính từ model zoo.
-
 
 ## B. Khó khăn
-
-1. **EgoEv: khả năng tổng quát hóa theo subject chưa ổn định.** Validation tốt nhất ở epoch 9 nhưng giảm ở epoch 16; cần kiểm tra dữ liệu, phân phối lớp, subject và hiệu quả regularization; không nên chỉ tiếp tục train đủ 60 epochs theo kế hoạch mà không đánh giá.
-2. **Nguy cơ trùng dữ liệu EgoEv:** phải hoàn thiện kiểm tra hash/nội dung trên cả ba tập train/validation/test, đặc biệt các subject 4/8 và 5/10.
-3. **IPN: lỗi dự đoán và biên phân đoạn còn đáng kể.** Cần tổng hợp confusion matrix và một số trường hợp có tính đại diện, tránh chỉ chọn ảnh đẹp.
-4. **Lưu trữ kết quả:** artifact hình ảnh IPN chưa được xác nhận hiện diện riêng trong folder GitHub; cần đồng bộ cùng CSV và metadata mô hình/checkpoint.
-5. **So sánh SOTA:** các bài dùng split, modality và giao thức khác nhau; chưa thể tuyên bố phương pháp tốt hơn dựa vào các Accuracy không đồng nhất. Thời gian xử lý trên T4 không được gọi là latency của hệ thống causal thời gian thực.
-
-
+- Không
 ## C. Công việc tiếp theo
-
-- **P0 — Nghiệm thu dữ liệu EgoEv:** tạo bảng per-subject/per-class, thống kê số mẫu trước/sau loại trùng và đối chiếu hash toàn bộ train/validation/test. Khóa split trước khi đánh giá test.
-- **P0 — Phân tích EgoEv epoch 9 so với epoch 16:** bảo toàn hai checkpoint, vẽ đường train/validation loss/accuracy/F1; xác định có cần thử early stopping, tăng regularization hoặc kiểm tra domain shift, không tự chọn tham số theo test.
-- **P1 — Hoàn thiện keyframe IPN trên GitHub:** đưa các ảnh/manifest/CSV liên quan vào thư mục riêng, gắn nhãn true/pred, tên video, thời điểm bắt đầu/kết thúc và mẫu sai điển hình; lập bảng phân tích nguyên nhân G01/G02/G08.
-- **P1 — Chốt bảng metrics thống nhất:** isolated Top-1/Macro-F1, Accuracy@10/20/50%, continuous Frame Accuracy/Macro-F1, Segment F1@10/25/50, Edit, lỗi biên; ghi rõ mẫu số, đơn vị và cách lấy trung bình.
-- **P2 — Đối chứng bài báo:** rà lại IPN-Hand và CTPGesture v1 có dùng **RGB/video** (không chỉ skeleton), kiểm tra protocol/split; điền Params/GFLOPs từ paper gốc hoặc mã nguồn, giữ **NR** nếu chưa kiểm chứng.
-- **P2 — Kế hoạch thử nghiệm tiếp:** sau khi khóa cấu hình, đánh giá EgoEv test đúng một quy trình cố định và so sánh với các baseline phù hợp; các thí nghiệm causal/online, latency hoặc hiệu năng thực tế cần một protocol riêng.
-
----
-
-**Liên kết:** [Notebook EgoEv](./egoevgesture-videomamba-tiny%20%282%29.ipynb) · [Notebook IPN](./videomamba-ipn-hand-p1-metrics-keyframes-python313%20%281%29.ipynb) · [Notebook CTP](./videomamba-ctpgesture-p1-metrics-keyframes-python3%20%283%29.ipynb) · [CTP artifacts](./ctpResult/ctpgesture_videomamba_p1_evaluation/).
-
-**Tính chất báo cáo:** số liệu nêu trên là kết quả đã ghi trong notebook; không có chạy lại huấn luyện hoặc suy luận trong lần biên tập README này.
