@@ -1,19 +1,20 @@
-# Báo cáo nghiên cứu ngày 28/10/2026 — VideoMamba / EgoEvGesture / IPN-Hand / CTPGesture
+# Báo cáo nghiên cứu ngày 28/10/2026
 
-> **Phạm vi:** Tổng hợp tiến độ đến kết quả được lưu trong các notebook ngày 28/10/2026. Các phép đo isolated, continuous offline và early recognition **khác giao thức**, không được xếp hạng trực tiếp với chỉ số causal/online trong bài báo khác. Phần nhận định được phân biệt với số liệu đã thực nghiệm.
+## A. Công việc đã làm.
 
-## A. Công việc đã thực hiện
+- Đóng gói dữ liệu **EgoEv Gesture** lên Kaggle, kiểm tra cấu trúc/split và huấn luyện mô hình **VideoMamba-Tiny**.
+- Xuất keyframe cho các trường hợp dự đoán **đúng/sai** từ hai mô hình VideoMamba đã huấn luyện trên **IPN Hand** và **CTP Gesture**, đồng thời tổng hợp các chỉ số đánh giá.
 
-### 1. Chuẩn bị dữ liệu và huấn luyện VideoMamba-Tiny trên EgoEvGesture
+### 1. Đóng gói dataset EgoEv Gesture
 
-**1.1. Dữ liệu và chia tập**
+**Cấu trúc và chia tập dữ liệu**
 
 - Bộ dữ liệu sự kiện EgoEvGesture được đóng gói để chạy trên Kaggle; bài toán phân loại **38 lớp**.
 - Ghi nhận trong quá trình kiểm tra dữ liệu gốc: **subject 5 và 10 trùng dữ liệu**, có **một tệp trùng giữa subject 4 và 8**. Đây là nguy cơ rò rỉ thông tin giữa các tập; không sử dụng các bản ghi trùng để đưa ra kết luận về khả năng tổng quát hóa.
 - Notebook đang sử dụng **Heterogeneous Cleaned Split v1** với **train: 2.626 mẫu, subjects 3–7** và **validation: 489 mẫu, subject 8**; cả hai tập đều có 38 lớp. Việc đối chiếu số lượng, nhãn, đường dẫn và checksum CSV với manifest đã **PASS**. **Tập test chưa được đọc hoặc đánh giá trong notebook này.**
 - Phạm vi kiểm tra tự động hiện thấy chủ yếu là train/validation; vẫn cần công bố bảng fingerprint/hash và xác nhận **không trùng nội dung giữa toàn bộ train–validation–test** trước khi dùng kết quả test trong bài báo.
 
-**1.2. Biểu diễn sự kiện và cấu hình huấn luyện**
+**Cấu hình huấn luyện**
 
 | Tham số | Giá trị theo notebook |
 |---|---|
@@ -31,7 +32,7 @@
 | Kế hoạch | 60 epochs; mỗi phiên tối đa 8 epochs, có resume checkpoint |
 | Mã nguồn | VideoMamba commit 37355c26d0ae99ca2459f6d4044a5f509031a79f |
 
-**1.3. Kết quả sau 16 epochs**
+**Kết quả huấn luyện sau 16 epochs**
 
 | Mốc | Train Accuracy | Validation Accuracy | Validation Macro-F1 |
 |---|---:|---:|---:|
@@ -46,16 +47,21 @@
 
 **Nguồn:** [Notebook EgoEvGesture và log train](./egoevgesture-videomamba-tiny%20%282%29.ipynb), các ô cấu hình, kiểm tra split, train và checkpoint (cells 4, 6, 18, 21, 23).
 
-### 2. Trích xuất keyframe và đánh giá VideoMamba trên IPN-Hand
 
-**2.1. Giao thức thực nghiệm**
+### 2. Xuất ra keyframe correct and error prediction để quan sát
+
+Các hình keyframe được dùng để đối chiếu nhãn thực tế (GT) với nhãn dự đoán (Pred) và phân tích nguyên nhân nhận dạng/định vị thời gian chưa đúng. Kết quả isolated và continuous offline được báo cáo riêng do khác giao thức.
+
+#### 2.1. IPN Hand
+
+**Giao thức đánh giá**
 
 - Dùng checkpoint đã fine-tune, **không train lại**. Mô hình nhận **16 RGB frames/clip, 224×224, 14 lớp**.
 - **Isolated**: đánh giá **1.101 đoạn** từ tập test đã chú thích, loại nhãn D0X khỏi đánh giá isolated.
 - **Continuous offline**: đánh giá **52 video, 212.574 frames**, cửa sổ **64 frames**, bước trượt **16 frames** (overlap 75%); lấy 16 khung làm đầu vào cho mỗi cửa sổ.
 - Thử nghiệm early recognition bằng cách cắt một phần **đoạn đã biết biên ground truth** rồi lấy mẫu lại; **không phải đo thời gian phản hồi trực tuyến**.
 
-**2.2. Kết quả định lượng**
+**Kết quả định lượng**
 
 | Chỉ số | Giá trị |
 |---|---:|
@@ -79,16 +85,17 @@
 
 **Nguồn:** [Notebook IPN P1 — metrics và keyframe](./videomamba-ipn-hand-p1-metrics-keyframes-python313%20%281%29.ipynb), các cells 17, 19, 21, 23, 27, 29, 31, 33.
 
-### 3. Trích xuất keyframe và đánh giá VideoMamba trên CTPGesture v1
 
-**3.1. Cấu hình và phạm vi**
+#### 2.2. CTP Gesture
+
+**Giao thức đánh giá**
 
 - Dùng checkpoint VideoMamba-Tiny **epoch 17**, **6.959.817 tham số**, **16 RGB frames/clip, 224×224**, **9 lớp**.
 - Kiểm tra **11 video test chính thức**, **67.356 frames**, **1.728 GT segments** (trong đó 869 no-gesture và 859 gesture).
 - Isolated: mỗi đoạn được gán nhãn là một clip. Continuous offline: cửa sổ **32 frames, stride 8**, overlap 75%, tổng **8.392 cửa sổ**; ghép xác suất dự đoán thành nhãn theo frame.
 - Môi trường: Python 3.13.15, PyTorch 2.11.0+cu128, CUDA 12.8, Tesla T4, native Mamba CUDA; kiểm thử checkpoint/model forward đã **PASS**.
 
-**3.2. Kết quả định lượng**
+**Kết quả định lượng**
 
 | Chỉ số | Giá trị |
 |---|---:|
@@ -109,7 +116,7 @@
 |---|---:|---:|---:|---:|---:|
 | Accuracy | 86,05% | 93,17% | 97,57% | 98,38% | 98,55% |
 
-**3.3. Keyframe dự đoán đúng và sai**
+**Keyframe dự đoán đúng và sai**
 
 - **Isolated:** xuất hình **1.728/1.728 clips**, gồm **1.703 đúng** và **25 sai**, không lỗi giải mã.
 - **Continuous:** xuất **970/970 trường hợp**, gồm **725 đúng** và **245 lỗi**; mỗi hình chứa 16 khung đại diện từ cửa sổ mô hình cùng timeline GT/Pred. Đếm trường hợp continuous dựa trên ghép một-một cùng lớp với temporal IoU ≥ 0,5, **không phải 970 video độc lập**.
@@ -119,12 +126,14 @@
 
 **Nguồn:** [Notebook CTP P1](./videomamba-ctpgesture-p1-metrics-keyframes-python3%20%283%29.ipynb), [thư mục kết quả CTP](./ctpResult/ctpgesture_videomamba_p1_evaluation/) và [kiểm toán P1](./ctpResult/ctpgesture_videomamba_p1_evaluation/p1_metric_audit/).
 
-### 4. Nhận xét tổng hợp
+
+**Nhận xét tổng hợp về các kết quả keyframe và đánh giá**
 
 - **CTP isolated có kết quả tốt nhưng continuous thấp hơn**, cho thấy phân loại đoạn đã tách sẵn chưa phản ánh đầy đủ độ chính xác nhận dạng trên video dài và biên bắt đầu/kết thúc cử chỉ.
 - **IPN-Hand khó hơn CTP trong cấu hình hiện tại**, đặc biệt ở các lớp G01/G02/G08 và khả năng phân đoạn cử chỉ trên video dài. Đây là nhận xét trên hai tập, không phải kết luận mô hình nào vượt SOTA.
 - **VideoMamba hiện đánh giá continuous theo cách offline** (cửa sổ chồng lấn và tổng hợp dự đoán); các metric này **không đồng nhất** với Online-F1, Early@10 hay Time-to-Correct-Command của hệ thống causal.
 - Bảng đối chiếu thuật toán, Params/GFLOPs và phân loại giao thức đã có ở [báo cáo 22/10](../261022/Readme.md). Khi đưa vào bài báo cần phân biệt số đo từ checkpoint của nhóm, số tác giả công bố và số ước tính từ model zoo.
+
 
 ## B. Khó khăn và vấn đề tồn đọng
 
@@ -133,6 +142,7 @@
 3. **IPN: lỗi dự đoán và biên phân đoạn còn đáng kể.** Cần tổng hợp confusion matrix và một số trường hợp có tính đại diện, tránh chỉ chọn ảnh đẹp.
 4. **Lưu trữ kết quả:** artifact hình ảnh IPN chưa được xác nhận hiện diện riêng trong folder GitHub; cần đồng bộ cùng CSV và metadata mô hình/checkpoint.
 5. **So sánh SOTA:** các bài dùng split, modality và giao thức khác nhau; chưa thể tuyên bố phương pháp tốt hơn dựa vào các Accuracy không đồng nhất. Thời gian xử lý trên T4 không được gọi là latency của hệ thống causal thời gian thực.
+
 
 ## C. Công việc tiếp theo (ưu tiên)
 
