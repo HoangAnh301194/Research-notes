@@ -1,5 +1,7 @@
 # Báo cáo nghiên cứu ngày 28/10/2026
 
+> **Kiểm chứng bổ sung 02/11/2026:** các liên kết notebook trong mục đánh giá dưới đây trỏ tới file `.ipynb` **đã lưu output trên GitHub**. Số output không đồng nghĩa số ảnh JPEG nhúng trong notebook; các file ảnh, CSV và chỉ mục được dẫn riêng ở `ipnResult/` và `ctpResult/`.
+
 ## A. Công việc đã làm.
 
 - Đóng gói dữ liệu **EgoEv Gesture** lên Kaggle, kiểm tra cấu trúc/split và huấn luyện mô hình **VideoMamba-Tiny**.
@@ -54,7 +56,7 @@
 - Kết thúc phiên: lưu **checkpoint-best.pth (epoch 9)**, **checkpoint-latest.pth (epoch 16)**, cấu hình và lịch sử train/validation. Checkpoint chứa trạng thái optimizer để tiếp tục.
 - **Nhận xét:** Train Accuracy gần 99% nhưng Validation Accuracy dao động và giảm còn 58,90% tại epoch 16 là **dấu hiệu quá khớp hoặc chênh lệch phân phối giữa subject train và validation**. Chưa đủ cơ sở xác định nguyên nhân duy nhất. Không được trình bày 69,53% là test Accuracy.
 
-**Notebook làm căn cứ:** [EgoEvGesture — VideoMamba-Tiny: training & resume](./egoevgesture-videomamba-tiny%20%282%29.ipynb) (mục 2: kiểm tra phân chia dữ liệu; mục 5–6: tiền xử lý và mô hình; mục 8: train/validation; mục 9–10: checkpoint và lịch sử huấn luyện). Notebook xác nhận số mẫu và subject của từng split cùng kết quả huấn luyện; **số liệu loại 587 + 1 mẫu trùng** thuộc bước kiểm toán/làm sạch trước huấn luyện và không nên xem notebook train là bằng chứng độc lập về toàn bộ thao tác loại trùng.
+**Notebook làm căn cứ (11/11 ô code có output, 20 output):** [EgoEvGesture — VideoMamba-Tiny: training & resume](./egoevgesture-videomamba-tiny%20%282%29.ipynb) (mục 2: kiểm tra phân chia dữ liệu; mục 5–6: tiền xử lý và mô hình; mục 8: train/validation; mục 9–10: checkpoint và lịch sử huấn luyện). Notebook xác nhận số mẫu và subject của từng split cùng kết quả huấn luyện; **số liệu loại 587 + 1 mẫu trùng** thuộc bước kiểm toán/làm sạch trước huấn luyện và không nên xem notebook train là bằng chứng độc lập về toàn bộ thao tác loại trùng.
 
 
 ### 2. Xuất ra keyframe correct and error prediction để quan sát
@@ -63,7 +65,7 @@ Các hình keyframe được dùng để đối chiếu nhãn thực tế (GT) v
 
 #### 2.1 IPN Hand
 
-**Notebook gốc để tái kiểm chứng:** [VideoMamba IPN-Hand — P1 Metrics & Keyframes](./videomamba-ipn-hand-p1-metrics-keyframes-python313%20%281%29.ipynb) (mục 4: Isolated và Early GT-prefix; mục 5: Continuous RAW, segment metrics và xuất ảnh 16 frame). **Notebook đọc kết quả:** [IPN-Hand — Complete P1 Results & Keyframe Explorer](./ipn-hand-complete-videomamba-p1-results-16-fra.ipynb) (bảng class, CSV/JSON, biểu đồ và thư viện ảnh; không thực hiện inference mới).
+**Notebook P1 đã thực thi (16/18 ô code có output, 47 output):** [VideoMamba IPN-Hand — P1 Metrics & Keyframes](./videomamba-ipn-hand-p1-metrics-keyframes-python313%20%281%29.ipynb) (mục 4: Isolated và Early GT-prefix; mục 5: Continuous RAW, segment metrics và xuất ảnh 16 frame). **Notebook đọc kết quả (9/9 ô code có output, 92 output):** [IPN-Hand — Complete P1 Results & Keyframe Explorer](./ipn-hand-complete-videomamba-p1-results-16-fra.ipynb) (bảng class, CSV/JSON, biểu đồ và thư viện ảnh; không thực hiện inference mới).
 
 **Giao thức đánh giá**
 
@@ -95,7 +97,7 @@ Các hình keyframe được dùng để đối chiếu nhãn thực tế (GT) v
 
 #### 2.2 CTP Gesture
 
-**Notebook gốc để tái kiểm chứng:** [VideoMamba CTPGesture — P1 Metrics & Keyframes](./videomamba-ctpgesture-p1-metrics-keyframes-python3%20%283%29.ipynb) (mục 6: Isolated, Early GT-prefix và xuất ảnh; mục 7: Continuous RAW, F1 theo tIoU, sai lệch biên và xuất ảnh 16 frame). **Notebook đọc kết quả:** [CTPGesture — Complete P1 Results & Keyframe Explorer](./ctpgesture-v1-complete-videomamba-p1-results-1.ipynb) (kiểm kê Output, bảng metric và thư viện ảnh; không thực hiện inference mới).
+**Notebook P1 đã thực thi (19/19 ô code có output, 51 output):** [VideoMamba CTPGesture — P1 Metrics & Keyframes](./videomamba-ctpgesture-p1-metrics-keyframes-python3%20%283%29.ipynb) (mục 6: Isolated, Early GT-prefix và xuất ảnh; mục 7: Continuous RAW, F1 theo tIoU, sai lệch biên và xuất ảnh 16 frame). **Notebook đọc kết quả (9/9 ô code có output, 96 output):** [CTPGesture — Complete P1 Results & Keyframe Explorer](./ctpgesture-v1-complete-videomamba-p1-results-1.ipynb) (kiểm kê Output, bảng metric và thư viện ảnh; không thực hiện inference mới).
 
 **Giao thức đánh giá**
 
@@ -199,15 +201,15 @@ Các ảnh dưới đây được lấy **trực tiếp từ hai thư mục `ipn
 
 ### 4. Danh mục notebook nguồn và khả năng kiểm chứng
 
-| Notebook trong `Research_Report/261028/` | Vai trò | Những kết quả trong báo cáo có thể đối chiếu |
-|---|---|---|
-| [EgoEvGesture — VideoMamba-Tiny](./egoevgesture-videomamba-tiny%20%282%29.ipynb) | Notebook huấn luyện, resume, kiểm tra split | Số mẫu train/val/test, subject split, cấu hình mô hình, lịch sử epoch, checkpoint; không thay thế báo cáo kiểm toán file trùng |
-| [VideoMamba IPN-Hand — P1 Metrics & Keyframes](./videomamba-ipn-hand-p1-metrics-keyframes-python313%20%281%29.ipynb) | **Notebook tính toán gốc** | Giao thức 16 frame, 1.101 Isolated, Early GT-prefix, 52 video Continuous, metric theo lớp/đoạn, sinh ảnh |
-| [VideoMamba CTPGesture — P1 Metrics & Keyframes](./videomamba-ctpgesture-p1-metrics-keyframes-python3%20%283%29.ipynb) | **Notebook tính toán gốc** | 1.728 Isolated, Early GT-prefix, 11 video Continuous, tIoU/F1, boundary diagnostics, sinh ảnh |
-| [IPN-Hand — Complete P1 Results](./ipn-hand-complete-videomamba-p1-results-16-fra.ipynb) | Notebook **đọc và trình bày Output** | Bảng mã lớp, thống kê CSV/JSON, đối chiếu GT/Pred và ảnh minh họa IPN |
-| [CTPGesture — Complete P1 Results](./ctpgesture-v1-complete-videomamba-p1-results-1.ipynb) | Notebook **đọc và trình bày Output** | Bảng mã lớp, thống kê CSV/JSON, đối chiếu GT/Pred và ảnh minh họa CTP |
+| Notebook trong `Research_Report/261028/` | Vai trò | Output lưu trong `.ipynb` trên GitHub | Những kết quả trong báo cáo có thể đối chiếu |
+|---|---|---|---|
+| [EgoEvGesture — VideoMamba-Tiny](./egoevgesture-videomamba-tiny%20%282%29.ipynb) | Notebook huấn luyện, resume, kiểm tra split | 11/11 ô; 20 output | Số mẫu train/val/test, subject split, cấu hình mô hình, lịch sử epoch, checkpoint; không thay thế báo cáo kiểm toán file trùng |
+| [VideoMamba IPN-Hand — P1 Metrics & Keyframes](./videomamba-ipn-hand-p1-metrics-keyframes-python313%20%281%29.ipynb) | **Notebook tính toán gốc** | 16/18 ô; 47 output | Giao thức 16 frame, 1.101 Isolated, Early GT-prefix, 52 video Continuous, metric theo lớp/đoạn, sinh ảnh |
+| [VideoMamba CTPGesture — P1 Metrics & Keyframes](./videomamba-ctpgesture-p1-metrics-keyframes-python3%20%283%29.ipynb) | **Notebook tính toán gốc** | 19/19 ô; 51 output | 1.728 Isolated, Early GT-prefix, 11 video Continuous, tIoU/F1, boundary diagnostics, sinh ảnh |
+| [IPN-Hand — Complete P1 Results](./ipn-hand-complete-videomamba-p1-results-16-fra.ipynb) | Notebook **đọc và trình bày Output** | 9/9 ô; 92 output | Bảng mã lớp, thống kê CSV/JSON, đối chiếu GT/Pred và ảnh minh họa IPN |
+| [CTPGesture — Complete P1 Results](./ctpgesture-v1-complete-videomamba-p1-results-1.ipynb) | Notebook **đọc và trình bày Output** | 9/9 ô; 96 output | Bảng mã lớp, thống kê CSV/JSON, đối chiếu GT/Pred và ảnh minh họa CTP |
 
-**Thứ tự ưu tiên nguồn:** Khi dẫn chứng **quy trình và công thức đánh giá**, tham khảo notebook tính toán gốc; khi dẫn chứng **con số và từng trường hợp đúng/sai**, đối chiếu thêm bảng CSV/JSON và ảnh trong `ipnResult/`, `ctpResult/`. Hai notebook *Complete Results* là công cụ trình bày lại các tệp đã xuất, **không phải lần thử nghiệm độc lập**.
+**Thứ tự ưu tiên nguồn:** Dẫn chứng quy trình và metric bằng **notebook P1 đã thực thi và lưu output** trong `261028/`; dẫn chứng con số, tình huống đúng/sai bằng thêm CSV/JSON và ảnh trong `ipnResult/`, `ctpResult/`. Hai notebook *Complete Results* chỉ đọc và trình bày dữ liệu đã xuất, **không phải lần đánh giá mô hình độc lập**. Các bản [IPN-Hand trong KaggleNotebook](../KaggleNotebook/VideoMamba_IPN_Hand_P1_Metrics_Keyframes_Python313.ipynb) và [CTPGesture trong KaggleNotebook](../KaggleNotebook/VideoMamba_CTPGesture_P1_Metrics_Keyframes_Python313.ipynb) lưu 0 output; để trích dẫn số thực nghiệm, dùng **bản 261028 có output** ở bảng trên.
 
 ## B. Khó khăn
 - Không
