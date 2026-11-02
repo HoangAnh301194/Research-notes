@@ -41,16 +41,16 @@ Danh mục được trình bày **trước các bảng so sánh**, bao gồm ngh
 
 ### Table 1 — IPN-Hand: Isolated Gesture Recognition
 
-| Method / Reference | Input / Architecture | Params (M) | GFLOPs | Samples | Accuracy (%) | GT-prefix AUC | Notes |
-| --- | --- | --- | --- | --- | --- | --- | --- |
-| **VideoMamba-Tiny** [Notebook](../261007/videomamba_man_configsBenchmark.ipynb) | RGB 16×224² | 6.9608 | 29.0261 | 1.101 | 84.65 | 0.72399 | VideoMamba; RGB 16 frames; GT-prefix offline. Chi phí theo clip, không phải toàn hệ thống. |
-| CoboGesture + **VideoMAEv2** [Cobo](https://doi.org/10.1109/ACCESS.2026.3664027) | RGB video, ViT-L | ≈303.8 (recognizer) | 596.8327 | - | 84.59 | - | Khác cách lấy mẫu và tiền xử lý so với VideoMamba. |
-| CoboGesture + VideoMAE [Cobo](https://doi.org/10.1109/ACCESS.2026.3664027) | RGB video, ViT-L | ≈303.8 (recognizer) | 596.8327 | - | 78.81 | - | Biến thể VideoMAE đời trước, cùng bài CoboGesture. |
-| Kausar et al. [Nguồn](https://doi.org/10.32604/cmc.2026.084514) | RGB + Flow + Seg + Transformer | ≈21.284672 (encoder tham chiếu) | ResNet-34 3.66/ảnh (tham chiếu) | - | 92.34 | - | Chưa khóa split; tham số chỉ phản ánh ResNet-34 encoder. |
-| Gil-Martín et al. [Nguồn](https://doi.org/10.5220/0013053500003890) | MediaPipe landmarks+LSTM | 0.058614 (LSTM); ≈2.192/3.172 (conditional full) | Palm192 0.354 /call; hand landmark + LSTM: - | - | 84.66±1.09; 86.38±2.03 | - | **Hai giao thức:** 10-fold CV / 37 train–13 test; 0,058614M chỉ LSTM. Full pipeline **ước lượng có điều kiện**: LSTM 0.058614M + Palm 1.133M + Hands landmark Lite 1.00M (hoặc Full 1.98M) = 2.191614/3.171614M. [Palm reference](https://models.luxonis.com/luxonis/mediapipe-palm-detection/9531aba9-ef45-4ad3-ae03-808387d61bf3); [Hands reference](https://pmc.ncbi.nlm.nih.gov/articles/PMC11244600/). Chưa xác minh đúng checkpoint trong bài Gil-Martín. |
-| IPN original: ResNeXt-101 RGB+Flow [Nguồn](https://gibranbenitez.github.io/IPN_Hand/Results.html) | RGB+SPyNet, 32f | 47.56 + 1.440 | - | - | 86.32 | - | RGB + optical flow; khác dữ liệu đầu vào và số khung. |
-| IPN original: ResNeXt-101 RGB+Seg [Nguồn](https://gibranbenitez.github.io/IPN_Hand/Results.html) | RGB+HarDNet, 32f | 47.56 + 4.114 | - | - | 84.77 | - | RGB + segmentation; khác dữ liệu đầu vào và số khung. |
-| IPN original: ResNeXt-101 RGB [Nguồn](https://gibranbenitez.github.io/IPN_Hand/Results.html) | RGB, 32f | 47.51 | - | - | 83.59 | - | Baseline RGB; 32 frames, khác thiết lập 16 frames. |
+| Method / Reference | Input / Architecture | Params (M) | GFLOPs | Accuracy (%) | GT-prefix AUC | Notes |
+| --- | --- | --- | --- | --- | --- | --- |
+| **VideoMamba-Tiny** [Notebook](../261007/videomamba_man_configsBenchmark.ipynb) | RGB 16×224² | 6.9608 | 29.0261 | 84.65 | 0.72399 | VideoMamba; RGB 16 frames; GT-prefix offline. Chi phí theo clip, không phải toàn hệ thống. |
+| CoboGesture + **VideoMAEv2** [Cobo](https://doi.org/10.1109/ACCESS.2026.3664027) | RGB video, ViT-L | ≈303.8 (recognizer) | 596.8327 | 84.59 | - | Khác cách lấy mẫu và tiền xử lý so với VideoMamba. |
+| CoboGesture + VideoMAE [Cobo](https://doi.org/10.1109/ACCESS.2026.3664027) | RGB video, ViT-L | ≈303.8 (recognizer) | 596.8327 | 78.81 | - | Biến thể VideoMAE đời trước, cùng bài CoboGesture. |
+| Kausar et al. [Nguồn](https://doi.org/10.32604/cmc.2026.084514) | RGB + Flow + Seg + Transformer | ≈21.284672 (encoder tham chiếu) | ResNet-34 3.66/ảnh (tham chiếu) | 92.34 | - | Chưa khóa split; tham số chỉ phản ánh ResNet-34 encoder. |
+| Gil-Martín et al. [Nguồn](https://doi.org/10.5220/0013053500003890) | MediaPipe landmarks+LSTM | 0.058614 (LSTM); ≈2.192/3.172 (conditional full) | Palm192 0.354 /call; hand landmark + LSTM: - | 84.66±1.09; 86.38±2.03 | - | **Hai giao thức:** 10-fold CV / 37 train–13 test; 0,058614M chỉ LSTM. Full pipeline **ước lượng có điều kiện**: LSTM 0.058614M + Palm 1.133M + Hands landmark Lite 1.00M (hoặc Full 1.98M) = 2.191614/3.171614M. [Palm reference](https://models.luxonis.com/luxonis/mediapipe-palm-detection/9531aba9-ef45-4ad3-ae03-808387d61bf3); [Hands reference](https://pmc.ncbi.nlm.nih.gov/articles/PMC11244600/). Chưa xác minh đúng checkpoint trong bài Gil-Martín. |
+| IPN original: ResNeXt-101 RGB+Flow [Nguồn](https://gibranbenitez.github.io/IPN_Hand/Results.html) | RGB+SPyNet, 32f | 47.56 + 1.440 | - | 86.32 | - | RGB + optical flow; khác dữ liệu đầu vào và số khung. |
+| IPN original: ResNeXt-101 RGB+Seg [Nguồn](https://gibranbenitez.github.io/IPN_Hand/Results.html) | RGB+HarDNet, 32f | 47.56 + 4.114 | - | 84.77 | - | RGB + segmentation; khác dữ liệu đầu vào và số khung. |
+| IPN original: ResNeXt-101 RGB [Nguồn](https://gibranbenitez.github.io/IPN_Hand/Results.html) | RGB, 32f | 47.51 | - | 83.59 | - | Baseline RGB; 32 frames, khác thiết lập 16 frames. |
 
 **Lưu ý:** Gil-Martín có **hai giao thức độc lập** (10-fold CV và 37 train/13 test); hai Accuracy trong cùng ô theo đúng thứ tự này. Những số Params chỉ là *recognizer* hoặc backbone được ghi rõ, không nên so trực tiếp với chi phí toàn pipeline.
 
@@ -75,17 +75,17 @@ Danh mục được trình bày **trước các bảng so sánh**, bao gồm ngh
 
 ### Table 3 — CTPGesture v1: Isolated Gesture Recognition and Related Image-Based Baselines
 
-| Method / Reference | Input / Architecture | Params (M) | Samples | Accuracy (%) | Task Type | Notes |
-| --- | --- | --- | --- | --- | --- | --- |
-| **VideoMamba-Tiny** [Notebook](../261015/VideoMambaTinyCTPGestureFinal.ipynb) | RGB video, 16×224² | 6.959817 | 1.728 | 98.5532 | Phân loại video | VideoMamba 9 lớp, 11 test videos; 1.728 GT clips. |
-| **VideoMamba-Tiny** [Notebook](../261015/VideoMambaTinyCTPGestureFinal.ipynb) — Gesture only (GT 1–8) | RGB video, 16×224² | 6.959817 | 859 | 98.0210 | Phân loại video | Subset 859 gesture GT từ cùng mô hình 9 lớp. |
-| **Zhang — BiLSTM–Transformer** [Nguồn](https://doi.org/10.3390/electronics15122578) | Skeleton; 40 frames | 20.9 (pose) + 0.08641 (head) | - | 98.91 | Video skeleton | Skeleton; 10 test videos; split khác VideoMamba. |
-| **FDMB-YOLOv11** [Nguồn](https://doi.org/10.1371/journal.pone.0357212) | RGB frame; YOLO11n | 1.93 | - | - | Detection ảnh | **Detection ảnh**; mAP không thể điền vào Accuracy video. |
-| **Liu — Improved YOLOv8n** [Nguồn](https://doi.org/10.3785/j.issn.1008-973X.2026.08.007) | RGB frame; YOLOv8n | 1.8 | - | - | Detection ảnh | **Detection ảnh**; dùng tập ảnh xử lý lại. |
-| **Assiri & Selim — Swin + CNN–BiLSTM** [Nguồn](https://doi.org/10.1016/j.asej.2025.103383) | RGB; Swin + CNN–BiLSTM | ≈28.288354 (Swin-T tham chiếu) | - | 99.25 | Video; chưa khóa dataset | Chưa xác minh sử dụng đúng CTPGesture v1. |
-| **P3D** [Xiong Table 3](https://doi.org/10.3390/electronics10050551) | RGB video, Pseudo-3D CNN | ≈65.3 (P3D-199 tham chiếu) | 1.565 | 92.21 | Phân loại video | Baseline trong Xiong, 9 video / 1.565 clips; variant tham chiếu. |
-| **C3D** [Xiong Table 3](https://doi.org/10.3390/electronics10050551) | RGB video, C3D | 78.4 (tham chiếu) | 1.565 | 87.12 | Phân loại video | Baseline Xiong; cấu hình model zoo chỉ tham khảo. |
-| **3D ResNet** [Xiong Table 3](https://doi.org/10.3390/electronics10050551) | RGB video, 3D ResNet | 33.371472 (R3D-18 tham chiếu) | 1.565 | 81.16 | Phân loại video | Baseline Xiong; độ sâu mạng gốc chưa xác minh. |
+| Method / Reference | Input / Architecture | Params (M) | Accuracy (%) | Task Type | Notes |
+| --- | --- | --- | --- | --- | --- |
+| **VideoMamba-Tiny** [Notebook](../261015/VideoMambaTinyCTPGestureFinal.ipynb) | RGB video, 16×224² | 6.959817 | 98.5532 | Phân loại video | VideoMamba 9 lớp, 11 test videos; 1.728 GT clips. |
+| **VideoMamba-Tiny** [Notebook](../261015/VideoMambaTinyCTPGestureFinal.ipynb) — Gesture only (GT 1–8) | RGB video, 16×224² | 6.959817 | 98.0210 | Phân loại video | Subset 859 gesture GT từ cùng mô hình 9 lớp. |
+| **Zhang — BiLSTM–Transformer** [Nguồn](https://doi.org/10.3390/electronics15122578) | Skeleton; 40 frames | 20.9 (pose) + 0.08641 (head) | 98.91 | Video skeleton | Skeleton; 10 test videos; split khác VideoMamba. |
+| **FDMB-YOLOv11** [Nguồn](https://doi.org/10.1371/journal.pone.0357212) | RGB frame; YOLO11n | 1.93 | - | Detection ảnh | **Detection ảnh**; mAP không thể điền vào Accuracy video. |
+| **Liu — Improved YOLOv8n** [Nguồn](https://doi.org/10.3785/j.issn.1008-973X.2026.08.007) | RGB frame; YOLOv8n | 1.8 | - | Detection ảnh | **Detection ảnh**; dùng tập ảnh xử lý lại. |
+| **Assiri & Selim — Swin + CNN–BiLSTM** [Nguồn](https://doi.org/10.1016/j.asej.2025.103383) | RGB; Swin + CNN–BiLSTM | ≈28.288354 (Swin-T tham chiếu) | 99.25 | Video; chưa khóa dataset | Chưa xác minh sử dụng đúng CTPGesture v1. |
+| **P3D** [Xiong Table 3](https://doi.org/10.3390/electronics10050551) | RGB video, Pseudo-3D CNN | ≈65.3 (P3D-199 tham chiếu) | 92.21 | Phân loại video | Baseline trong Xiong, 9 video / 1.565 clips; variant tham chiếu. |
+| **C3D** [Xiong Table 3](https://doi.org/10.3390/electronics10050551) | RGB video, C3D | 78.4 (tham chiếu) | 87.12 | Phân loại video | Baseline Xiong; cấu hình model zoo chỉ tham khảo. |
+| **3D ResNet** [Xiong Table 3](https://doi.org/10.3390/electronics10050551) | RGB video, 3D ResNet | 33.371472 (R3D-18 tham chiếu) | 81.16 | Phân loại video | Baseline Xiong; độ sâu mạng gốc chưa xác minh. |
 
 **Lưu ý:** Các công trình **detection trên ảnh** (FDMB-YOLOv11, Liu) không có Accuracy phân loại video tương ứng. Bản Assiri & Selim chưa xác minh dùng đúng CTPGesture v1; các baseline Xiong có split khác.
 
