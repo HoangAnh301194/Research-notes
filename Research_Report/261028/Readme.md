@@ -1,6 +1,6 @@
 # Báo cáo nghiên cứu ngày 28/10/2026
 
-> **Kiểm chứng bổ sung 02/11/2026:** các liên kết notebook trong mục đánh giá dưới đây trỏ tới file `.ipynb` **đã lưu output trên GitHub**. Số output không đồng nghĩa số ảnh JPEG nhúng trong notebook; các file ảnh, CSV và chỉ mục được dẫn riêng ở `ipnResult/` và `ctpResult/`.
+> **Kiểm chứng bổ sung 02/11/2026:** các liên kết notebook trong mục đánh giá dưới đây trỏ tới file `.ipynb` **đã lưu output trên GitHub**. Số output không đồng nghĩa số ảnh JPEG nhúng trong notebook; các file ảnh và file index CSV được dẫn riêng ở `ipnResult/` và `ctpResult/`.
 
 ## A. Công việc đã làm.
 
@@ -143,7 +143,7 @@ Các ảnh dưới đây được lấy **trực tiếp từ hai thư mục `ipn
 
 #### 3.1 IPN Hand — Isolated classification
 
-*Nguồn phương pháp và nhãn:* [Notebook đánh giá IPN-Hand — mục 4](./videomamba-ipn-hand-p1-metrics-keyframes-python313%20%281%29.ipynb); [notebook đối chiếu keyframe và mã lớp](./ipn-hand-complete-videomamba-p1-results-16-fra.ipynb); [CSV chỉ mục Isolated](./ipnResult/p1_ipn_re_evaluation/isolated_16frame/isolated_all_samples_index.csv).
+*Nguồn phương pháp và nhãn:* [Notebook đánh giá IPN-Hand — mục 4](./videomamba-ipn-hand-p1-metrics-keyframes-python313%20%281%29.ipynb); [notebook đối chiếu keyframe và mã lớp](./ipn-hand-complete-videomamba-p1-results-16-fra.ipynb); [index CSV Isolated](./ipnResult/p1_ipn_re_evaluation/isolated_16frame/isolated_all_samples_index.csv).
 
 | Phân loại đúng | Nhầm nhãn cử chỉ |
 |:---:|:---:|
@@ -154,7 +154,7 @@ Các ảnh dưới đây được lấy **trực tiếp từ hai thư mục `ipn
 
 #### 3.2 IPN Hand — Continuous offline
 
-*Nguồn phương pháp và nhãn:* [Notebook đánh giá IPN-Hand — mục 5](./videomamba-ipn-hand-p1-metrics-keyframes-python313%20%281%29.ipynb); [notebook đối chiếu keyframe và lỗi](./ipn-hand-complete-videomamba-p1-results-16-fra.ipynb); [CSV chỉ mục Continuous](./ipnResult/p1_ipn_re_evaluation/continuous_16frame_timeline/continuous_all_events_index.csv).
+*Nguồn phương pháp và nhãn:* [Notebook đánh giá IPN-Hand — mục 5](./videomamba-ipn-hand-p1-metrics-keyframes-python313%20%281%29.ipynb); [notebook đối chiếu keyframe và lỗi](./ipn-hand-complete-videomamba-p1-results-16-fra.ipynb); [index CSV Continuous](./ipnResult/p1_ipn_re_evaluation/continuous_16frame_timeline/continuous_all_events_index.csv).
 
 | Phát hiện và ghép đoạn đúng | Lỗi nhầm lớp |
 |:---:|:---:|
@@ -163,7 +163,7 @@ Các ảnh dưới đây được lấy **trực tiếp từ hai thư mục `ipn
 
 #### 3.3 CTPGesture_v1 — Isolated classification
 
-*Nguồn phương pháp và nhãn:* [Notebook đánh giá CTPGesture — mục 6](./videomamba-ctpgesture-p1-metrics-keyframes-python3%20%283%29.ipynb); [notebook đối chiếu keyframe và mã lớp](./ctpgesture-v1-complete-videomamba-p1-results-1.ipynb); [CSV chỉ mục Isolated](./ctpResult/ctpgesture_videomamba_p1_evaluation/p1_metric_audit/isolated_16frame/isolated_all_samples_index.csv).
+*Nguồn phương pháp và nhãn:* [Notebook đánh giá CTPGesture — mục 6](./videomamba-ctpgesture-p1-metrics-keyframes-python3%20%283%29.ipynb); [notebook đối chiếu keyframe và mã lớp](./ctpgesture-v1-complete-videomamba-p1-results-1.ipynb); [index CSV Isolated](./ctpResult/ctpgesture_videomamba_p1_evaluation/p1_metric_audit/isolated_16frame/isolated_all_samples_index.csv).
 
 | Phân loại đúng | Nhầm nhãn cử chỉ |
 |:---:|:---:|
@@ -172,7 +172,7 @@ Các ảnh dưới đây được lấy **trực tiếp từ hai thư mục `ipn
 
 #### 3.4 CTPGesture_v1 — Continuous offline
 
-*Nguồn phương pháp và nhãn:* [Notebook đánh giá CTPGesture — mục 7](./videomamba-ctpgesture-p1-metrics-keyframes-python3%20%283%29.ipynb); [notebook đối chiếu keyframe và lỗi](./ctpgesture-v1-complete-videomamba-p1-results-1.ipynb); [CSV chỉ mục Continuous](./ctpResult/ctpgesture_videomamba_p1_evaluation/p1_metric_audit/continuous_16frame_timeline/continuous_all_events_index.csv).
+*Nguồn phương pháp và nhãn:* [Notebook đánh giá CTPGesture — mục 7](./videomamba-ctpgesture-p1-metrics-keyframes-python3%20%283%29.ipynb); [notebook đối chiếu keyframe và lỗi](./ctpgesture-v1-complete-videomamba-p1-results-1.ipynb); [index CSV Continuous](./ctpResult/ctpgesture_videomamba_p1_evaluation/p1_metric_audit/continuous_16frame_timeline/continuous_all_events_index.csv).
 
 | Phát hiện và ghép đoạn đúng | Lỗi nhầm lớp |
 |:---:|:---:|
@@ -181,7 +181,7 @@ Các ảnh dưới đây được lấy **trực tiếp từ hai thư mục `ipn
 
 #### 3.5 Khi lớp dự đoán đúng nhưng vẫn bị tính là lỗi Continuous
 
-*Nguồn định nghĩa lỗi ranh giới và ghép đoạn:* [IPN-Hand — P1 Metrics & Keyframes](./videomamba-ipn-hand-p1-metrics-keyframes-python313%20%281%29.ipynb) và [CTPGesture — P1 Metrics & Keyframes](./videomamba-ctpgesture-p1-metrics-keyframes-python3%20%283%29.ipynb); mã loại lỗi và tIoU được đối chiếu trực tiếp với hai CSV chỉ mục ở bảng nguồn bên dưới.
+*Nguồn định nghĩa lỗi ranh giới và ghép đoạn:* [IPN-Hand — P1 Metrics & Keyframes](./videomamba-ipn-hand-p1-metrics-keyframes-python313%20%281%29.ipynb) và [CTPGesture — P1 Metrics & Keyframes](./videomamba-ctpgesture-p1-metrics-keyframes-python3%20%283%29.ipynb); mã loại lỗi và tIoU được đối chiếu trực tiếp với hai index CSV ở bảng nguồn bên dưới.
 
 | IPN Hand: sai biên đoạn | CTPGesture: phân mảnh/dự đoán trùng |
 |:---:|:---:|
@@ -192,7 +192,7 @@ Các ảnh dưới đây được lấy **trực tiếp từ hai thư mục `ipn
 
 **Nguồn để kiểm tra đầy đủ từng hình:**
 
-| Dataset | Chỉ mục Isolated | Chỉ mục Continuous | Thư mục ảnh |
+| Dataset | Index Isolated | Index Continuous | Thư mục ảnh |
 |---|---|---|---|
 | IPN Hand | [CSV Isolated](./ipnResult/p1_ipn_re_evaluation/isolated_16frame/isolated_all_samples_index.csv) | [CSV Continuous](./ipnResult/p1_ipn_re_evaluation/continuous_16frame_timeline/continuous_all_events_index.csv) | [ipnResult](./ipnResult/) |
 | CTPGesture_v1 | [CSV Isolated](./ctpResult/ctpgesture_videomamba_p1_evaluation/p1_metric_audit/isolated_16frame/isolated_all_samples_index.csv) | [CSV Continuous](./ctpResult/ctpgesture_videomamba_p1_evaluation/p1_metric_audit/continuous_16frame_timeline/continuous_all_events_index.csv) | [ctpResult](./ctpResult/) |
