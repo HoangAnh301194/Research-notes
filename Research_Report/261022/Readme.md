@@ -13,27 +13,27 @@ Danh mục được trình bày **trước các bảng so sánh**, bao gồm ngh
 
 ### 1. IPN-Hand — 8 bài báo/công trình
 
-1. [CoboGesture (2026)](https://doi.org/10.1109/ACCESS.2026.3664027) — so sánh các biến thể VideoMAE, VideoMAEv2.
-2. [Kausar và cộng sự (2026)](https://doi.org/10.32604/cmc.2026.084514) — kết hợp thông tin RGB, optical flow, segmentation và đặc trưng hình học.
-3. [Gil-Martín và cộng sự (2025)](https://doi.org/10.5220/0013053500003890) — MediaPipe hand landmarks kết hợp LSTM.
-4. [IPN-Hand original (2020/2021)](https://doi.org/10.1109/ICPR48806.2021.9412317) — công bố bộ dữ liệu và các baseline ResNeXt với RGB, optical flow hoặc segmentation.
-5. [TY-Net (2023)](https://doi.org/10.1109/ACCESS.2023.3341702) — khai thác skeleton và Transformer.
-6. [Nayan và cộng sự (2024)](https://doi.org/10.1007/s00138-024-01565-9) — phương pháp multi-stream và BiLSTM cho nhận dạng liên tục.
-7. [TMMF (2021)](https://doi.org/10.1109/TIP.2021.3108349) — phương pháp kết hợp đặc trưng theo thời gian.
-8. [TD-Net (2022)](https://doi.org/10.1109/ICCAIS56082.2022.9990122) — phương pháp dựa trên skeleton và các mạng phát hiện/phân loại.
+1. [**CoboGesture: A Continuous Hand Gesture Dataset and Recognition Method for Human-Collaborative Robot Interaction**](https://doi.org/10.1109/ACCESS.2026.3664027) (2026) — Đánh giá các biến thể VideoMAE/VideoMAEv2; có số liệu trên IPN-Hand.
+2. [**Deep Hand Segmentation and Multi-Modal Gesture Recognition for Human-Robot Interaction via 3D Volumetric Encoding**](https://doi.org/10.32604/cmc.2026.084514) (2026) — Kết hợp RGB, optical flow, phân đoạn bàn tay và đặc trưng hình học.
+3. [**Hand Gesture Recognition Using MediaPipe Landmarks and Deep Learning Networks**](https://doi.org/10.5220/0013053500003890) (2025) — Dùng MediaPipe hand landmarks và LSTM; khảo sát các giao thức chia dữ liệu.
+4. [**IPN Hand: A Video Dataset and Benchmark for Real-Time Continuous Hand Gesture Recognition**](https://doi.org/10.1109/ICPR48806.2021.9412317) (2021 (ICPR 2020)) — Bài công bố bộ dữ liệu và các baseline RGB, optical flow, segmentation.
+5. [**TY-Net: Transforming YOLO for Hand Gesture Recognition**](https://doi.org/10.1109/ACCESS.2023.3341702) (2023) — Phương pháp dùng skeleton và mạng nhận dạng gọn nhẹ.
+6. [**A multi-modal framework for continuous and isolated hand gesture recognition utilizing movement epenthesis detection**](https://doi.org/10.1007/s00138-024-01565-9) (2024) — Nhận dạng isolated và continuous với nhiều luồng đặc trưng, loại khung chuyển tiếp.
+7. [**TMMF: Temporal Multi-Modal Fusion for Single-Stage Continuous Gesture Recognition**](https://doi.org/10.1109/TIP.2021.3108349) (2021) — Kết hợp nhiều modality theo thời gian trong nhận dạng liên tục.
+8. [**A Continuous Real-time Hand Gesture Recognition Method based on Skeleton**](https://doi.org/10.1109/ICCAIS56082.2022.9990122) (2022) — Nhận dạng cử chỉ liên tục dựa trên skeleton và TD-Net.
 
-**Lưu ý:** Một bài báo có thể chứa nhiều biến thể kiến trúc và xuất hiện ở cả bài toán isolated lẫn continuous; các biến thể này không được đếm thành bài báo độc lập.
+**Lưu ý:** Một bài báo có thể có nhiều biến thể và đánh giá ở cả isolated lẫn continuous. Các biến thể được thể hiện riêng trong bảng nhưng không được đếm thành bài báo độc lập.
 
 ### 2. CTPGesture v1 và các nghiên cứu ảnh dẫn xuất — 6 bài báo/công trình độc lập
 
-1. [Zhang và cộng sự (2026) — YOLO11m-Pose + BiLSTM–Transformer](https://doi.org/10.3390/electronics15122578) — sử dụng skeleton/pose.
-2. [RSC-GestureNet (2026)](https://arxiv.org/abs/2608.02200) — khai thác skeleton kết hợp đặc trưng RGB, đánh giá theo giao thức causal.
-3. [FDMB-YOLOv11 (2026)](https://doi.org/10.1371/journal.pone.0357212) — phát hiện trên ảnh dẫn xuất; không đồng nhất với nhận dạng cử chỉ video.
-4. [Liu và cộng sự (2026) — Improved YOLOv8n](https://doi.org/10.3785/j.issn.1008-973X.2026.08.007) — phát hiện trên ảnh, sử dụng nguồn dữ liệu được xử lý lại.
-5. [Assiri & Selim (2025) — Swin Transformer + CNN–BiLSTM](https://doi.org/10.1016/j.asej.2025.103383) — nghiên cứu liên quan; **chưa xác minh dùng đúng CTPGesture v1**, do đó chỉ đưa vào diện khảo sát có điều kiện.
-6. [Xiong và cộng sự (2021)](https://doi.org/10.3390/electronics10050551) — nguồn đối chứng chứa **ba baseline non-skeleton**: P3D, C3D và 3D ResNet.
+1. [**A Traffic Police Gesture Recognition Method Based on BiLSTM-Transformer Architecture**](https://doi.org/10.3390/electronics15122578) (2026) — Sử dụng keypoint từ YOLO11m-Pose cùng BiLSTM–Transformer.
+2. [**RSC-GestureNet: Reliability-Aware Selective Causal Recognition of Chinese Traffic Police Gestures**](https://arxiv.org/abs/2608.02200) (2026) — Kết hợp skeleton/RGB và độ tin cậy pose theo giao thức causal.
+3. [**FDMB-YOLOv11: Traffic police command gesture recognition method under different lighting conditions**](https://doi.org/10.1371/journal.pone.0357212) (2026) — Phát hiện trên ảnh trong các điều kiện chiếu sáng; không phải phân loại video.
+4. [**Lightweight traffic police gesture recognition method for autonomous driving**](https://doi.org/10.3785/j.issn.1008-973X.2026.08.007) (2026) — Phương pháp YOLOv8n nhẹ cho nhận dạng/phát hiện trên ảnh.
+5. [**A swin transformer-driven framework for gesture recognition to assist hearing impaired people by integrating deep learning with secretary bird optimization algorithm**](https://doi.org/10.1016/j.asej.2025.103383) (2025) — Nghiên cứu liên quan về cử chỉ ngôn ngữ ký hiệu; **chưa xác minh dùng CTPGesture v1**, không coi là baseline cùng dataset.
+6. [**Traffic Police Gesture Recognition Based on Gesture Skeleton Extractor and Multichannel Dilated Graph Convolution Network**](https://doi.org/10.3390/electronics10050551) (2021) — Công trình có phương pháp chính dựa trên skeleton; bảng đối chứng còn chứa **P3D, C3D và 3D ResNet**, là ba baseline xử lý RGB video.
 
-**Phân loại phương pháp trong các bảng:** 2 hướng có sử dụng skeleton/pose (Zhang, RSC-GestureNet) và 6 phương pháp đối chứng không sử dụng skeleton (FDMB-YOLOv11, Liu, Assiri & Selim, P3D, C3D, 3D ResNet). **Tổng 8 phương pháp đối chứng không phải 8 bài báo độc lập**; ba baseline cuối cùng thuộc cùng công trình Xiong (2021). Các nghiên cứu detection ảnh dẫn xuất không được so sánh trực tiếp như bài toán video classification.
+**Lưu ý về phạm vi:** Danh mục này gồm nghiên cứu video, nghiên cứu detection ảnh liên quan và một bài về cử chỉ ngôn ngữ ký hiệu (Assiri & Selim) cần xác minh tính tương thích dữ liệu. Bài Xiong (2021) đề xuất phương pháp dựa trên skeleton nhưng cung cấp ba baseline xử lý RGB (P3D, C3D, 3D ResNet). Vì thế **8 phương pháp đối chứng không đồng nghĩa 8 bài báo độc lập**, và không được so sánh trực tiếp mAP của detection ảnh với Accuracy của nhận dạng video.
 
 ## Kết quả so sánh chính
 
