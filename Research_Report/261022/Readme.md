@@ -39,9 +39,9 @@ Danh mục được trình bày **trước các bảng so sánh**, bao gồm ngh
 
 > **Nguyên tắc đọc:** Các phương pháp trong cùng bảng không nhất thiết cùng tập test, chia dữ liệu, chế độ online/offline hoặc thước đo. Các giá trị là **kết quả báo cáo theo từng giao thức**, không phải bảng xếp hạng công bằng. Dấu `-` nghĩa là chưa có số liệu đúng định nghĩa đã xác minh. Params/GFLOPs có thể chỉ tính một thành phần, xem phụ lục để biết giới hạn.
 
-### Bảng 1 — IPN-Hand: Nhận dạng đoạn cử chỉ (isolated)
+### Table 1 — IPN-Hand: Isolated Gesture Recognition
 
-| Phương pháp / nguồn | Đầu vào | Params (M) | GFLOPs | N mẫu | Accuracy (%) | GT-prefix AUC | Ghi chú ngắn |
+| Method / Reference | Input / Architecture | Params (M) | GFLOPs | Samples | Accuracy (%) | GT-prefix AUC | Notes |
 | --- | --- | --- | --- | --- | --- | --- | --- |
 | **VideoMamba-Tiny** [Notebook](../261007/videomamba_man_configsBenchmark.ipynb) | RGB 16×224² | 6.9608 | 29.0261 | 1.101 | 84.65 | 0.72399 | VideoMamba; RGB 16 frames; GT-prefix offline. Chi phí theo clip, không phải toàn hệ thống. |
 | CoboGesture + **VideoMAEv2** [Cobo](https://doi.org/10.1109/ACCESS.2026.3664027) | RGB video, ViT-L | ≈303.8 (recognizer) | 596.8327 | - | 84.59 | - | Khác cách lấy mẫu và tiền xử lý so với VideoMamba. |
@@ -54,9 +54,9 @@ Danh mục được trình bày **trước các bảng so sánh**, bao gồm ngh
 
 **Lưu ý:** Gil-Martín có **hai giao thức độc lập** (10-fold CV và 37 train/13 test); hai Accuracy trong cùng ô theo đúng thứ tự này. Những số Params chỉ là *recognizer* hoặc backbone được ghi rõ, không nên so trực tiếp với chi phí toàn pipeline.
 
-### Bảng 2 — IPN-Hand: Nhận dạng liên tục (continuous)
+### Table 2 — IPN-Hand: Continuous Gesture Recognition
 
-| Phương pháp / nguồn | Đầu vào / giao thức | Params (M) | Accuracy bài báo (%) | FrameAcc TB/video (%) | Overlap | Gesture Recall (%) | Ghi chú ngắn |
+| Method / Reference | Input / Protocol | Params (M) | Reported Accuracy (%) | Mean Frame Accuracy / Video (%) | Overlap | Gesture Recall (%) | Notes |
 | --- | --- | --- | --- | --- | --- | --- | --- |
 | **VideoMamba Raw** [Notebook](../261007/videomamba_man_configsBenchmark.ipynb) | RGB video, offline 64/16 | 6.9608 | - | 83.4889 | 0.491110 | 78.8995 | RAW offline 64/16; không phải đánh giá online. |
 | VideoMamba R3 [Notebook](../261007/videomamba_man_configsBenchmark.ipynb) | RGB, post-processing 64/16 | 6.9608 | - | 83.5249 | 0.507705 | 76.2844 | R3 chọn ngưỡng trên test; không dùng để khẳng định hơn baseline. |
@@ -73,9 +73,9 @@ Danh mục được trình bày **trước các bảng so sánh**, bao gồm ngh
 
 **Lưu ý:** Cột Accuracy bài báo của Nayan, TY-Net, TMMF, TD-Net và IPN original chủ yếu là **Levenshtein Accuracy**, **không tương đương FrameAcc**. VideoMamba và CoboGesture có thể dùng cách tính overlap khác nhau.
 
-### Bảng 3 — CTPGesture v1: Nhận dạng đoạn cử chỉ và đối chứng liên quan
+### Table 3 — CTPGesture v1: Isolated Gesture Recognition and Related Image-Based Baselines
 
-| Phương pháp / nguồn | Đầu vào | Params (M) | N mẫu | Accuracy (%) | Loại bài toán | Ghi chú ngắn |
+| Method / Reference | Input / Architecture | Params (M) | Samples | Accuracy (%) | Task Type | Notes |
 | --- | --- | --- | --- | --- | --- | --- |
 | **VideoMamba-Tiny** [Notebook](../261015/VideoMambaTinyCTPGestureFinal.ipynb) | RGB video, 16×224² | 6.959817 | 1.728 | 98.5532 | Phân loại video | VideoMamba 9 lớp, 11 test videos; 1.728 GT clips. |
 | **VideoMamba-Tiny** [Notebook](../261015/VideoMambaTinyCTPGestureFinal.ipynb) — Gesture only (GT 1–8) | RGB video, 16×224² | 6.959817 | 859 | 98.0210 | Phân loại video | Subset 859 gesture GT từ cùng mô hình 9 lớp. |
@@ -89,9 +89,9 @@ Danh mục được trình bày **trước các bảng so sánh**, bao gồm ngh
 
 **Lưu ý:** Các công trình **detection trên ảnh** (FDMB-YOLOv11, Liu) không có Accuracy phân loại video tương ứng. Bản Assiri & Selim chưa xác minh dùng đúng CTPGesture v1; các baseline Xiong có split khác.
 
-### Bảng 4 — CTPGesture v1: Nhận dạng liên tục
+### Table 4 — CTPGesture v1: Continuous Gesture Recognition
 
-| Phương pháp / nguồn | Đầu vào / giao thức | Params (M) | Accuracy bài báo (%) | FrameAcc global (%) | FrameAcc TB/video (%) | Overlap | Ghi chú ngắn |
+| Method / Reference | Input / Protocol | Params (M) | Reported Accuracy (%) | Global Frame Accuracy (%) | Mean Frame Accuracy / Video (%) | Overlap | Notes |
 | --- | --- | --- | --- | --- | --- | --- | --- |
 | **VideoMamba Raw** [Notebook](../261015/VideoMambaTinyCTPGestureFinal.ipynb) | RGB video, offline 32/8 | 6.959817 | - | 83.9836 | 83.4973 | 0.653223 | RAW offline 32/8; có sử dụng frame tương lai. |
 | VideoMamba R3 [Notebook](../261015/VideoMambaTinyCTPGestureFinal.ipynb) | RGB offline 32/8 + post-processing | 6.959817 | - | 83.9940 | - | 0.6590 | R3 tinh chỉnh trên official test; không phải held-out. |
