@@ -7,6 +7,38 @@
 
 
 
+## Danh sách bài báo và công trình đã khảo sát
+
+Danh mục được trình bày **trước các bảng so sánh**, bao gồm nghiên cứu gần đây, công trình công bố bộ dữ liệu và phương pháp đối chứng. Phần lớn sử dụng dữ liệu ảnh/video (non-skeleton), đồng thời giữ một số phương pháp dùng đặc trưng khung xương (skeleton) để đánh giá sự khác biệt về kiến trúc và giao thức.
+
+### 1. IPN-Hand — 8 bài báo/công trình
+
+1. [CoboGesture (2026)](https://doi.org/10.1109/ACCESS.2026.3664027) — so sánh các biến thể VideoMAE, VideoMAEv2.
+2. [Kausar và cộng sự (2026)](https://doi.org/10.32604/cmc.2026.084514) — kết hợp thông tin RGB, optical flow, segmentation và đặc trưng hình học.
+3. [Gil-Martín và cộng sự (2025)](https://doi.org/10.5220/0013053500003890) — MediaPipe hand landmarks kết hợp LSTM.
+4. [IPN-Hand original (2020/2021)](https://doi.org/10.1109/ICPR48806.2021.9412317) — công bố bộ dữ liệu và các baseline ResNeXt với RGB, optical flow hoặc segmentation.
+5. [TY-Net (2023)](https://doi.org/10.1109/ACCESS.2023.3341702) — khai thác skeleton và Transformer.
+6. [Nayan và cộng sự (2024)](https://doi.org/10.1007/s00138-024-01565-9) — phương pháp multi-stream và BiLSTM cho nhận dạng liên tục.
+7. [TMMF (2021)](https://doi.org/10.1109/TIP.2021.3108349) — phương pháp kết hợp đặc trưng theo thời gian.
+8. [TD-Net (2022)](https://doi.org/10.1109/ICCAIS56082.2022.9990122) — phương pháp dựa trên skeleton và các mạng phát hiện/phân loại.
+
+**Lưu ý:** Một bài báo có thể chứa nhiều biến thể kiến trúc và xuất hiện ở cả bài toán isolated lẫn continuous; các biến thể này không được đếm thành bài báo độc lập.
+
+### 2. CTPGesture v1 và các nghiên cứu ảnh dẫn xuất — 6 bài báo/công trình độc lập
+
+1. [Zhang và cộng sự (2026) — YOLO11m-Pose + BiLSTM–Transformer](https://doi.org/10.3390/electronics15122578) — sử dụng skeleton/pose.
+2. [RSC-GestureNet (2026)](https://arxiv.org/abs/2608.02200) — khai thác skeleton kết hợp đặc trưng RGB, đánh giá theo giao thức causal.
+3. [FDMB-YOLOv11 (2026)](https://doi.org/10.1371/journal.pone.0357212) — phát hiện trên ảnh dẫn xuất; không đồng nhất với nhận dạng cử chỉ video.
+4. [Liu và cộng sự (2026) — Improved YOLOv8n](https://doi.org/10.3785/j.issn.1008-973X.2026.08.007) — phát hiện trên ảnh, sử dụng nguồn dữ liệu được xử lý lại.
+5. [Assiri & Selim (2025) — Swin Transformer + CNN–BiLSTM](https://doi.org/10.1016/j.asej.2025.103383) — nghiên cứu liên quan; **chưa xác minh dùng đúng CTPGesture v1**, do đó chỉ đưa vào diện khảo sát có điều kiện.
+6. [Xiong và cộng sự (2021)](https://doi.org/10.3390/electronics10050551) — nguồn đối chứng chứa **ba baseline non-skeleton**: P3D, C3D và 3D ResNet.
+
+**Phân loại phương pháp trong các bảng:** 2 hướng có sử dụng skeleton/pose (Zhang, RSC-GestureNet) và 6 phương pháp đối chứng không sử dụng skeleton (FDMB-YOLOv11, Liu, Assiri & Selim, P3D, C3D, 3D ResNet). **Tổng 8 phương pháp đối chứng không phải 8 bài báo độc lập**; ba baseline cuối cùng thuộc cùng công trình Xiong (2021). Các nghiên cứu detection ảnh dẫn xuất không được so sánh trực tiếp như bài toán video classification.
+
+## Các bảng so sánh kết quả
+
+Các bảng sau sử dụng những nguồn đã liệt kê ở trên và các notebook thực nghiệm VideoMamba đã dẫn. Cột **Chú thích / nguồn số liệu** ở cuối từng bảng giải thích nguồn đo, giá trị ước tính và khác biệt giao thức.
+
 ## Bảng 1 — IPN-Hand: Isolated Gesture Recognition
 
 | Phương pháp / nguồn | Năm | Đầu vào / kiến trúc | Params (M) | GFLOPs | Params full pipeline (M) | GFLOPs full pipeline | N mẫu | Accuracy (%) | Accuracy@100% (%) | GT-prefix AUC | Ever-correct (%) | Chú thích / nguồn số liệu |
@@ -113,17 +145,6 @@
 **Nguồn paper để điền metric:** [CoboGesture, Tables 4 và 7](https://doi.org/10.1109/ACCESS.2026.3664027); [IPN-Hand benchmark](https://gibranbenitez.github.io/IPN_Hand/Results.html); [Nayan et al., Table 12](https://doi.org/10.1007/s00138-024-01565-9); [TY-Net](https://doi.org/10.1109/ACCESS.2023.3341702); [Zhang 2026, Tables 2–3](https://doi.org/10.3390/electronics15122578); [RSC-GestureNet, Table 1](https://arxiv.org/abs/2608.02200); [Xiong 2021](https://doi.org/10.3390/electronics10050551). Các hàng FDMB/Liu chỉ thuộc detection ảnh dẫn xuất nên không ghi sai mAP vào cột classification.
 
 **Nguồn P1 đã có output (kiểm tra 02/11/2026):** [IPN-Hand — tính toán P1](../261028/videomamba-ipn-hand-p1-metrics-keyframes-python313%20%281%29.ipynb) (**16/18 ô code có output; 47 output**), [CTPGesture — tính toán P1](../261028/videomamba-ctpgesture-p1-metrics-keyframes-python3%20%283%29.ipynb) (**19/19; 51 output**). Notebook đọc kết quả có output: [IPN-Hand Complete Results](../261028/ipn-hand-complete-videomamba-p1-results-16-fra.ipynb) (**9/9; 92 output**) và [CTPGesture Complete Results](../261028/ctpgesture-v1-complete-videomamba-p1-results-1.ipynb) (**9/9; 96 output**). Hai bản [IPN-Hand code](../KaggleNotebook/VideoMamba_IPN_Hand_P1_Metrics_Keyframes_Python313.ipynb) và [CTPGesture code](../KaggleNotebook/VideoMamba_CTPGesture_P1_Metrics_Keyframes_Python313.ipynb) ở `KaggleNotebook/` có **0 output**; không sử dụng làm nguồn cho số thực nghiệm. Các notebook Complete Results chỉ đọc/tổng hợp CSV, JSON, hình đã xuất; không phải thực nghiệm độc lập. Xem [báo cáo 28/10](../261028/Readme.md) để đối chiếu các ảnh đúng/sai.
-
-## Danh sách bài báo khảo sát
-Các điều kiện để chọn danh sách : 
- - Là các công trình trong những năm gần đây hoặc bài báo công bố dataset 
- - Có một vài công trình sử dụng skeleton 
- - Đa số là none skeleton
-
-**IPN-Hand — 8 bài báo/công trình:** **(1)** [CoboGesture 2026](https://doi.org/10.1109/ACCESS.2026.3664027), **(2)** [Kausar et al. 2026](https://doi.org/10.32604/cmc.2026.084514), **(3)** [Gil-Martín et al. 2025](https://doi.org/10.5220/0013053500003890), **(4)** [IPN-Hand original 2020/21](https://doi.org/10.1109/ICPR48806.2021.9412317), **(5)** [TY-Net 2023](https://doi.org/10.1109/ACCESS.2023.3341702), **(6)** [Nayan et al. 2024](https://doi.org/10.1007/s00138-024-01565-9), **(7)** [TMMF 2021](https://doi.org/10.1109/TIP.2021.3108349), **(8)** [TD-Net 2022](https://doi.org/10.1109/ICCAIS56082.2022.9990122). Một bài có thể có nhiều biến thể hoặc xuất hiện ở cả isolated và continuous.
-
-**CTPGesture v1 / nguồn ảnh liên quan — 8 phương pháp khảo sát sâu:** **2 skeleton**: **(1)** [Zhang 2026 — YOLO11m-Pose + BiLSTM–Transformer](https://doi.org/10.3390/electronics15122578), **(2)** [RSC-GestureNet 2026](https://arxiv.org/abs/2608.02200). **6 non-skeleton**: **(3)** [FDMB-YOLOv11 2026](https://doi.org/10.1371/journal.pone.0357212), **(4)** [Liu 2026 — YOLOv8n](https://doi.org/10.3785/j.issn.1008-973X.2026.08.007), **(5)** [Assiri & Selim 2025 — Swin + CNN–BiLSTM](https://doi.org/10.1016/j.asej.2025.103383) *(ứng viên, chưa xác minh đúng v1)*, **(6)** P3D, **(7)** C3D, **(8)** 3D ResNet. Ba baseline cuối đều từ **[Xiong 2021, Table 3](https://doi.org/10.3390/electronics10050551)**, nên **8 phương pháp không đồng nghĩa 8 bài báo độc lập**.
-
 
 ## B. Khó khăn
 - Không
