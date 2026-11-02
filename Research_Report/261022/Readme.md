@@ -122,7 +122,8 @@ Các bảng **5.1–5.5 chỉ trình bày số liệu thực nghiệm VideoMamba
 | --- | --- | --- | --- | --- | --- | --- | --- |
 | IPN-Hand · VideoMamba-Tiny | 78.34 | 77.2581 | 95.0045 | 97.2752 | 88.5559 | 0.300308 | 0.315880 |
 | CTP · VideoMamba (9 lớp) | 97.9590 | 98.1226 | 99.7685 | 99.8843 | 99.1319 | 0.135231 | 0.135232 |
-| CTP · VideoMamba (gesture-only) | 98.2363 | 98.0030 | - | - | - | - | - |
+
+**CTPGesture gesture-only (859 đoạn):** nhóm đã có **Macro-F1 = 98.2363%** và **Balanced Accuracy = 98.0030%** từ cùng checkpoint 9 lớp. Không đưa tập con này vào bảng Top-K vì chưa có các kết quả Top-2/Top-3, Ever-correct và First-correct riêng.
 
 Chỉ số *first-correct* và *first-stable* là tỷ lệ chiều dài đoạn theo giao thức GT-prefix; không phải độ trễ tính bằng giây.
 
@@ -132,29 +133,28 @@ Chỉ số *first-correct* và *first-stable* là tỷ lệ chiều dài đoạn
 | --- | --- | --- | --- | --- |
 | IPN-Hand · VideoMamba-Tiny | 0.029848 | 0.197447 | 0.420977 | 1.101 JPEG: 932 đúng / 169 sai |
 | CTP · VideoMamba (9 lớp) | 0.005987 | 0.021505 | 0.051804 | 1,728/1,728 JPEG; 1,703 đúng; 25 sai; 0 lỗi |
-| CTP · VideoMamba (gesture-only) | - | - | - | Dùng chung 1,728 JPEG từ bộ 9 lớp; subset 859 gesture |
 
-ECE, Brier và NLL chỉ đánh giá **calibration ở isolated**. Số keyframe là tổng trường hợp có log xuất hình đúng/sai, **không phải số video độc lập**. Xem ví dụ trong [báo cáo 28/10](../261028/Readme.md).
+ECE, Brier và NLL chỉ đánh giá **calibration ở isolated** cho các tập có output xác minh. **Subset CTPGesture gesture-only gồm 859 đoạn dùng chung bộ 1.728 ảnh JPEG đã xuất từ mô hình 9 lớp**, chưa có ECE/Brier/NLL được tính riêng. Số keyframe trong bảng là tổng trường hợp có log xuất hình đúng/sai, **không phải số video độc lập**. Xem ví dụ trong [báo cáo 28/10](../261028/Readme.md).
 
 ### 5.4. Continuous — FrameAcc, Macro-F1 và chất lượng phân đoạn
 
 | Mô hình / tập test | FrameAcc global (%) | FrameAcc TB/video (%) | Macro-F1 (%) | Seg F1@10 (%) | Seg F1@25 (%) | Seg F1@50 (%) | Edit (%) |
 | --- | --- | --- | --- | --- | --- | --- | --- |
 | IPN-Hand · VideoMamba RAW | 83.7308 | 83.4889 | 64.4012 | 79.4544 | 77.5789 | 69.9062 | 74.3831 |
-| IPN-Hand · VideoMamba R3 | - | 83.5249 | - | - | - | - | - |
 | CTP · VideoMamba RAW | 83.9836 | 83.4973 | 80.6135 | 96.0472 | 94.7493 | 85.5457 | 93.4968 |
-| CTP · VideoMamba R3 | 83.9940 | - | 80.6254 | - | - | - | - |
 
-Với R3, các metric phân đoạn chưa được xác minh thì để `-`, **không chuyển kết quả RAW sang R3**. FrameAcc theo video khác cách tổng hợp FrameAcc trên tất cả frame.
+**Kết quả R3 đã có từ notebook baseline:** IPN-Hand R3 có **FrameAcc TB/video = 83.5249%**; CTPGesture R3 có **FrameAcc global = 83.9940%** và **Macro-F1 = 80.6254%**. Đây là chỉ số baseline, **không phải metric Segment F1/Edit của P1**. Nhánh R3 đã được tinh chỉnh trên tập test; không dùng kết quả này như phép đánh giá held-out độc lập.
+
+FrameAcc theo video khác cách tổng hợp FrameAcc trên tất cả frame.
 
 ### 5.5. Continuous — Ghép đoạn, sai lệch biên và keyframe
 
 | Mô hình / tập test | Precision@50 (%) | Recall@50 (%) | Onset MAE (s) | Offset MAE (s) | FP/min | Temporal overlap | Keyframe đã xuất |
 | --- | --- | --- | --- | --- | --- | --- | --- |
 | IPN-Hand · VideoMamba RAW | 65.8635 | 74.4777 | 0.440922 | 0.481819 | 3.596927 | 0.491110 | 1.526 JPEG: 820 ghép đúng / 706 lỗi |
-| IPN-Hand · VideoMamba R3 | - | - | - | - | - | 0.507705 | 16f + GT/Pred timeline: code |
 | CTP · VideoMamba RAW | 86.7225 | 84.4005 | 0.290115 | 0.445517 | 1.483164 | 0.653223 | 970/970 JPEG; 725 matched; 245 lỗi; 0 lỗi xuất |
-| CTP · VideoMamba R3 | - | - | - | - | - | 0.658979 | 16f + GT/Pred timeline: code |
+
+**Các kết quả R3 đã có từ notebook baseline:** IPN-Hand R3 đạt **Temporal overlap = 0.507705**; CTPGesture R3 đạt **Temporal overlap = 0.658979**. Cả hai mới có **mã tạo timeline GT/Pred từ 16 frame**; chưa có bộ ảnh P1 xuất riêng cho R3. Không chuyển Precision/Recall, sai lệch biên hay FP/min từ RAW sang R3.
 
 **FP/min** trong các notebook P1 RAW được tính từ đoạn dự đoán không ghép được mỗi phút (ngưỡng tIoU 0,50), không mặc định trùng định nghĩa FP/min của mọi bài báo. Các sai số onset/offset MAE tính trên những đoạn đã ghép đúng.
 
