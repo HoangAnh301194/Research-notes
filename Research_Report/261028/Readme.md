@@ -95,6 +95,7 @@
 #### 2.2 CTP Gesture
 
 **Notebook metric bổ sugn và keyframe đã thực thi :** [VideoMamba CTPGesture — P1 Metrics & Keyframes](./videomamba-ctpgesture-p1-metrics-keyframes-python3%20%283%29.ipynb) 
+
 **Notebook kết quả test :** [CTPGesture — Complete P1 Results & Keyframe Explorer](./ctpgesture-v1-complete-videomamba-p1-results-1.ipynb)
 
 **Protocal đánh giá**
@@ -205,8 +206,8 @@ Các ảnh dưới đây được lấy **trực tiếp từ hai thư mục `ipn
 | [CTPGesture — Complete P1 Results](./ctpgesture-v1-complete-videomamba-p1-results-1.ipynb) | Notebook **đọc và trình bày Output** | 9/9 ô; 96 output | Bảng mã lớp, thống kê CSV/JSON, đối chiếu GT/Pred và ảnh minh họa CTP |
 
 - **Dữ liệu ảnh keyframe được lưu trong :**
-    - [ipnResult](Research-notes\Research_Report\261028\ipnResult)
-    - [ctpResult](Research-notes\Research_Report\261028\ctpResult)
+    - [ipnResult](./ipnResult)
+    - [ctpResult](./ctpResult)
 ## B. Khó khăn
 - Không
 ## C. Công việc tiếp theo
