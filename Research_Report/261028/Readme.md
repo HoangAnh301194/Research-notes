@@ -205,7 +205,7 @@ Các ảnh dưới đây được lấy **trực tiếp từ hai thư mục `ipn
 | [IPN-Hand — Complete P1 Results](./ipn-hand-complete-videomamba-p1-results-16-fra.ipynb) | Notebook **đọc và trình bày Output** | 9/9 ô; 92 output | Bảng mã lớp, thống kê CSV/JSON, đối chiếu GT/Pred và ảnh minh họa IPN |
 | [CTPGesture — Complete P1 Results](./ctpgesture-v1-complete-videomamba-p1-results-1.ipynb) | Notebook **đọc và trình bày Output** | 9/9 ô; 96 output | Bảng mã lớp, thống kê CSV/JSON, đối chiếu GT/Pred và ảnh minh họa CTP |
 
-- **Dữ liệu ảnh keyframe được lưu trong :**
+- **Toàn bộ dữ liệu ảnh keyframe được lưu trong :**
     - [ipnResult](./ipnResult)
     - [ctpResult](./ctpResult)
 ## B. Khó khăn
