@@ -35,11 +35,134 @@ Danh mục được trình bày **trước các bảng so sánh**, bao gồm ngh
 
 **Phân loại phương pháp trong các bảng:** 2 hướng có sử dụng skeleton/pose (Zhang, RSC-GestureNet) và 6 phương pháp đối chứng không sử dụng skeleton (FDMB-YOLOv11, Liu, Assiri & Selim, P3D, C3D, 3D ResNet). **Tổng 8 phương pháp đối chứng không phải 8 bài báo độc lập**; ba baseline cuối cùng thuộc cùng công trình Xiong (2021). Các nghiên cứu detection ảnh dẫn xuất không được so sánh trực tiếp như bài toán video classification.
 
-## Các bảng so sánh kết quả
+## Kết quả so sánh chính
 
-Các bảng sau sử dụng những nguồn đã liệt kê ở trên và các notebook thực nghiệm VideoMamba đã dẫn. Cột **Chú thích / nguồn số liệu** ở cuối từng bảng giải thích nguồn đo, giá trị ước tính và khác biệt giao thức.
+> **Nguyên tắc đọc:** Các phương pháp trong cùng bảng không nhất thiết cùng tập test, chia dữ liệu, chế độ online/offline hoặc thước đo. Các giá trị là **kết quả báo cáo theo từng giao thức**, không phải bảng xếp hạng công bằng. Dấu `-` nghĩa là chưa có số liệu đúng định nghĩa đã xác minh. Params/GFLOPs có thể chỉ tính một thành phần, xem phụ lục để biết giới hạn.
 
-## Bảng 1 — IPN-Hand: Isolated Gesture Recognition
+### Bảng 1 — IPN-Hand: Nhận dạng đoạn cử chỉ (isolated)
+
+| Phương pháp / nguồn | Đầu vào | Params (M) | GFLOPs | N mẫu | Accuracy (%) | GT-prefix AUC | Ghi chú ngắn |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| **VideoMamba-Tiny** [Notebook](../261007/videomamba_man_configsBenchmark.ipynb) | RGB 16×224² | 6.9608 | 29.0261 | 1.101 | 84.65 | 0.72399 | VideoMamba; RGB 16 frames; GT-prefix offline. Chi phí theo clip, không phải toàn hệ thống. |
+| CoboGesture + **VideoMAEv2** [Cobo](https://doi.org/10.1109/ACCESS.2026.3664027) | RGB video, ViT-L | ≈303.8 (recognizer) | 596.8327 | - | 84.59 | - | Khác cách lấy mẫu và tiền xử lý so với VideoMamba. |
+| CoboGesture + VideoMAE [Cobo](https://doi.org/10.1109/ACCESS.2026.3664027) | RGB video, ViT-L | ≈303.8 (recognizer) | 596.8327 | - | 78.81 | - | Biến thể VideoMAE đời trước, cùng bài CoboGesture. |
+| Kausar et al. [Nguồn](https://doi.org/10.32604/cmc.2026.084514) | RGB + Flow + Seg + Transformer | ≈21.284672 (encoder tham chiếu) | ResNet-34 3.66/ảnh (tham chiếu) | - | 92.34 | - | Chưa khóa split; tham số chỉ phản ánh ResNet-34 encoder. |
+| Gil-Martín et al. [Nguồn](https://doi.org/10.5220/0013053500003890) | MediaPipe landmarks+LSTM | 0.058614 (LSTM) | Palm192 0.354 /call; hand landmark + LSTM: - | - | 84.66±1.09; 86.38±2.03 | - | **Hai giao thức:** 10-fold CV / 37 train–13 test; 0,058614M chỉ LSTM. |
+| IPN original: ResNeXt-101 RGB+Flow [Nguồn](https://gibranbenitez.github.io/IPN_Hand/Results.html) | RGB+SPyNet, 32f | 47.56 + 1.440 | - | - | 86.32 | - | RGB + optical flow; khác dữ liệu đầu vào và số khung. |
+| IPN original: ResNeXt-101 RGB+Seg [Nguồn](https://gibranbenitez.github.io/IPN_Hand/Results.html) | RGB+HarDNet, 32f | 47.56 + 4.114 | - | - | 84.77 | - | RGB + segmentation; khác dữ liệu đầu vào và số khung. |
+| IPN original: ResNeXt-101 RGB [Nguồn](https://gibranbenitez.github.io/IPN_Hand/Results.html) | RGB, 32f | 47.51 | - | - | 83.59 | - | Baseline RGB; 32 frames, khác thiết lập 16 frames. |
+
+**Lưu ý:** Gil-Martín có **hai giao thức độc lập** (10-fold CV và 37 train/13 test); hai Accuracy trong cùng ô theo đúng thứ tự này. Những số Params chỉ là *recognizer* hoặc backbone được ghi rõ, không nên so trực tiếp với chi phí toàn pipeline.
+
+### Bảng 2 — IPN-Hand: Nhận dạng liên tục (continuous)
+
+| Phương pháp / nguồn | Đầu vào / giao thức | Params (M) | Accuracy bài báo (%) | FrameAcc TB/video (%) | Overlap | Gesture Recall (%) | Ghi chú ngắn |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| **VideoMamba Raw** [Notebook](../261007/videomamba_man_configsBenchmark.ipynb) | RGB video, offline 64/16 | 6.9608 | - | 83.4889 | 0.491110 | 78.8995 | RAW offline 64/16; không phải đánh giá online. |
+| VideoMamba R3 [Notebook](../261007/videomamba_man_configsBenchmark.ipynb) | RGB, post-processing 64/16 | 6.9608 | - | 83.5249 | 0.507705 | 76.2844 | R3 chọn ngưỡng trên test; không dùng để khẳng định hơn baseline. |
+| CoboGesture + VideoMAEv2 [Nguồn](https://doi.org/10.1109/ACCESS.2026.3664027) | RGB video, offline 64/30 | ≈303.8 (recognizer) | - | 83.00 | 0.510 | - | Offline 64/30; cách tính overlap cần đối chiếu. |
+| CoboGesture + VideoMAE [Nguồn](https://doi.org/10.1109/ACCESS.2026.3664027) | RGB video, offline 64/30 | ≈303.8 (recognizer) | - | 80.00 | 0.370 | - | Offline 64/30; cách tính overlap cần đối chiếu. |
+| Nayan et al. [Nguồn](https://doi.org/10.1007/s00138-024-01565-9) | RGB + Flow + EHTD + Seg | ≈6.624904 (backbone tham chiếu) | 73.71 | - | - | - | Giá trị bài báo là **Levenshtein Accuracy**, không phải FrameAcc. |
+| Nayan et al. [Nguồn](https://doi.org/10.1007/s00138-024-01565-9) (không Seg) | RGB + Flow + EHTD | ≈6.624904 (backbone tham chiếu) | 69.40 | - | - | - | Không dùng segmentation; giá trị là **Levenshtein Accuracy**. |
+| TY-Net [Nguồn](https://doi.org/10.1109/ACCESS.2023.3341702) | Skeleton + Transformer | ≈5 (recognizer) | 60.46 | - | - | - | Skeleton; kết quả online theo Levenshtein, khác FrameAcc. |
+| TMMF [Nguồn](https://doi.org/10.1109/TIP.2021.3108349) | RGB+Flow, fusion theo thời gian | - | 68.12 | - | - | - | Levenshtein Accuracy trích từ bảng của Nayan. |
+| TD-Net [Nguồn](https://doi.org/10.1109/ICCAIS56082.2022.9990122) | Skeleton + TD-Net | Chưa xác minh full TD-Net | 40.10 | - | - | - | Skeleton; kết quả theo Levenshtein, khác FrameAcc. |
+| IPN original: ResNeXt+ResLight+SPyNet [Nguồn](https://gibranbenitez.github.io/IPN_Hand/Results.html) | RGB+Flow, original continuous | 47.56 + 0.908 + 1.440 | 42.47 | - | - | - | Benchmark gốc; Levenshtein Accuracy, không phải FrameAcc. |
+| IPN original: ResNeXt+ResLight+HarDNet [Nguồn](https://gibranbenitez.github.io/IPN_Hand/Results.html) | RGB+Seg, original continuous | 47.56 + 0.908 + 4.114 | 39.01 | - | - | - | Benchmark gốc với segmentation; Levenshtein Accuracy. |
+| IPN original: ResNeXt+ResLight [Nguồn](https://gibranbenitez.github.io/IPN_Hand/Results.html) | RGB, original continuous | 47.51 + 0.895 | 25.34 | - | - | - | Benchmark gốc chỉ RGB; Levenshtein Accuracy. |
+
+**Lưu ý:** Cột Accuracy bài báo của Nayan, TY-Net, TMMF, TD-Net và IPN original chủ yếu là **Levenshtein Accuracy**, **không tương đương FrameAcc**. VideoMamba và CoboGesture có thể dùng cách tính overlap khác nhau.
+
+### Bảng 3 — CTPGesture v1: Nhận dạng đoạn cử chỉ và đối chứng liên quan
+
+| Phương pháp / nguồn | Đầu vào | Params (M) | N mẫu | Accuracy (%) | Loại bài toán | Ghi chú ngắn |
+| --- | --- | --- | --- | --- | --- | --- |
+| **VideoMamba-Tiny** [Notebook](../261015/VideoMambaTinyCTPGestureFinal.ipynb) | RGB video, 16×224² | 6.959817 | 1.728 | 98.5532 | Phân loại video | VideoMamba 9 lớp, 11 test videos; 1.728 GT clips. |
+| **VideoMamba-Tiny** [Notebook](../261015/VideoMambaTinyCTPGestureFinal.ipynb) — Gesture only (GT 1–8) | RGB video, 16×224² | 6.959817 | 859 | 98.0210 | Phân loại video | Subset 859 gesture GT từ cùng mô hình 9 lớp. |
+| **Zhang — BiLSTM–Transformer** [Nguồn](https://doi.org/10.3390/electronics15122578) | Skeleton; 40 frames | 20.9 (pose) + 0.08641 (head) | - | 98.91 | Video skeleton | Skeleton; 10 test videos; split khác VideoMamba. |
+| **FDMB-YOLOv11** [Nguồn](https://doi.org/10.1371/journal.pone.0357212) | RGB frame; YOLO11n | 1.93 | - | - | Detection ảnh | **Detection ảnh**; mAP không thể điền vào Accuracy video. |
+| **Liu — Improved YOLOv8n** [Nguồn](https://doi.org/10.3785/j.issn.1008-973X.2026.08.007) | RGB frame; YOLOv8n | 1.8 | - | - | Detection ảnh | **Detection ảnh**; dùng tập ảnh xử lý lại. |
+| **Assiri & Selim — Swin + CNN–BiLSTM** [Nguồn](https://doi.org/10.1016/j.asej.2025.103383) | RGB; Swin + CNN–BiLSTM | ≈28.288354 (Swin-T tham chiếu) | - | 99.25 | Video; chưa khóa dataset | Chưa xác minh sử dụng đúng CTPGesture v1. |
+| **P3D** [Xiong Table 3](https://doi.org/10.3390/electronics10050551) | RGB video, Pseudo-3D CNN | ≈65.3 (P3D-199 tham chiếu) | 1.565 | 92.21 | Phân loại video | Baseline trong Xiong, 9 video / 1.565 clips; variant tham chiếu. |
+| **C3D** [Xiong Table 3](https://doi.org/10.3390/electronics10050551) | RGB video, C3D | 78.4 (tham chiếu) | 1.565 | 87.12 | Phân loại video | Baseline Xiong; cấu hình model zoo chỉ tham khảo. |
+| **3D ResNet** [Xiong Table 3](https://doi.org/10.3390/electronics10050551) | RGB video, 3D ResNet | 33.371472 (R3D-18 tham chiếu) | 1.565 | 81.16 | Phân loại video | Baseline Xiong; độ sâu mạng gốc chưa xác minh. |
+
+**Lưu ý:** Các công trình **detection trên ảnh** (FDMB-YOLOv11, Liu) không có Accuracy phân loại video tương ứng. Bản Assiri & Selim chưa xác minh dùng đúng CTPGesture v1; các baseline Xiong có split khác.
+
+### Bảng 4 — CTPGesture v1: Nhận dạng liên tục
+
+| Phương pháp / nguồn | Đầu vào / giao thức | Params (M) | Accuracy bài báo (%) | FrameAcc global (%) | FrameAcc TB/video (%) | Overlap | Ghi chú ngắn |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| **VideoMamba Raw** [Notebook](../261015/VideoMambaTinyCTPGestureFinal.ipynb) | RGB video, offline 32/8 | 6.959817 | - | 83.9836 | 83.4973 | 0.653223 | RAW offline 32/8; có sử dụng frame tương lai. |
+| VideoMamba R3 [Notebook](../261015/VideoMambaTinyCTPGestureFinal.ipynb) | RGB offline 32/8 + post-processing | 6.959817 | - | 83.9940 | - | 0.6590 | R3 tinh chỉnh trên official test; không phải held-out. |
+| **RSC-GestureNet** [Nguồn](https://arxiv.org/abs/2608.02200) | Skeleton + RGB; causal 32/4 | 0.815270 (fusion only) | **93.33±0.24** | - | - | - | Causal 32/4, 3 seeds; **không so trực tiếp** với FrameAcc offline. |
+
+**Lưu ý:** RSC-GestureNet đánh giá **causal**; VideoMamba là **offline** với cửa sổ chồng lấn. Không dùng Accuracy causal của RSC làm FrameAcc của VideoMamba.
+
+
+## Phân tích chuyên sâu VideoMamba
+
+Các bảng dưới đây chỉ tập trung vào các metric có trong notebook baseline và notebook P1 đã chạy; không trộn chỉ số *isolated* với chỉ số *continuous*. [Notebook IPN-Hand có output](../261028/videomamba-ipn-hand-p1-metrics-keyframes-python313%20%281%29.ipynb) · [Notebook CTPGesture có output](../261028/videomamba-ctpgesture-p1-metrics-keyframes-python3%20%283%29.ipynb).
+
+### 5.1. Isolated — Accuracy theo phần cử chỉ đã quan sát
+
+| Mô hình / tập test | N clip | Acc@10% | Acc@20% | Acc@50% | Acc@75% | Acc@100% | GT-prefix AUC |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| IPN-Hand · VideoMamba-Tiny | 1.101 | 38.6921 | 53.7693 | 76.1126 | 83.8329 | 84.6503 | 0.72399 |
+| CTP · VideoMamba (9 lớp) | 1.728 | 86.0532 | 93.1713 | 97.5694 | 98.3796 | 98.5532 | 0.963140 |
+| CTP · VideoMamba (gesture-only) | 859 | 91.0361 | 95.4598 | 97.6717 | 97.9045 | 98.0210 | 0.969247 |
+
+Đây là **GT-prefix offline**: đoạn cử chỉ được cắt theo nhãn đúng trước khi lấy phần đầu. Không đồng nhất với việc robot phát hiện lệnh trong thời gian thực (*causal Early@10*).
+
+### 5.2. Isolated — F1, Top-K và mức độ nhận dạng sớm
+
+| Mô hình / tập test | Macro-F1 (%) | Balanced Acc (%) | Top-2 (%) | Top-3 (%) | Ever-correct (%) | First-correct ratio | First-stable ratio |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| IPN-Hand · VideoMamba-Tiny | 78.34 | 77.2581 | 95.0045 | 97.2752 | 88.5559 | 0.300308 | 0.315880 |
+| CTP · VideoMamba (9 lớp) | 97.9590 | 98.1226 | 99.7685 | 99.8843 | 99.1319 | 0.135231 | 0.135232 |
+| CTP · VideoMamba (gesture-only) | 98.2363 | 98.0030 | - | - | - | - | - |
+
+Chỉ số *first-correct* và *first-stable* là tỷ lệ chiều dài đoạn theo giao thức GT-prefix; không phải độ trễ tính bằng giây.
+
+### 5.3. Isolated — Calibration và minh chứng keyframe
+
+| Mô hình / tập test | ECE-15 | Brier | NLL | Keyframe đã xuất |
+| --- | --- | --- | --- | --- |
+| IPN-Hand · VideoMamba-Tiny | 0.029848 | 0.197447 | 0.420977 | 1.101 JPEG: 932 đúng / 169 sai |
+| CTP · VideoMamba (9 lớp) | 0.005987 | 0.021505 | 0.051804 | 1,728/1,728 JPEG; 1,703 đúng; 25 sai; 0 lỗi |
+| CTP · VideoMamba (gesture-only) | - | - | - | Dùng chung 1,728 JPEG từ bộ 9 lớp; subset 859 gesture |
+
+ECE, Brier và NLL chỉ đánh giá **calibration ở isolated**. Số keyframe là tổng trường hợp có log xuất hình đúng/sai, **không phải số video độc lập**. Xem ví dụ trong [báo cáo 28/10](../261028/Readme.md).
+
+### 5.4. Continuous — FrameAcc, Macro-F1 và chất lượng phân đoạn
+
+| Mô hình / tập test | FrameAcc global (%) | FrameAcc TB/video (%) | Macro-F1 (%) | Seg F1@10 (%) | Seg F1@25 (%) | Seg F1@50 (%) | Edit (%) |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| IPN-Hand · VideoMamba RAW | 83.7308 | 83.4889 | 64.4012 | 79.4544 | 77.5789 | 69.9062 | 74.3831 |
+| IPN-Hand · VideoMamba R3 | - | 83.5249 | - | - | - | - | - |
+| CTP · VideoMamba RAW | 83.9836 | 83.4973 | 80.6135 | 96.0472 | 94.7493 | 85.5457 | 93.4968 |
+| CTP · VideoMamba R3 | 83.9940 | - | 80.6254 | - | - | - | - |
+
+Với R3, các metric phân đoạn chưa được xác minh thì để `-`, **không chuyển kết quả RAW sang R3**. FrameAcc theo video khác cách tổng hợp FrameAcc trên tất cả frame.
+
+### 5.5. Continuous — Ghép đoạn, sai lệch biên và keyframe
+
+| Mô hình / tập test | Precision@50 (%) | Recall@50 (%) | Onset MAE (s) | Offset MAE (s) | FP/min | Temporal overlap | Keyframe đã xuất |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| IPN-Hand · VideoMamba RAW | 65.8635 | 74.4777 | 0.440922 | 0.481819 | 3.596927 | 0.491110 | 1.526 JPEG: 820 ghép đúng / 706 lỗi |
+| IPN-Hand · VideoMamba R3 | - | - | - | - | - | 0.507705 | 16f + GT/Pred timeline: code |
+| CTP · VideoMamba RAW | 86.7225 | 84.4005 | 0.290115 | 0.445517 | 1.483164 | 0.653223 | 970/970 JPEG; 725 matched; 245 lỗi; 0 lỗi xuất |
+| CTP · VideoMamba R3 | - | - | - | - | - | 0.658979 | 16f + GT/Pred timeline: code |
+
+**FP/min** trong các notebook P1 RAW được tính từ đoạn dự đoán không ghép được mỗi phút (ngưỡng tIoU 0,50), không mặc định trùng định nghĩa FP/min của mọi bài báo. Các sai số onset/offset MAE tính trên những đoạn đã ghép đúng.
+
+
+## Phụ lục — Bảng đầy đủ, nguồn và giả định tính toán
+
+Để báo cáo chính ngắn gọn, toàn bộ **5 bảng gốc**, các ô metric chưa xác minh, thông số toàn pipeline, chú thích dài và liên kết bài báo được giữ nguyên dưới đây. Mở phần tương ứng khi cần kiểm toán, đối chiếu giao thức hoặc viết báo cáo khoa học chi tiết.
+
+<details>
+<summary>Phụ lục 1 — IPN-Hand: Isolated Gesture Recognition (bảng và chú thích đầy đủ)</summary>
 
 | Phương pháp / nguồn | Năm | Đầu vào / kiến trúc | Params (M) | GFLOPs | Params full pipeline (M) | GFLOPs full pipeline | N mẫu | Accuracy (%) | Accuracy@100% (%) | GT-prefix AUC | Ever-correct (%) | Chú thích / nguồn số liệu |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
@@ -52,7 +175,10 @@ Các bảng sau sử dụng những nguồn đã liệt kê ở trên và các n
 | IPN original: ResNeXt-101 RGB+Seg [Nguồn](https://gibranbenitez.github.io/IPN_Hand/Results.html) | 2020/21 | RGB+HarDNet, 32f | ResNeXt 47.56 + HarDNet 4.114 | - | 51.674 = 47.56 + 4.114 | - | - | 84.77 | - | - | - | Official IPN, khác modality/sampling; IPN original Tables IV–V công bố Params của các module riêng; total là phép cộng; **Nguồn số liệu:** Params (M): do tác giả công bố; Params full pipeline (M): nhóm cộng thông số các module được công bố. |
 | IPN original: ResNeXt-101 RGB [Nguồn](https://gibranbenitez.github.io/IPN_Hand/Results.html) | 2020/21 | RGB, 32f | 47.51 recognizer | - | 47.51 | - | - | 83.59 | - | - | - | Cùng dữ liệu gốc, khác số frame; **Nguồn số liệu:** Params full pipeline (M): do tác giả công bố. |
 
-## Bảng 2 — IPN-Hand: Continuous Gesture Recognition
+</details>
+
+<details>
+<summary>Phụ lục 2 — IPN-Hand: Continuous Gesture Recognition (bảng và chú thích đầy đủ)</summary>
 
 | Phương pháp / nguồn | Năm | Đầu vào / kiến trúc | Params (M) | GFLOPs | Params full pipeline (M) | GFLOPs full pipeline | N video | Accuracy (paper, %) | FrameAcc global (%) | FrameAcc TB/video (%) | Temporal Overlap | Gesture Recall (%) | FP/min | Chú thích / nguồn số liệu |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
@@ -69,7 +195,10 @@ Các bảng sau sử dụng những nguồn đã liệt kê ở trên và các n
 | IPN original: ResNeXt+ResLight+HarDNet [Nguồn](https://gibranbenitez.github.io/IPN_Hand/Results.html) | 2020/21 | RGB+Seg, original continuous | ResNeXt 47.56 + ResLight 0.908 + HarDNet 4.114 | - | 52.582 | - | 52 | 39.01 | - | - | - | - | - | Original Table IX; khác modality; cộng recognizer + ResLight detector (RGB 0.895M, RGB+Flow/Seg 0.908M) + Flow/Seg tùy hàng, từ IPN original Tables IV, V, VIII.; Số tại cột Accuracy (paper) là **Levenshtein Accuracy**, khác FrameAcc. [IPN official continuous benchmark](https://gibranbenitez.github.io/IPN_Hand/Results.html); **Nguồn số liệu:** Params (M): do tác giả công bố; Params full pipeline (M): nhóm cộng thông số các module được công bố. |
 | IPN original: ResNeXt+ResLight [Nguồn](https://gibranbenitez.github.io/IPN_Hand/Results.html) | 2020/21 | RGB, original continuous | ResNeXt 47.51 + ResLight 0.895 | - | 48.405 | - | 52 | 25.34 | - | - | - | - | - | Original Table IX; detector ResLight; cộng recognizer + ResLight detector (RGB 0.895M, RGB+Flow/Seg 0.908M) + Flow/Seg tùy hàng, từ IPN original Tables IV, V, VIII.; Số tại cột Accuracy (paper) là **Levenshtein Accuracy**, khác FrameAcc. [IPN official continuous benchmark](https://gibranbenitez.github.io/IPN_Hand/Results.html); **Nguồn số liệu:** Params (M): do tác giả công bố; Params full pipeline (M): nhóm cộng thông số các module được công bố. |
 
-## Bảng 3 — CTPGesture v1: Isolated Recognition và đối chứng ảnh dẫn xuất
+</details>
+
+<details>
+<summary>Phụ lục 3 — CTPGesture v1: Isolated Recognition và đối chứng ảnh dẫn xuất (bảng và chú thích đầy đủ)</summary>
 
 | Phương pháp / nguồn | Năm | Đầu vào / kiến trúc | Params (M) | GFLOPs | Params full pipeline (M) | GFLOPs full pipeline | N mẫu | Accuracy (%) | Accuracy@100% (%) | GT-prefix AUC | Ever-correct (%) | Chú thích / nguồn số liệu |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
@@ -83,7 +212,10 @@ Các bảng sau sử dụng những nguồn đã liệt kê ở trên và các n
 | **C3D** [Xiong Table 3](https://doi.org/10.3390/electronics10050551) | 2021 (baseline) | **Non-skeleton:** RGB video, C3D | 78.4 MMAction2 | 38.5 /16×112² | - | - | 1.565 | 87.12 | - | - | - | 9 test videos / 1.565 clips; Params/GFLOPs model zoo không xác nhận checkpoint Xiong; 9 test videos/1.565 clips; các Params/GFLOPs là variant model zoo, **không** xác nhận checkpoint Xiong; **Nguồn số liệu:** Params (M), GFLOPs: tham khảo từ model zoo, chưa xác nhận đúng biến thể của bài báo. |
 | **3D ResNet** [Xiong Table 3](https://doi.org/10.3390/electronics10050551) | 2021 (baseline) | **Non-skeleton:** RGB video, 3D ResNet | 33.371472**R3D-18** | 40.70 /16×112² | - | - | 1.565 | 81.16 | - | - | - | 9 test videos / 1.565 clips; **không biết depth** của bản Xiong, số tham chiếu R3D-18; 9 test videos/1.565 clips; các Params/GFLOPs là variant model zoo, **không** xác nhận checkpoint Xiong; **Nguồn số liệu:** Params (M), GFLOPs: tham khảo từ model zoo, chưa xác nhận đúng biến thể của bài báo. |
 
-## Bảng 4 — CTPGesture v1: Continuous Gesture Recognition
+</details>
+
+<details>
+<summary>Phụ lục 4 — CTPGesture v1: Continuous Gesture Recognition (bảng và chú thích đầy đủ)</summary>
 
 | Phương pháp / nguồn | Năm | Đầu vào / kiến trúc | Params (M) | GFLOPs | Params full pipeline (M) | GFLOPs full pipeline | N video | Accuracy (paper, %) | FrameAcc global (%) | FrameAcc TB/video (%) | Temporal Overlap | Gesture Recall (%) | FP/min | Chú thích / nguồn số liệu |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
@@ -97,7 +229,10 @@ Các bảng sau sử dụng những nguồn đã liệt kê ở trên và các n
 
 **MediaPipe Pose:** [BlazePose gốc](https://www.alphaxiv.org/abs/2006.10204) báo Lite ≈1.3M và Full ≈3.5M Params tham chiếu. [MediaPipe Pose](https://github.com/google-ai-edge/mediapipe/blob/master/docs/solutions/pose.md) còn có Heavy và mạng person/pose detector, nên 1.3/3.5M chỉ phản ánh thành phần pose landmark theo kiến trúc tham chiếu, không phải full Pose pipeline. RSC dùng pose features đã trích, không phát hành đầy đủ cấu hình detector/checkpoint gốc; do đó **cột full Params vẫn là '-';** chỉ ghi cộng tham chiếu thành phần trong ghi chú. TD-Net có thêm detector và hai bộ phân loại TD-Net chưa xác minh chính xác Params, nên chỉ bổ sung chi phí MediaPipe tham chiếu. **Không chuyển số Model Size (MB), file .tflite (MB) hay FLOPs mỗi lần chạy sang #Params hoặc GFLOPs toàn chuỗi khi thiếu định nghĩa.**
 
-## Bảng 5 — Các metric bổ sung P1: IPN-Hand và CTPGesture v1
+</details>
+
+<details>
+<summary>Phụ lục 5 — Các metric bổ sung P1: IPN-Hand và CTPGesture v1 (bảng và chú thích đầy đủ)</summary>
 
 **Mục đích:** một bảng riêng để đối chiếu các metric mới trong hai notebook P1 với những công trình đã nằm trong danh sách khảo sát. Cột **Dataset** và **Chế độ** cho biết isolated hay continuous. Bốn bảng SOTA trước đó được giữ nguyên.
 
@@ -143,6 +278,9 @@ Các bảng sau sử dụng những nguồn đã liệt kê ở trên và các n
 **Nguồn paper để điền metric:** [CoboGesture, Tables 4 và 7](https://doi.org/10.1109/ACCESS.2026.3664027); [IPN-Hand benchmark](https://gibranbenitez.github.io/IPN_Hand/Results.html); [Nayan et al., Table 12](https://doi.org/10.1007/s00138-024-01565-9); [TY-Net](https://doi.org/10.1109/ACCESS.2023.3341702); [Zhang 2026, Tables 2–3](https://doi.org/10.3390/electronics15122578); [RSC-GestureNet, Table 1](https://arxiv.org/abs/2608.02200); [Xiong 2021](https://doi.org/10.3390/electronics10050551). Các hàng FDMB/Liu chỉ thuộc detection ảnh dẫn xuất nên không ghi sai mAP vào cột classification.
 
 **Nguồn P1 đã có output (kiểm tra 02/11/2026):** [IPN-Hand — tính toán P1](../261028/videomamba-ipn-hand-p1-metrics-keyframes-python313%20%281%29.ipynb) (**16/18 ô code có output; 47 output**), [CTPGesture — tính toán P1](../261028/videomamba-ctpgesture-p1-metrics-keyframes-python3%20%283%29.ipynb) (**19/19; 51 output**). Notebook đọc kết quả có output: [IPN-Hand Complete Results](../261028/ipn-hand-complete-videomamba-p1-results-16-fra.ipynb) (**9/9; 92 output**) và [CTPGesture Complete Results](../261028/ctpgesture-v1-complete-videomamba-p1-results-1.ipynb) (**9/9; 96 output**). Hai bản [IPN-Hand code](../KaggleNotebook/VideoMamba_IPN_Hand_P1_Metrics_Keyframes_Python313.ipynb) và [CTPGesture code](../KaggleNotebook/VideoMamba_CTPGesture_P1_Metrics_Keyframes_Python313.ipynb) ở `KaggleNotebook/` có **0 output**; không sử dụng làm nguồn cho số thực nghiệm. Các notebook Complete Results chỉ đọc/tổng hợp CSV, JSON, hình đã xuất; không phải thực nghiệm độc lập. Xem [báo cáo 28/10](../261028/Readme.md) để đối chiếu các ảnh đúng/sai.
+
+</details>
+
 
 ## B. Khó khăn
 - Không
