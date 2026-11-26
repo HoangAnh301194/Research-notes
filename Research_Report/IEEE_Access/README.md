@@ -6,7 +6,7 @@ Entry point: `main.tex`.
 
 1. Download the official IEEE Access LaTeX template from https://ieeeaccess.ieee.org/authors/preparing-your-article/ or open https://www.overleaf.com/latex/templates/ieee-access-latex-template/cdxrhtbjgszv .
 2. Copy the official template class `ieeeaccess.cls` and its companion resources into this directory (or upload this manuscript into the official Overleaf template). Do not substitute the generic IEEEtran class.
-3. Open `Figures/VideoMamba_Technical_Diagrams_v3.drawio.html` in diagrams.net, edit the embedded diagram, and export pages 1--3 individually as `Figures/Fig1.pdf`, `Figures/Fig2.pdf`, and `Figures/Fig3.pdf`. PNG with the same base names also works for drafting. The manuscript uses explicitly labeled placeholders until the graphics are exported.
+3. Open `Figures/VideoMamba_Technical_Diagrams_v3.drawio` in diagrams.net, edit the diagram, and export pages 1--3 individually as `Figures/Fig1.pdf`, `Figures/Fig2.pdf`, and `Figures/Fig3.pdf`. PNG with the same base names also works for drafting. The manuscript uses explicitly labeled placeholders until the graphics are exported.
 4. From this directory, run `pdflatex main.tex` twice, or select pdfLaTeX on Overleaf. The current references use an inline thebibliography environment (no BibTeX run needed).
 
 ## Draft scope

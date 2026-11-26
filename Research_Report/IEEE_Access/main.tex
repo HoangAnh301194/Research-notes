@@ -30,7 +30,7 @@
 % \tfootnote{Funding information to be confirmed.}
 
 \begin{abstract}
-Continuous hand gesture recognition requires the identification of gesture categories and their temporal boundaries in untrimmed video sequences. The computational requirements of global self-attention in video recognition motivate the investigation of compact alternatives for resource-constrained human--robot interaction. This work develops a red-green-blue video recognition framework using a lightweight video state space backbone. The framework first learns gesture representations from annotated clips and subsequently applies the resulting classifier to overlapping windows extracted from continuous videos. Fixed-stride temporal sampling decouples the temporal extent of each window from the number of input frames. Arithmetic probability aggregation integrates predictions from overlapping windows to obtain frame-level class distributions, followed by temporal segmentation through consecutive-label grouping. The evaluation protocol considers isolated classification, continuous recognition, temporal localization, and model-level computational efficiency on public gesture benchmarks. The current formulation is explicitly offline; online recognition latency and adaptive inference remain separate research objectives. This draft describes the implemented method without asserting unverified accuracy improvements or deployment results.
+% TODO: Write Abstract after Proposed Method and experimental results are finalized.
 \end{abstract}
 
 \begin{keywords}
@@ -41,22 +41,11 @@ Continuous gesture recognition, edge artificial intelligence, human--robot inter
 
 \section{Introduction}
 \label{sec:introduction}
-\PARstart{H}{and} gestures provide a visual communication channel for human--robot interaction. In practical settings, a camera produces an untrimmed video containing gesture executions, background activity, and transitions between successive gestures. A recognition system must therefore determine the gesture category as well as its temporal location without relying on predefined test-time boundaries.
-
-CoboGesture \cite{nguyen2026cobogesture} investigates continuous recognition through RGB-based and skeleton-assisted inference pipelines. Its use of clip-level video classifiers motivates the investigation of a compact video state space backbone for continuous recognition. VideoMamba \cite{li2024videomamba}, built upon selective state space modeling \cite{gu2024mamba}, provides an existing architecture suitable for this purpose.
-
-This study integrates VideoMamba-Tiny with overlapping-window inference and probability-based temporal aggregation. The current work focuses on offline recognition and model-level efficiency rather than proposing a new state space backbone. Recognition accuracy, temporal localization, and model-level computation must be distinguished from end-to-end online performance.
-% TODO: Finalize the research gap and contributions after controlled baselines
-% and edge experiments. Do not claim adaptive inference yet.
+% TODO: Write Introduction after Proposed Method and experimental results are finalized.
 
 \section{Related Work}
 \label{sec:related}
-\subsection{Isolated and Continuous Gesture Recognition}
-Isolated recognition assumes a trimmed interval containing a gesture, whereas continuous recognition additionally requires temporal localization and background discrimination. CoboGesture \cite{nguyen2026cobogesture} provides a relevant framework-level comparator using RGB windows and an alternative skeleton-guided pipeline. The present method follows the RGB-only setting and does not require an explicit skeleton estimator.
-
-\subsection{Video State Space Models}
-Mamba \cite{gu2024mamba} introduces input-dependent state space parameters to selectively propagate sequence information. VideoMamba \cite{li2024videomamba} adapts this principle to spatio-temporal video tokens using bidirectional modeling. We adopt the published architecture as a backbone rather than claiming a new neural architecture.
-% TODO: Extend with verified continuous HGR, temporal localization and causal literature.
+% TODO: Write Related Work after Proposed Method and experimental results are finalized.
 
 \section{Proposed Method}
 \label{sec:method}
@@ -86,7 +75,7 @@ As illustrated in Fig.~\ref{fig:framework}, the framework contains a clip-level 
 \begin{figure*}[!t]
 \centering
 \methodfigure{Fig1}{Overall framework}
-\caption{Overall framework of the RGB-based gesture recognition method, including clip-level training and continuous inference.}
+\caption{Overall framework of the RGB-based gesture recognition method, comprising (a) clip-level fine-tuning, (b) isolated gesture classification, and (c) offline continuous gesture recognition.}
 \label{fig:framework}
 \end{figure*}
 
@@ -297,13 +286,11 @@ For long videos, the backbone processes approximately $N/S$ windows with fixed i
 \section{Experiments and Results}
 \label{sec:experiments}
 \subsection{Datasets and Experimental Protocol}
-The current experiments use IPN-Hand and CTPGesture v1, with 14 and nine classifier output classes respectively, including the background class. IPN-Hand isolated evaluation excludes No-Gesture intervals; continuous evaluation includes the background. CTPGesture v1 isolated evaluation includes the background category.
 % TODO: Add verified dataset citations, splits, sample counts and checkpoints.
 \subsection{Implementation Details}
 % TODO: Add finalized training configurations, pretraining, optimizer,
 % learning rate, batch size, epochs, augmentation, hardware and seeds.
 \subsection{Evaluation Metrics}
-Evaluation distinguishes isolated top-1 accuracy, frame-wise accuracy, macro-averaged F1, and temporal segmentation quality. Segmental F1 at temporal intersection-over-union thresholds and the activity overlap score provide complementary views of localization. Per-video mean accuracy and global frame accuracy should be reported separately. Ground-truth-prefix early recognition measures classification of partial annotated gestures, not online detection.
 % TODO: Specify matching, averaging, overlap tolerance and background handling.
 \subsection{Isolated Gesture Recognition Results}
 % TODO: Insert verified results and matched evaluation protocols.
