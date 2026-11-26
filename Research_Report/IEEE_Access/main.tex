@@ -1,0 +1,345 @@
+% IEEE Access manuscript -- working draft, 26 November 2026.
+% Official template: https://ieeeaccess.ieee.org/authors/preparing-your-article/
+% Only implemented offline RGB pipeline is described as the proposed method.
+\documentclass{ieeeaccess}
+\usepackage{cite}
+\usepackage{amsmath,amssymb,amsfonts}
+\usepackage{graphicx}
+\usepackage{textcomp}
+\usepackage{booktabs}
+\graphicspath{{Figures/}}
+\DeclareMathOperator*{\argmax}{arg\,max}
+
+% Export pages 1--3 of the Draw.io HTML to Fig1.pdf, Fig2.pdf, Fig3.pdf.
+\newcommand{\methodfigure}[2]{%
+  \IfFileExists{Figures/#1.pdf}{\includegraphics[width=\textwidth]{#1.pdf}}{%
+  \IfFileExists{Figures/#1.png}{\includegraphics[width=\textwidth]{#1.png}}{%
+  \fbox{\parbox[c][38mm][c]{0.94\textwidth}{\centering
+  \textbf{#2}\\[2mm]\textit{Draft placeholder: export #1.pdf from the Draw.io source.}}}}}}
+
+\begin{document}
+\history{Date of publication xxxx 00, 0000, date of current version xxxx 00, 0000.}
+\doi{10.1109/ACCESS.XXXX.XXXXXXX}
+\title{Lightweight Continuous Hand Gesture Recognition Using Video State Space Models}
+% TODO: Confirm the author list, institution, corresponding author and funding.
+\author{\uppercase{Author Name}\authorrefmark{1}}
+\address[1]{Institution and department to be confirmed, Hanoi, Vietnam}
+\markboth{Author et al.: Lightweight Continuous Hand Gesture Recognition}
+{Author et al.: Lightweight Continuous Hand Gesture Recognition}
+\corresp{Corresponding author: to be confirmed.}
+% \tfootnote{Funding information to be confirmed.}
+
+\begin{abstract}
+Continuous hand gesture recognition requires the identification of gesture categories and their temporal boundaries in untrimmed video sequences. The computational requirements of global self-attention in video recognition motivate the investigation of compact alternatives for resource-constrained human--robot interaction. This work develops a red-green-blue video recognition framework using a lightweight video state space backbone. The framework first learns gesture representations from annotated clips and subsequently applies the resulting classifier to overlapping windows extracted from continuous videos. Fixed-stride temporal sampling decouples the temporal extent of each window from the number of input frames. Arithmetic probability aggregation integrates predictions from overlapping windows to obtain frame-level class distributions, followed by temporal segmentation through consecutive-label grouping. The evaluation protocol considers isolated classification, continuous recognition, temporal localization, and model-level computational efficiency on public gesture benchmarks. The current formulation is explicitly offline; online recognition latency and adaptive inference remain separate research objectives. This draft describes the implemented method without asserting unverified accuracy improvements or deployment results.
+\end{abstract}
+
+\begin{keywords}
+Continuous gesture recognition, edge artificial intelligence, human--robot interaction, selective state space models, temporal segmentation, video recognition.
+\end{keywords}
+\titlepgskip=-15pt
+\maketitle
+
+\section{Introduction}
+\label{sec:introduction}
+\PARstart{H}{and} gestures provide a visual communication channel for human--robot interaction. In practical settings, a camera produces an untrimmed video containing gesture executions, background activity, and transitions between successive gestures. A recognition system must therefore determine the gesture category as well as its temporal location without relying on predefined test-time boundaries.
+
+CoboGesture \cite{nguyen2026cobogesture} investigates continuous recognition through RGB-based and skeleton-assisted inference pipelines. Its use of clip-level video classifiers motivates the investigation of a compact video state space backbone for continuous recognition. VideoMamba \cite{li2024videomamba}, built upon selective state space modeling \cite{gu2024mamba}, provides an existing architecture suitable for this purpose.
+
+This study integrates VideoMamba-Tiny with overlapping-window inference and probability-based temporal aggregation. The current work focuses on offline recognition and model-level efficiency rather than proposing a new state space backbone. Recognition accuracy, temporal localization, and model-level computation must be distinguished from end-to-end online performance.
+% TODO: Finalize the research gap and contributions after controlled baselines
+% and edge experiments. Do not claim adaptive inference yet.
+
+\section{Related Work}
+\label{sec:related}
+\subsection{Isolated and Continuous Gesture Recognition}
+Isolated recognition assumes a trimmed interval containing a gesture, whereas continuous recognition additionally requires temporal localization and background discrimination. CoboGesture \cite{nguyen2026cobogesture} provides a relevant framework-level comparator using RGB windows and an alternative skeleton-guided pipeline. The present method follows the RGB-only setting and does not require an explicit skeleton estimator.
+
+\subsection{Video State Space Models}
+Mamba \cite{gu2024mamba} introduces input-dependent state space parameters to selectively propagate sequence information. VideoMamba \cite{li2024videomamba} adapts this principle to spatio-temporal video tokens using bidirectional modeling. We adopt the published architecture as a backbone rather than claiming a new neural architecture.
+% TODO: Extend with verified continuous HGR, temporal localization and causal literature.
+
+\section{Proposed Method}
+\label{sec:method}
+
+\subsection{Overall Framework}
+\label{sec:framework}
+Let an untrimmed RGB video be represented as
+\begin{equation}
+\mathcal V=\{I_t\}_{t=0}^{N-1},\qquad
+I_t\in\mathbb R^{3\times H_0\times W_0},
+\label{eq:video}
+\end{equation}
+where $N$ is the number of frames and $H_0,W_0$ are the original spatial dimensions. Let $\mathcal C=\{0,\ldots,C-1\}$ denote the class set, with class zero representing No Gesture. The objective is to estimate the frame-level label sequence
+\begin{equation}
+\hat{\mathbf y}=(\hat y_0,\ldots,\hat y_{N-1})
+\label{eq:frame_sequence}
+\end{equation}
+and the corresponding foreground segment set
+\begin{equation}
+\hat{\mathcal G}=\{(\hat s_j,\hat e_j,\hat c_j)\}_{j=1}^{M},
+\label{eq:segments}
+\end{equation}
+where $\hat s_j$, $\hat e_j$, and $\hat c_j\neq 0$ denote the inclusive start, inclusive end, and category of segment $j$.
+
+As illustrated in Fig.~\ref{fig:framework}, the framework contains a clip-level training stage and a continuous inference stage. Annotated video intervals are converted into fixed-length clips to fine-tune the classifier. During inference, overlapping windows are temporally sampled and processed using the trained model. Window probabilities are projected onto the original timeline and aggregated before temporal segmentation. This inference procedure does not require ground-truth boundaries.
+
+\begin{figure*}[!t]
+\centering
+\methodfigure{Fig1}{Overall framework}
+\caption{Overall framework of the RGB-based gesture recognition method, including clip-level training and continuous inference.}
+\label{fig:framework}
+\end{figure*}
+
+\subsection{VideoMamba-Based Isolated Gesture Recognition}
+\label{sec:isolated}
+\subsubsection{Video Representation and Preprocessing}
+Gesture instances vary in duration and motion speed. During isolated evaluation, a labeled interval $[s,e]$ is uniformly sampled at $T$ positions:
+\begin{equation}
+u_i=\operatorname{round}\left(s+\frac{i(e-s)}{T-1}\right),
+\quad i=0,\ldots,T-1,
+\label{eq:isolated_sampling}
+\end{equation}
+where indices are zero-based and $T>1$. The selected frames are spatially resized to $H\times W$ and normalized using ImageNet statistics. Given pixel values scaled to $[0,1]$, channel normalization is
+\begin{equation}
+X'_{c,i,h,w}=\frac{X_{c,i,h,w}-\mu_c}{\sigma_c},
+\end{equation}
+where $\boldsymbol\mu=(0.485,0.456,0.406)$ and $\boldsymbol\sigma=(0.229,0.224,0.225)$. The resulting clip tensor has shape
+\begin{equation}
+\mathbf X\in\mathbb R^{3\times T\times H\times W}.
+\end{equation}
+The implemented configuration is $T=16$ and $H=W=224$. Training augmentation is documented separately in the experimental setup.
+
+\subsubsection{Spatio-Temporal Token Embedding}
+The adopted VideoMamba-Tiny architecture \cite{li2024videomamba} partitions each clip into non-overlapping spatio-temporal patches and projects each patch into a $d$-dimensional embedding. For divisible input dimensions, the number of video tokens is
+\begin{equation}
+N_p=\frac{T}{P_t}\frac{H}{P_h}\frac{W}{P_w},
+\label{eq:patch_count}
+\end{equation}
+where $P_t,P_h,P_w$ are patch dimensions. In the current configuration, $(P_t,P_h,P_w)=(1,16,16)$ and $d=192$, yielding $N_p=3136$. With a classification token and positional embeddings, the input sequence is
+\begin{equation}
+\mathbf Z^{(0)}=\mathcal E(\mathbf X)
+\in\mathbb R^{(N_p+1)\times d},
+\label{eq:embedding}
+\end{equation}
+where $\mathcal E$ denotes embedding and token organization. The sequence contains 3137 tokens.
+
+\begin{figure*}[!t]
+\centering
+\methodfigure{Fig2}{VideoMamba-Tiny architecture}
+\caption{Clip-to-class architecture of VideoMamba-Tiny, adopted from \cite{li2024videomamba}, with spatio-temporal embedding and bidirectional selective state space modeling.}
+\label{fig:backbone}
+\end{figure*}
+
+\subsubsection{Bidirectional Selective State Space Modeling}
+State space models describe sequence evolution through a hidden state. A conventional continuous-time representation is
+\begin{align}
+\dot{\mathbf h}(t)&=\mathbf A\mathbf h(t)+\mathbf B\mathbf x(t),\\
+\mathbf o(t)&=\mathbf C\mathbf h(t)+\mathbf D\mathbf x(t),
+\end{align}
+where $\mathbf x$, $\mathbf h$, and $\mathbf o$ represent input, hidden state, and output. The matrices describe state evolution, input injection, readout, and direct feedthrough.
+
+Selective state space modeling uses input-dependent parameters to regulate information propagation \cite{gu2024mamba}. A generic discretized selective recurrence is
+\begin{align}
+\mathbf h_i&=\overline{\mathbf A}_i\mathbf h_{i-1}
++\overline{\mathbf B}_i\mathbf x_i,\label{eq:ssm_state}\\
+\mathbf o_i&=\mathbf C_i\mathbf h_i+\mathbf D\mathbf x_i.
+\label{eq:ssm_output}
+\end{align}
+For a zero-order-hold illustration, the effective discrete parameters can be expressed as
+\begin{align}
+\overline{\mathbf A}_i&=\exp(\Delta_i\mathbf A),\\
+\overline{\mathbf B}_i&=\int_0^{\Delta_i}
+\exp(\tau\mathbf A)\mathbf B_i\,d\tau,
+\end{align}
+where $\Delta_i$ denotes the input-dependent discretization step. These equations describe the state space principle rather than claiming that the fused implementation evaluates the integral explicitly.
+
+VideoMamba employs forward and backward selective scans within each clip. With sequence reversal $\mathcal R$, the two directional representations are conceptually expressed as
+\begin{align}
+\mathbf Z_f&=\mathrm{SSM}_f(\mathbf Z),\\
+\mathbf Z_b&=\mathcal R\bigl(\mathrm{SSM}_b(\mathcal R(\mathbf Z))\bigr).
+\end{align}
+The published backbone combines these representations through its existing bidirectional blocks. The Tiny configuration contains 24 layers. At fixed feature and state dimensions, selective scan scales linearly with token sequence length, whereas global pairwise self-attention has quadratic sequence-length complexity. This motivates the backbone selection but does not independently establish end-to-end speed.
+
+\subsubsection{Gesture Classification}
+The final classification representation $\mathbf h_{\mathrm{cls}}$ is projected to logits:
+\begin{equation}
+\mathbf z=\mathbf W_{\mathrm{cls}}\mathbf h_{\mathrm{cls}}+
+\mathbf b_{\mathrm{cls}}.
+\end{equation}
+Softmax converts these logits into class probabilities:
+\begin{equation}
+p_c=\frac{\exp(z_c)}{\sum_{r=0}^{C-1}\exp(z_r)},
+\quad c\in\mathcal C.
+\label{eq:softmax}
+\end{equation}
+The prediction is $\hat c=\argmax_{c\in\mathcal C}p_c$. For one-hot labels, the conventional supervised objective is
+\begin{equation}
+\mathcal L_{\mathrm{CE}}=-\frac{1}{B}
+\sum_{b=1}^{B}\sum_{c=0}^{C-1}y_{b,c}\log p_{b,c},
+\end{equation}
+where $B$ denotes the batch size. The trained classifier is reused for continuous inference.
+
+\subsection{Continuous Gesture Recognition}
+\label{sec:continuous}
+The clip-level classifier alone does not locate gestures in an untrimmed video. We construct overlapping windows, sample a fixed number of frames per window, and convert the resulting probabilities into a dense temporal representation. Figure~\ref{fig:temporal} illustrates the procedure.
+
+\subsubsection{Overlapping Temporal Window Construction}
+Let $L$ denote window length and $S$ the stride, with $1\leq S\leq L$. For $N>L$, the regular window starts are
+\begin{equation}
+\mathcal S_{\mathrm{reg}}=
+\{kS:k=0,\ldots,\lfloor(N-L)/S\rfloor\}.
+\end{equation}
+The full set of starts is
+\begin{equation}
+\mathcal S=
+\begin{cases}
+\{0\},&N\leq L,\\
+\mathcal S_{\mathrm{reg}}\cup\{N-L\},&N>L.
+\end{cases}
+\label{eq:starts}
+\end{equation}
+Duplicate starts are removed and the set is sorted. The tail-aligned window ensures coverage at the end of the sequence. For $s_k\in\mathcal S$, define
+\begin{equation}
+e_k=\min(s_k+L-1,N-1),\quad
+W_k=\{I_t\}_{t=s_k}^{e_k}.
+\end{equation}
+The nominal overlap between regular full windows is
+\begin{equation}
+\rho=1-\frac{S}{L}.
+\end{equation}
+The final tail-aligned window may have greater overlap.
+
+\subsubsection{Fixed-Stride Temporal Sampling}
+Each window is sampled into $T$ frames. For the implemented settings, $L$ is divisible by $T$, giving $q=L/T$. The sampled clip is
+\begin{equation}
+\mathbf X_k=\{I_{\min(s_k+iq,N-1)}\}_{i=0}^{T-1}.
+\label{eq:window_sampling}
+\end{equation}
+Index clipping handles short videos. Unlike $S$, which controls the spacing of window predictions, $q$ controls the spacing of sampled frames within a window. Thus, the temporal coverage is decoupled from the backbone input size. The current configurations are shown in Table~\ref{tab:windows}.
+
+\begin{table}[!t]
+\caption{Implemented continuous inference settings.}
+\label{tab:windows}
+\centering
+\begin{tabular}{lrrrr}
+\toprule
+Dataset & $L$ & $S$ & $T$ & $q$\\
+\midrule
+IPN-Hand & 64 & 16 & 16 & 4\\
+CTPGesture v1 & 32 & 8 & 16 & 2\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{figure*}[!t]
+\centering
+\methodfigure{Fig3}{Temporal sampling and probability aggregation}
+\caption{Overlapping temporal windows, fixed-stride sampling, window-to-frame probability aggregation, and temporal gesture segmentation.}
+\label{fig:temporal}
+\end{figure*}
+
+\subsubsection{Window-to-Frame Probability Aggregation}
+For $K=|\mathcal S|$ windows, let $\mathbf p_k=f_\theta(\mathbf X_k)\in[0,1]^C$ denote the softmax output of the trained model, with $\sum_c p_{k,c}=1$. The window probability matrix $\mathbf P\in\mathbb R^{K\times C}$ contains these vectors as rows.
+
+The coverage matrix $\mathbf A\in\{0,1\}^{N\times K}$ is defined by
+\begin{equation}
+A_{t,k}=
+\begin{cases}
+1,&s_k\leq t\leq e_k,\\
+0,&\text{otherwise}.
+\end{cases}
+\end{equation}
+Each frame may receive predictions from multiple overlapping windows. Its class probability is calculated as
+\begin{equation}
+\bar p_{t,c}=
+\frac{\sum_{k=0}^{K-1}A_{t,k}p_{k,c}}
+{\sum_{k=0}^{K-1}A_{t,k}}.
+\label{eq:aggregation}
+\end{equation}
+Let $\mathbf D=\operatorname{diag}(\mathbf A\mathbf 1_K)$. For covered frames, the equivalent matrix representation is
+\begin{equation}
+\overline{\mathbf P}=\mathbf D^{-1}\mathbf A\mathbf P.
+\label{eq:matrix_aggregation}
+\end{equation}
+The notebooks accumulate each probability vector over its covered interval and divide by the coverage count without materializing $\mathbf A$. An uncovered frame, if any, receives unit probability for No Gesture. The procedure weights covering windows equally and does not introduce a learned attention mechanism.
+
+\subsubsection{Temporal Gesture Segmentation}
+The raw label for frame $t$ is
+\begin{equation}
+\hat y_t=\argmax_{c\in\mathcal C}\bar p_{t,c}.
+\end{equation}
+Label transition points are
+\begin{equation}
+\mathcal B=\{t:1\leq t<N,\ \hat y_t\neq\hat y_{t-1}\}.
+\end{equation}
+Define the ordered boundaries $(b_0,\ldots,b_J)$ by sorting $\{0,N\}\cup\mathcal B$. Each constant-label run is represented as $(b_j,b_{j+1}-1,\hat y_{b_j})$ for $j=0,\ldots,J-1$. Foreground segments are obtained by excluding No Gesture. This transformation requires no test-time annotations.
+
+\subsubsection{Optional Temporal Refinement}
+When enabled, a three-window moving average is applied before probability aggregation:
+\begin{equation}
+\tilde{\mathbf p}_k=
+\frac{\mathbf p_{\max(0,k-1)}+\mathbf p_k+
+\mathbf p_{\min(K-1,k+1)}}{3}.
+\end{equation}
+Subsequent heuristic segment-level operations may link same-class segments separated by short background intervals, remove short foreground segments, and optionally fill same-label neighbors. Raw predictions without refinement serve as the primary baseline. These conventional operations are not claimed as novel contributions.
+
+\subsection{Scope and Computational Considerations}
+\label{sec:scope}
+The aggregation in \eqref{eq:aggregation} assigns a window prediction to its complete temporal interval. Thus, the label at time $t$ can depend on frames after $t$. The present inference protocol is offline and must not be interpreted as causal streaming recognition. Bidirectional modeling within an already observed clip is compatible with an end-aligned online buffer, but that alternative is not implemented here.
+
+For long videos, the backbone processes approximately $N/S$ windows with fixed input size. A smaller stride increases temporal prediction density at the expense of additional model calls. Model-level computation and temporal inference frequency must therefore be evaluated jointly. End-to-end latency additionally includes acquisition, decoding, preprocessing, buffering, inference, and decision logic.
+
+% FUTURE METHOD (not implemented): Adaptive Causal Inference.
+% Candidate components: causal buffer, uncertainty estimation, adaptive stride,
+% reliability-aware temporal fusion and selective decision.
+% Include Fig4 only after implementation and validation.
+
+\section{Experiments and Results}
+\label{sec:experiments}
+\subsection{Datasets and Experimental Protocol}
+The current experiments use IPN-Hand and CTPGesture v1, with 14 and nine classifier output classes respectively, including the background class. IPN-Hand isolated evaluation excludes No-Gesture intervals; continuous evaluation includes the background. CTPGesture v1 isolated evaluation includes the background category.
+% TODO: Add verified dataset citations, splits, sample counts and checkpoints.
+\subsection{Implementation Details}
+% TODO: Add finalized training configurations, pretraining, optimizer,
+% learning rate, batch size, epochs, augmentation, hardware and seeds.
+\subsection{Evaluation Metrics}
+Evaluation distinguishes isolated top-1 accuracy, frame-wise accuracy, macro-averaged F1, and temporal segmentation quality. Segmental F1 at temporal intersection-over-union thresholds and the activity overlap score provide complementary views of localization. Per-video mean accuracy and global frame accuracy should be reported separately. Ground-truth-prefix early recognition measures classification of partial annotated gestures, not online detection.
+% TODO: Specify matching, averaging, overlap tolerance and background handling.
+\subsection{Isolated Gesture Recognition Results}
+% TODO: Insert verified results and matched evaluation protocols.
+\subsection{Continuous Gesture Recognition Results}
+% TODO: Report RAW and optional refinement separately.
+\subsection{Computational Complexity and Ablation Study}
+% TODO: Insert matched model-only benchmarks and validation-selected ablations.
+\subsection{Edge Deployment}
+% TODO: Insert only after actual online hardware measurements.
+
+\section{Conclusion}
+\label{sec:conclusion}
+The current framework combines a compact video state space backbone with overlapping probability aggregation for offline RGB-based continuous gesture recognition. It distinguishes clip-level classification from temporal localization and establishes a baseline for subsequent efficiency and online recognition investigations. Adaptive causal inference remains a research direction rather than a validated contribution.
+% TODO: Revise after final experiments.
+
+\begin{thebibliography}{00}
+\bibitem{nguyen2026cobogesture}
+P.-D. Nguyen, V.-T. Tran, D.-K. Ngo, V.-D. Le, H.-A. Nguyen,
+T. B. Nguyen, H.-Q. Nguyen, and T.-L. Le,
+\textquotedblleft CoboGesture: A continuous hand gesture dataset and recognition method
+for human-collaborative robot interaction,\textquotedblright\
+\emph{IEEE Access}, vol. 14, pp. 27584--27601, 2026,
+doi: 10.1109/ACCESS.2026.3664027.
+
+\bibitem{li2024videomamba}
+K. Li, X. Li, Y. Wang, Y. He, Y. Wang, L. Wang, and Y. Qiao,
+\textquotedblleft VideoMamba: State space model for efficient video understanding,\textquotedblright\
+in \emph{Proc. Eur. Conf. Comput. Vis. (ECCV)}, 2024,
+doi: 10.1007/978-3-031-73347-5\_14.
+
+\bibitem{gu2024mamba}
+A. Gu and T. Dao,
+\textquotedblleft Mamba: Linear-time sequence modeling with selective state spaces,\textquotedblright\
+in \emph{Proc. Conf. Lang. Model. (COLM)}, 2024.
+\end{thebibliography}
+
+% TODO: Insert approved author biographies using IEEEbiography.
+\EOD
+\end{document}
